@@ -21,7 +21,7 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <div className='bg-accent-foreground px-2 pt-30'>
+    <div className='bg-accent-foreground px-2'>
       <Container className=' relative overflow-hidden grid grid-cols-1 lg:grid-cols-3 gap-10 text-lg font-normal py-16 z-10'>
         {footerLinks.map((section, index) => (
           <div key={index} className='flex flex-col space-y-4'>
