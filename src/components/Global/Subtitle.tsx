@@ -8,7 +8,7 @@ type SubtitleProps = {
 
 export default function Subtitle({ children, className }: SubtitleProps) {
   return (
-    <h2 className={cn("text-sm md:text-base text-foreground/80", className)}>
+    <h2 className={cn("text-sm md:text-base", className)}>
       {children}
     </h2>
   );

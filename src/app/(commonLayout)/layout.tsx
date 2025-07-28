@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Quantico } from "next/font/google";
 import "../../styles/globals.css";
 import { Providers } from "../providers";
 import Navbar from "@/components/Global/Navbar";
@@ -10,6 +10,11 @@ const inter = Inter({
   weight: ['100', '300', '200', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin']
 });
+const quantico = Quantico({
+  variable: "--font-quantico",
+  weight: ["400", '700'],
+  subsets: ['latin']
+})
 
 export const metadata: Metadata = {
   title: "Kahf Collective",
@@ -23,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} `}>
+      <body className={`${inter.variable} ${quantico.variable}`}>
         <Providers>
           <Navbar />
           {children}
