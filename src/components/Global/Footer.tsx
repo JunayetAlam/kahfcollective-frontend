@@ -1,24 +1,22 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Instagram, Send, Twitter, Linkedin } from 'lucide-react';
-import logo from '@/assets/logo.png'
 import Container from './Container';
 import Subtitle from './Subtitle';
 
 // Footer link sections
 const footerLinks = [
   {
-    title: 'Quick Links',
-    links: ['Home', 'Browse Listings', 'Post a Listing', 'Contact'],
+    title: 'About',
+    links: ['Empowering Muslims worldwide through authentic Islamic education and community building.'],
   },
   {
-    title: 'Support',
-    links: ['Privacy Policy', 'Help Center', 'Terms & Conditions'],
+    title: 'Community',
+    links: ['Study Groups', 'Discussion Forums', 'Brotherhood Circle', 'Sisterhood Circle', 'Events'],
   },
   {
-    title: 'Contact Info',
-    links: ['email: overlandingoutpost@gmail.com'],
+    title: 'Platform',
+    links: ['Contact Us', 'Donate', 'Privacy Policy', 'Terms of Service'],
   },
 ];
 
@@ -34,32 +32,6 @@ const Footer = () => {
                 <Subtitle className=''>{link}</Subtitle>
               </Link>
             ))}
-
-            {/* Add Follow Us section for Contact Info */}
-            {section.title === 'Contact Info' && (
-              <div className="mt-4">
-                <Subtitle className="font-bold mb-2 ">Follow Us</Subtitle>
-                <p className="text-xs md:text-sm  mb-3">
-                  Follow us on social media for the latest deals and travel inspiration
-                </p>
-
-                {/* Social Media Icons */}
-                <div className="flex gap-3 text-[#1C1C1C] flex-wrap">
-                  <Link href="#" className="w-8 h-8 bg-white/40 rounded-full flex items-center justify-center   transition-colors">
-                    <Instagram size={16} />
-                  </Link>
-                  <Link href="#" className="w-8 h-8 bg-white/40 rounded-full flex items-center justify-center   transition-colors">
-                    <Send size={16} />
-                  </Link>
-                  <Link href="#" className="w-8 h-8 bg-white/40 rounded-full flex items-center justify-center   transition-colors">
-                    <Twitter size={16} />
-                  </Link>
-                  <Link href="#" className="w-8 h-8 bg-white/40 rounded-full flex items-center justify-center   transition-colors">
-                    <Linkedin size={16} />
-                  </Link>
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </Container>
