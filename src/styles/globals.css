@@ -153,7 +153,7 @@
 
 body {
   font-family: var(--font-inter) !important;
-  background: white;
+  background: #fafafa;
 }
 
 .secondaryFont {

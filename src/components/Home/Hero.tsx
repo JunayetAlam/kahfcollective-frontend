@@ -11,30 +11,22 @@ const features = [
     {
         label: 'Islamic Scholars',
         icon: image1,
-        color: 'bg-orange-500',
-        align: 'end',
-        offset: 'ml-0',
+        ownClass: 'justify-end ml-0',
     },
     {
         label: 'Quiz & Assignments',
         icon: image2,
-        color: 'bg-blue-500',
-        align: 'center',
-        offset: 'mr-16',
+        ownClass: 'justify-center mr-16',
     },
     {
         label: '1000+ Students',
         icon: image3,
-        color: 'bg-green-500',
-        align: 'end',
-        offset: 'mr-8',
+        ownClass: 'justify-end mr-8',
     },
     {
         label: 'Video Lessons',
         icon: image4,
-        color: 'bg-red-500',
-        align: 'center',
-        offset: 'ml-8',
+        ownClass: 'justify-center ml-8',
     },
 ];
 
@@ -75,7 +67,7 @@ export default function Hero() {
                             {features.map((feature, index) => (
                                 <div
                                     key={index}
-                                    className={`flex justify-${feature.align} ${feature.offset}`}
+                                    className={`flex ${feature.ownClass}`}
                                 >
                                     <div className="bg-primary border border-[#F1EEE4] backdrop-blur-sm rounded-full px-4 py-3 flex items-center gap-3 ">
                                         <div className="size-12 xl:size-14 aspect-square bg-[#99CAFB] rounded-full flex justify-center items-center">
