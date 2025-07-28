@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Overlanding outpost",
-  description: "Buy sell explore",
+  title: "Kahf Collective",
+  description: "Deepen Your Islamic Knowledge Journey",
 };
 
 export default function RootLayout({
