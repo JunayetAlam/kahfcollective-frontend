@@ -8,7 +8,7 @@ type TitleProps = {
 
 export default function Title({ children, className }: TitleProps) {
   return (
-    <h1 className={cn("text-2xl md:text-3xl lg:text-4xl font-bold text-title", className)}>
+    <h1 className={cn("text-2xl md:text-3xl lg:text-4xl font-bold text-primary ", className)}>
       {children}
     </h1>
   );

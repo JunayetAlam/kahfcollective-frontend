@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       'encrypted-tbn0.gstatic.com',
       'vehicle-images.dealerinspire.com',
       'image.cnbcfm.com',
+      'images.unsplash.com',
+      'plus.unsplash.com'
     ],
   },
 };

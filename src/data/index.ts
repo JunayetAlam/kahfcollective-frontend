@@ -1,1 +1,4 @@
 export * from './home.data'
+export * from './course.data'
+export * from './instructor.data'
+export * from './testimonial.data'
