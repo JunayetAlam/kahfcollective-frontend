@@ -70,7 +70,7 @@ export default function Hero() {
                                     className={`flex ${feature.ownClass}`}
                                 >
                                     <div className="bg-primary border border-[#F1EEE4] backdrop-blur-sm rounded-full px-4 py-3 flex items-center gap-3 ">
-                                        <div className="size-12 xl:size-14 aspect-square bg-[#99CAFB] rounded-full flex justify-center items-center">
+                                        <div className="size-12 xl:size-14 aspect-square bg-[#A2E9B7] rounded-full flex justify-center items-center">
                                             <div className="size-7 relative">
                                                 <Image
                                                     src={feature.icon}

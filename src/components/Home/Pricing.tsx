@@ -47,18 +47,18 @@ const plans = [
   },
 ];
 
-export default function Pricing({ title = 'Simple pricing', subtitle = 'Choose the plan that works for you' }: { title?: string, subtitle?: string }) {
+export default function Pricing({ title = 'Learning Tiers', subtitle = 'Progress through structured tiers designed to build your Islamic knowledge systematically.' }: { title?: string, subtitle?: string }) {
     return (
         <Container className='pb-20 max-w-7xl'>
             <Title className='text-center pb-3'>{title}</Title>
             <Subtitle className='pb-8 text-center max-w-3xl mx-auto'>{subtitle}</Subtitle>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-10">
                 {plans.map((plan) => (
                     <Card
                         key={plan.name}
                         className={`  relative border-2   ${plan.popular ? "shadow-offset-8 border-primary" : "shadow-custom-offset border-black"} rounded-2xl  bg-white xl:px-5 max-h-max my-auto w-full max-w-[300px] md:max-w-[350px] mx-auto`}
                     >
-                        <CardHeader className="pb-4">
+                        <CardHeader className="pb-4 px-3 lg:px-6">
                             <Title className='pb-6 font-semibold text-foreground'>{plan.name}</Title>
                             <div className="mb-4 flex items-end ">
                                 <Title className='font-semibold text-foreground'>{plan.price}</Title>
@@ -66,7 +66,7 @@ export default function Pricing({ title = 'Simple pricing', subtitle = 'Choose t
                             </div>
                         </CardHeader>
 
-                        <CardContent className="pt-0">
+                        <CardContent className="pt-0 px-3 lg:px-6">
                             <ul className="space-y-3 mb-8">
                                 {plan.features.map((feature, featureIndex) => (
                                     <li key={featureIndex} className="flex items-center text-sm text-gray-800 gap-2">
