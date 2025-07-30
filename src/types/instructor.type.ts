@@ -2,6 +2,6 @@ export type Instructor = {
     id: string;
     name: string;
     role: string;
-    rating: number;
+    students: number;
     courses: number;
 };

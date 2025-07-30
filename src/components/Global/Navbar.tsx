@@ -29,8 +29,8 @@ const Navbar = () => {
                     <div>
                         <div className="flex justify-between items-center">
                             {/* Logo */}
-                            <div className='flex gap-2 justify-center items-center'>
-                                <Link href="/" className="flex-shrink-0 transition-transform hover:scale-105">
+                            <Link href="/" className='flex gap-2 justify-center items-center'>
+                                <div className="flex-shrink-0 transition-transform">
                                     <Image
                                         src={logo}
                                         placeholder='blur'
@@ -40,9 +40,9 @@ const Navbar = () => {
                                         className="rounded-lg size-16"
                                         priority
                                     />
-                                </Link>
+                                </div>
                                 <h1 className='font-bold text-xl xl:text-2xl text-white'>Kahf Collective</h1>
-                            </div>
+                            </Link>
 
                             {/* Desktop Navigation */}
                             <div className="flex items-center gap-1 xl:gap-2">
@@ -86,8 +86,8 @@ const Navbar = () => {
             <nav className="fixed z-50 w-full top-0 lg:hidden shadow-lg" style={{ backgroundColor: '#304437' }}>
                 <Container className="flex justify-between items-center py-2">
                     {/* Logo */}
-                    <div className='flex gap-2 justify-center items-center'>
-                        <Link href="/" className="flex-shrink-0 transition-transform hover:scale-105">
+                    <Link href="/" className='flex gap-2 justify-center items-center'>
+                        <div className="flex-shrink-0 transition-transform hover:scale-105">
                             <Image
                                 src={logo}
                                 placeholder='blur'
@@ -97,9 +97,9 @@ const Navbar = () => {
                                 className="rounded-lg size-12 sm:size-14"
                                 priority
                             />
-                        </Link>
+                        </div>
                         <h1 className='font-bold hidden sm:block text-lg sm:text-xl  text-white'>Kahf Collective</h1>
-                    </div>
+                    </Link>
 
                     {/* Mobile Actions */}
                     <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ const Navbar = () => {
             <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t" style={{ backgroundColor: '#304437', borderTopColor: '#4a5c54' }}>
                 <Container className="py-2">
                     <div className="flex justify-center">
-                        <div className="grid grid-cols-6 gap-1 max-w-md w-full">
+                        <div className="grid grid-cols-6 gap-1 w-full">
                             {navContent.map((link, idx) => {
                                 const Icon = link.icon;
                                 const isActive = pathname === link.path;
@@ -150,7 +150,7 @@ const Navbar = () => {
                                             )}
                                         </div>
                                         {/* Show text only for Home and shorter names */}
-                                       
+
                                     </Link>
                                 );
                             })}

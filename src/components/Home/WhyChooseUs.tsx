@@ -3,6 +3,7 @@ import Container from '../Global/Container';
 import TopTitle from '../Global/TopTitle';
 import Title from '../Global/Title';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 const iconOne = <svg
     width="24"
@@ -109,7 +110,9 @@ export default function WhyChooseUs() {
                 </div>
 
             </div>
-            <Button variant={'secondary'}>More About Us</Button>
+            <Link href={'/about-us'}>
+                <Button variant={'secondary'}>More About Us</Button>
+            </Link>
         </Container>
     );
 }

@@ -1,8 +1,9 @@
 import { Instructor } from "@/types";
 import TopTitle from "./TopTitle";
 import Subtitle from "./Subtitle";
-import { Play, Star } from "lucide-react";
-
+import { Play } from "lucide-react";
+import studentIcon from '@/assets/students.svg'
+import Image from "next/image";
 export default function InstructorCard({ instructor }: { instructor: Instructor }) {
     return (
         <div className="px-4 py-6 rounded-xl bg-white border border-[#E2E4E7] ">
@@ -10,12 +11,18 @@ export default function InstructorCard({ instructor }: { instructor: Instructor 
                 <TopTitle hideLine={true} className="justify-center">{instructor.name}</TopTitle>
                 <Subtitle className="text-center">{instructor.role}</Subtitle>
             </div>
-            <div className="flex justify-between items-center text-foreground text-sm ">
-                <div className="flex gap-1">
-                    <Star size={16} className="text-[#F3122C] fill-[#F3122C]" />
-                    {instructor.rating}
+            <div className="flex justify-between items-center text-foreground text-sm  border-t border-gray-200 pt-4">
+                <div className="flex gap-1 relative font-medium">
+                    <div className="relative w-5 aspect-square">
+                        <Image
+                            src={studentIcon}
+                            fill
+                            alt="student"
+                        />
+                    </div>
+                    {instructor.students} Students
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 font-semibold">
                     <Play size={16} /> {instructor.courses} Courses
                 </div>
             </div>
