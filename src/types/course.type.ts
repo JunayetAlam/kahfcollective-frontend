@@ -5,4 +5,5 @@ export type CourseCardType = {
   instructorProfile: string
   lessons: number
   image: string
+  id: string
 }

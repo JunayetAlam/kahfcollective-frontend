@@ -2,6 +2,7 @@ import { SVGProps } from "react";
 export * from './course.type'
 export * from './instructor.type'
 export * from './testimonial.type'
+export * from './sermon.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
