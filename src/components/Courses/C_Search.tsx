@@ -32,16 +32,10 @@ const categories: FilterItem[] = [
     { id: "arabic", name: "Arabic" },
 ];
 
-const levels: FilterItem[] = [
-    { id: "beginner", name: "Beginner" },
-    { id: "intermediate", name: "Intermediate" },
-    { id: "advanced", name: "Advanced" },
-];
-
 const pricingOptions: FilterItem[] = [
-    { id: "free", name: "Free" },
-    { id: "paid", name: "Paid" },
-    { id: "premium", name: "Premium" },
+    { id: "awaken", name: "Awaken" },
+    { id: "ascend", name: "Ascend" },
+    { id: "actualize", name: "Actualize" },
 ];
 
 export default function C_Search({ className = "" }: C_SearchProps) {
@@ -72,14 +66,14 @@ export default function C_Search({ className = "" }: C_SearchProps) {
         handleSetSearchParams('category', newCategories.join(','), searchParams, router)
     };
 
-    // Handle level selection
-    const handleLevelChange = (levelId: string) => {
-        const newLevels = selectedLevels.includes(levelId)
-            ? selectedLevels.filter(id => id !== levelId)
-            : [...selectedLevels, levelId];
+    // // Handle level selection
+    // const handleLevelChange = (levelId: string) => {
+    //     const newLevels = selectedLevels.includes(levelId)
+    //         ? selectedLevels.filter(id => id !== levelId)
+    //         : [...selectedLevels, levelId];
 
-        handleSetSearchParams('level', newLevels.join(','), searchParams, router)
-    };
+    //     handleSetSearchParams('level', newLevels.join(','), searchParams, router)
+    // };
 
     const handlePricingChange = (pricingId: string) => {
         const newPricing = selectedPricing.includes(pricingId)
@@ -143,13 +137,6 @@ export default function C_Search({ className = "" }: C_SearchProps) {
 
             <div className="border-t mb-5 border-gray-200 w-full"></div>
 
-            {/* Levels */}
-            <FilterSection
-                title="Levels"
-                items={levels}
-                selectedItems={selectedLevels}
-                onItemChange={handleLevelChange}
-            />
 
             <div className="border-t mb-5 border-gray-200 w-full"></div>
 

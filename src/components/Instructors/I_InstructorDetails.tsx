@@ -1,10 +1,9 @@
-import { Phone, Mail, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Container from "../Global/Container"
 import TopTitle from "../Global/TopTitle"
 import Subtitle from "../Global/Subtitle"
 import { HiMailOpen } from "react-icons/hi";
-import { FaLocationDot, FaPhone, FaPhoneFlip } from "react-icons/fa6";
+import { FaLocationDot, FaPhone,  } from "react-icons/fa6";
 export default function I_InstructorDetails() {
     return (
         <Container className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 py-20">

@@ -7,7 +7,7 @@ import Container from '../Global/Container';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
-import { BookOpen, BookText, CirclePlay, Clock, Download, Globe, Heart, Star, User } from 'lucide-react';
+import { BookOpen, BookText, CirclePlay, Clock,  Globe, Heart,  User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import Title from '../Global/Title';

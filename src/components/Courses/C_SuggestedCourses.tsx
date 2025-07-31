@@ -1,7 +1,6 @@
 import React from 'react';
 import Container from '../Global/Container';
 import TopTitle from '../Global/TopTitle';
-import Subtitle from '../Global/Subtitle';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import { courses } from '@/data';

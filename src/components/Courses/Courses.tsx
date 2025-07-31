@@ -34,7 +34,7 @@ export default function Courses() {
                                     Filter Courses
                                 </Button>
                             </DrawerTrigger>
-                            <DrawerContent className="h-[80vh]">
+                            <DrawerContent className="h-[65vh]">
                                 <DrawerHeader>
                                     <DrawerTitle>Filter Courses</DrawerTitle>
                                 </DrawerHeader>
@@ -53,7 +53,7 @@ export default function Courses() {
                 </div>
                 
             </div>
-            <PaginationWithParams totalPages={20} />
+            <PaginationWithParams totalPages={5} />
         </Container>
     );
 }

@@ -3,6 +3,9 @@ export * from './course.type'
 export * from './instructor.type'
 export * from './testimonial.type'
 export * from './sermon.type'
+export * from './article.type'
+export * from './study-circle.type'
+export * from './post.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };

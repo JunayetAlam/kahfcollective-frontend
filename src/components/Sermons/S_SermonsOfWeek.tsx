@@ -6,13 +6,17 @@ import TopTitle from '../Global/TopTitle';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import mosqueImg from '@/assets/mosque.jpg'
-import { ArrowUpRight, Calendar } from 'lucide-react';
+import { Calendar, PlayCircle } from 'lucide-react';
 export default function S_SermonsOfWeek() {
+  
   return (
     <Container className='py-20'>
       <div className="grid lg:grid-cols-2 gap-12 items-start relative">
         <div className="pr-10">
-          <div className="w-full aspect-square relative">
+          <div className="w-full aspect-square relative flex justify-center items-center">
+            <Button size={'lg'} className='md:!px-8 md:h-11  relative z-10 bg-white/35 text-foreground backdrop-blur-xs border border-white'>
+              Play <PlayCircle />
+            </Button>
             <Image
               src={mosqueImg}
               alt="image"
