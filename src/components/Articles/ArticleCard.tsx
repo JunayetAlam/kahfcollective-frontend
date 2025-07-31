@@ -2,7 +2,7 @@ import { Article } from '@/types';
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import Image from 'next/image';
-import { Calendar, PlayCircle } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Button } from '../ui/button';
 import sermonImg from '@/assets/sermon.jpg'
 import TopTitle from '../Global/TopTitle';

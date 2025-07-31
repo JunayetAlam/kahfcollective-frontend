@@ -1,8 +1,4 @@
-import { Play } from "lucide-react";
 import Container from "../Global/Container";
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Textarea } from "../ui/textarea";
 import SCF_MembersList from "./SCF_MembersList";
 import SCFPost from "./SCFPost";
 import SCF_CreatePost from "./SCF_CreatePost";

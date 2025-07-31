@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Overlanding outpost",
-  description: "Buy sell explore",
+  title: "Kahf Collective",
+  description: "Kahf Collective",
 };
 import img from '@/assets/auth.png'
 import Container from "@/components/Global/Container";

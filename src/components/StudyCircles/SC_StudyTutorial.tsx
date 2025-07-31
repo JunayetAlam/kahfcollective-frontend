@@ -1,7 +1,7 @@
 import { Book, MessageCircle, UserPlus } from 'lucide-react';
 import React from 'react';
 import Container from '../Global/Container';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader } from '../ui/card';
 import TopTitle from '../Global/TopTitle';
 import Subtitle from '../Global/Subtitle';
 import Title from '../Global/Title';

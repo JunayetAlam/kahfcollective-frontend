@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FormEvent, useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, MapPin, EyeClosed, LockKeyhole, LockKeyholeIcon } from 'lucide-react';
+import { Eye, Mail, User, EyeClosed, LockKeyhole, LockKeyholeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {

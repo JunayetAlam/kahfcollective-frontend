@@ -54,16 +54,24 @@ export default function C_Search({ className = "" }: C_SearchProps) {
     // Handle search input change
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newSearchTerm = e.target.value;
-        handleSetSearchParams('searchTerm', newSearchTerm, searchParams, router)
-    };
 
+        handleSetSearchParams(
+            { searchTerm: newSearchTerm },
+            searchParams,
+            router
+        );
+    };
     // Handle category selection
     const handleCategoryChange = (categoryId: string) => {
         const newCategories = selectedCategories.includes(categoryId)
             ? selectedCategories.filter(id => id !== categoryId)
             : [...selectedCategories, categoryId];
 
-        handleSetSearchParams('category', newCategories.join(','), searchParams, router)
+        handleSetSearchParams(
+            { category: newCategories.join(',') },
+            searchParams,
+            router
+        );
     };
 
     // // Handle level selection
@@ -80,7 +88,11 @@ export default function C_Search({ className = "" }: C_SearchProps) {
             ? selectedPricing.filter(id => id !== pricingId)
             : [...selectedPricing, pricingId];
 
-        handleSetSearchParams('pricing', newPricing.join(','), searchParams, router)
+        handleSetSearchParams(
+            { pricing: newPricing.join(',') },
+            searchParams,
+            router
+        );
     };
 
     // Handle clear all filters

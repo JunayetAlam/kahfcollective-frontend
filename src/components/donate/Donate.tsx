@@ -1,8 +1,7 @@
-import { DollarSign, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import Container from "../Global/Container";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import TopTitle from "../Global/TopTitle";
 import { AiFillDollarCircle } from "react-icons/ai";
 export default function Donate() {

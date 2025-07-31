@@ -7,7 +7,7 @@ import Container from '../Global/Container';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
-import { BookOpen, BookText, CirclePlay, Clock,  Globe, Heart,  User } from 'lucide-react';
+import { BookOpen, BookText, CirclePlay, Clock, Globe, Heart, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import Title from '../Global/Title';
@@ -15,6 +15,7 @@ import Subtitle from '../Global/Subtitle';
 import Rating from '../Global/Rating';
 import { FaBookmark } from 'react-icons/fa';
 import TopTitle from '../Global/TopTitle';
+import Link from 'next/link';
 
 const topics = [
     {
@@ -159,9 +160,11 @@ export default function CourseDetails({ slug }: { slug: string }) {
                             {/* Price Section */}
                             <div className="bg-secondary text-white p-6 rounded-xl">
                                 <div className="space-y-3">
-                                    <Subtitle>Course Fee</Subtitle>
-                                    <Title className='text-background'>$56.00</Title>
-                                    <Button size={'lg'} className='w-full'>Enroll Now</Button>
+                                    <Subtitle>Course Tier</Subtitle>
+                                    <Title className='text-background'>Ascend 29$</Title>
+                                    <Link href={`${courseDetails?.id}/lessons`}>
+                                        <Button size={'lg'} className='w-full'>Enroll Now</Button>
+                                    </Link>
                                 </div>
                             </div>
 

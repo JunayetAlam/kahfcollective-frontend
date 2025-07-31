@@ -17,7 +17,7 @@ export function PaginationWithParams({
   const currentPage = Number(searchParams.get("page") || 1);
 
   const createPageURL = (pageNumber: number | string) => {
-    handleSetSearchParams('page', pageNumber.toString(), searchParams, router)
+    handleSetSearchParams({ page: pageNumber.toString() }, searchParams, router)
   };
 
   const goToPage = (page: number) => {
@@ -63,8 +63,8 @@ export function PaginationWithParams({
           group relative h-10 w-10 flex items-center justify-center 
           rounded-lg border border-gray-200 bg-white shadow-sm
           transition-all duration-200 ease-out
-          ${currentPage === 1 
-            ? 'cursor-not-allowed opacity-50' 
+          ${currentPage === 1
+            ? 'cursor-not-allowed opacity-50'
             : 'hover:border-primary/30 hover:bg-primary/5 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
           }
         `}
@@ -73,8 +73,8 @@ export function PaginationWithParams({
       >
         <ChevronLeft className={`
           h-4 w-4 transition-all duration-200
-          ${currentPage === 1 
-            ? 'text-gray-300' 
+          ${currentPage === 1
+            ? 'text-gray-300'
             : 'text-gray-600 group-hover:text-primary group-hover:-translate-x-0.5'
           }
         `} />
@@ -84,8 +84,8 @@ export function PaginationWithParams({
       <div className="flex items-center space-x-1 mx-2">
         {getPageNumbers().map((page, index) =>
           page === "..." ? (
-            <span 
-              key={`ellipsis-${index}`} 
+            <span
+              key={`ellipsis-${index}`}
               className="px-2 py-2 text-gray-400 font-medium select-none"
             >
               ...
@@ -127,8 +127,8 @@ export function PaginationWithParams({
           group relative h-10 w-10 flex items-center justify-center 
           rounded-lg border border-gray-200 bg-white shadow-sm
           transition-all duration-200 ease-out
-          ${currentPage === totalPages 
-            ? 'cursor-not-allowed opacity-50' 
+          ${currentPage === totalPages
+            ? 'cursor-not-allowed opacity-50'
             : 'hover:border-primary/30 hover:bg-primary/5 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
           }
         `}
@@ -137,8 +137,8 @@ export function PaginationWithParams({
       >
         <ChevronRight className={`
           h-4 w-4 transition-all duration-200
-          ${currentPage === totalPages 
-            ? 'text-gray-300' 
+          ${currentPage === totalPages
+            ? 'text-gray-300'
             : 'text-gray-600 group-hover:text-primary group-hover:translate-x-0.5'
           }
         `} />
