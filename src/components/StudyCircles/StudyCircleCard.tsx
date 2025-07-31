@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Subtitle from '../Global/Subtitle';
 import { GraduationCap } from 'lucide-react';
 import { Button } from '../ui/button';
-import image from '@/assets/mosque.jpg'
 import Link from 'next/link';
 export default function StudyCircleCard({ studyCircle }: { studyCircle: TStudyCircle }) {
     return (
@@ -14,9 +13,8 @@ export default function StudyCircleCard({ studyCircle }: { studyCircle: TStudyCi
                 <Link href={`/study-circles/feed/${studyCircle.id}`} >
                     <div className="relative w-full aspect-video flex items-center justify-center">
                         <Image
-                            src={image}
+                            src={studyCircle.image}
                             alt="Sermon Illustration"
-                            placeholder='blur'
                             fill
                             className="object-cover"
                         />

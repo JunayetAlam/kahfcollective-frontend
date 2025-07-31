@@ -1,9 +1,8 @@
+import SignUp from '@/components/Auth/SignUp';
 import React from 'react';
 
 export default function page() {
   return (
-    <>
-      This is the page page.
-    </>
+    <SignUp />
   );
 }

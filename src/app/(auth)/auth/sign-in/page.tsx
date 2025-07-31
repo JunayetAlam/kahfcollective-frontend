@@ -1,8 +1,7 @@
+import SignIn from "@/components/Auth/SignIn";
 
 export default function page() {
   return (
-    <>
-      This is the page page.
-    </>
+     <SignIn />
   );
 }
