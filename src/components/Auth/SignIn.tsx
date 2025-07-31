@@ -72,9 +72,11 @@ export default function SignIn() {
 
                 {/* Forgot Password */}
                 <div className="flex items-center justify-end">
-                    <Button variant="link" className="px-0 text-sm">
-                        Forgot password?
-                    </Button>
+                    <Link href={'/auth/forget-password'}>
+                        <Button variant="link" className="px-0 text-sm">
+                            Forgot password?
+                        </Button>
+                    </Link>
                 </div>
 
                 {/* Submit Button */}
