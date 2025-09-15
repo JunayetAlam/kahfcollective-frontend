@@ -27,3 +27,6 @@ export const handleSetSearchParams = (
 
   router.push(`?${params.toString()}`, { scroll: false });
 };
+
+
+

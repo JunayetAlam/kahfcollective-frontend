@@ -8,7 +8,7 @@ interface PaginationWithParamsProps {
   totalPages: number;
 }
 
-export function PaginationWithParams({
+export function Pagination({
   totalPages,
 }: PaginationWithParamsProps) {
   const router = useRouter();
@@ -28,7 +28,6 @@ export function PaginationWithParams({
   const getPageNumbers = () => {
     const pageNumbers = [];
 
-    // Always show first page
     if (currentPage > 3) {
       pageNumbers.push(1);
       if (currentPage > 4) {
@@ -36,7 +35,6 @@ export function PaginationWithParams({
       }
     }
 
-    // Show current page and adjacent pages
     for (
       let i = Math.max(1, currentPage - 1);
       i <= Math.min(totalPages, currentPage + 1);

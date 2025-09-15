@@ -21,3 +21,26 @@ export type Module = {
   courseCount: number;
   items: ModuleCourseItem[];
 };
+
+export interface CourseData {
+  title: string;
+  description: string;
+  tierLevel: string;
+  status: string;
+}
+
+export interface Student {
+  id: number;
+  name: string;
+  progress: number;
+  lastAccess: string;
+}
+
+export interface ManageCourseProps {
+  courseData: CourseData;
+  onCourseDataChange: (field: keyof CourseData, value: string) => void;
+  onSaveChanges: () => void;
+  onCancel: () => void;
+  contentItems: CourseData[];
+  students: Student[];
+}

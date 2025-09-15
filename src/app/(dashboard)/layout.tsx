@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import { Inter, Quantico } from "next/font/google";
+import "@/app/globals.css";
+import { Providers } from "../providers";
+import { Sidebar } from "@/components/Dashboard/Sidebar";
+import Container from "@/components/Global/Container";
+
+const inter = Inter({
+  variable: "--font-inter",
+  weight: ['100', '300', '200', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin']
+});
+const quantico = Quantico({
+  variable: "--font-quantico",
+  weight: ["400", '700'],
+  subsets: ['latin']
+})
+
+export const metadata: Metadata = {
+  title: "Kahf Collective",
+  description: "Deepen Your Islamic Knowledge Journey",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${inter.variable} ${quantico.variable}`}>
+        <Providers>
+          <div className="flex relative">
+            <Sidebar />
+            <Container className="py-6 pt-24">
+              {children}
+            </Container>
+          </div>
+        </Providers>
+      </body>
+    </html>
+  );
+}

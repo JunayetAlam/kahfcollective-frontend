@@ -7,6 +7,7 @@ export * from './article.type'
 export * from './study-circle.type'
 export * from './post.type'
 export * from './fraternity.type'
+export * from './content.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };

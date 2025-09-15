@@ -8,7 +8,7 @@ import { Filter } from "lucide-react";
 import C_Search from "./C_Search";
 import { courses } from "@/data";
 import CourseCard from "../Global/CourseCard";
-import { PaginationWithParams } from "../Global/PaginationWithParams";
+import { Pagination } from "../Global/Pagination";
 
 export default function Courses() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,7 +53,7 @@ export default function Courses() {
                 </div>
                 
             </div>
-            <PaginationWithParams totalPages={5} />
+            <Pagination totalPages={5} />
         </Container>
     );
 }
