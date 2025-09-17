@@ -114,8 +114,27 @@ const userApi = baseApi.injectEndpoints({
         method: "PUT",
         body: formData,
       }),
-      invalidatesTags: () => ["User", { type: "User"}],
+      invalidatesTags: () => ["User", { type: "User" }],
     }),
+    updateUserRole: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+        url: `/users/user-role/${id}`,
+        method: "PUT",
+        body: data,
+      }
+      },
+      invalidatesTags: ["User"],
+    }),
+
+    updateUserStatus: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/users/user-status/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    })
   }),
 });
 
@@ -133,4 +152,6 @@ export const {
   useUpdateProfileMutation,
   useDeleteUserMutation,
   useUpdateProfileImgMutation,
+  useUpdateUserRoleMutation,
+  useUpdateUserStatusMutation,
 } = userApi;

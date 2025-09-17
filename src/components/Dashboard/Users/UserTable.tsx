@@ -1,12 +1,10 @@
 "use client";
 
-import React, {  } from "react";
-import { Badge } from "@/components/ui/badge";
+import React, { } from "react";
 import { Pagination } from "@/components/Global/Pagination";
 import {
     Table,
     TableBody,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
@@ -15,13 +13,9 @@ import SearchUser from "./SearchUser";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { useSearchParams } from "next/navigation";
 import TableSkeleton from "@/components/Global/TableSkeleton";
-import { AppConfig } from "@/config";
-import Image from "next/image";
-import avatarImg from "@/assets/user.png";
-import { Button } from "@/components/ui/button";
-import {  TQueryParam } from "@/types";
+import { TQueryParam } from "@/types";
 
-import { UserDetailsModal } from "./UserDetailsModal";
+import UserRow from "./UserRow";
 
 export default function UserTable() {
     const searchParams = useSearchParams();
@@ -71,56 +65,7 @@ export default function UserTable() {
                         </TableHeader>
                         <TableBody>
                             {users.map((user) => (
-                                <TableRow key={user.id}>
-                                    {/* Name + Avatar */}
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full overflow-hidden">
-                                                <Image
-                                                    src={user.profile ? `${AppConfig.backendUrl}${user.profile}` : avatarImg}
-                                                    alt={user.fullName}
-                                                    width={32}
-                                                    height={32}
-                                                />
-                                            </div>
-                                            <span className="font-medium">{user.fullName}</span>
-                                        </div>
-                                    </TableCell>
-
-                                    {/* Email */}
-                                    <TableCell>{user.email}</TableCell>
-
-                                    {/* Phone */}
-                                    <TableCell>{user.phoneNumber}</TableCell>
-
-                                    {/* Tier */}
-                                    <TableCell>
-                                        <Button variant="outline" size="sm">
-                                            Ascend
-                                        </Button>
-                                    </TableCell>
-
-                                    {/* Role */}
-                                    <TableCell>
-                                        <Badge>{user.role}</Badge>
-                                    </TableCell>
-
-                                    {/* Referrals */}
-                                    <TableCell>
-                                        {user.isReferredBySheikhSalmam
-                                            ? "Referred by Sheikh Salman"
-                                            : user.referredBy || "—"}
-                                    </TableCell>
-
-                                    {/* Action */}
-                                    <TableCell className="flex gap-2">
-                                       
-                                        <UserDetailsModal user={user} />
-                                        <Button variant="outline" size="sm">
-                                            Edit
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
+                                <UserRow key={user.id} user={user} />
                             ))}
                         </TableBody>
                     </Table>
