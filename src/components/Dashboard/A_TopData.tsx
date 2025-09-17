@@ -44,7 +44,7 @@ export default function A_TopData({ title }: { title: string }) {
     );
   }
 
-  const statss = {
+  const stat = {
     totalUsers: 5,
     activeCourses: 5,
     monthlyRevenue: 10,
@@ -55,19 +55,19 @@ export default function A_TopData({ title }: { title: string }) {
   const stats = [
     {
       title: "Total Users",
-      value: statss?.totalUsers || 0,
+      value: stat?.totalUsers || 0,
     },
     {
       title: "Active Courses",
-      value: statss?.monthlyRevenue || 0,
+      value: stat?.monthlyRevenue || 0,
     },
     {
       title: "Monthly Revenue",
-      value: `$${statss?.activeCourses || 0}`,
+      value: `$${stat?.activeCourses || 0}`,
     },
     {
       title: "Support Tickets",
-      value: statss?.supportTickets || 0,
+      value: stat?.supportTickets || 0,
     },
   ];
 
