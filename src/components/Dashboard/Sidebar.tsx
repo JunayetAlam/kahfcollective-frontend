@@ -10,6 +10,8 @@ import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { logout } from "@/redux/authSlice"
 import { useAppDispatch } from "@/redux/store"
+import { useGetMeQuery } from "@/redux/api/userApi"
+import { Skeleton } from "../ui/skeleton"
 
 
 const navigation = [
@@ -17,66 +19,131 @@ const navigation = [
         label: "Dashboard",
         icon: LayoutDashboard,
         route: "/dashboard",
-        roles: ["SUPERADMIN", "USER"],
+        roles: ["SUPERADMIN", "INSTRUCTOR"],
     },
     {
         label: "My Classes",
         icon: GraduationCap,
         route: "/dashboard/my-classes",
-        roles: ["USER"],
+        roles: ["INSTRUCTOR"],
     },
     {
         label: "My Students",
         icon: Users,
         route: "/dashboard/my-students",
-        roles: ["USER"],
+        roles: ["INSTRUCTOR"],
     },
     {
         label: "User Management",
         icon: Users,
         route: "/dashboard/users",
-        roles: ["SUPERADMIN", "USER"],
+        roles: ["SUPERADMIN", "INSTRUCTOR"],
     },
     {
         label: "Content Management",
         icon: FileText,
         route: "/dashboard/content",
-        roles: ["SUPERADMIN", "USER"],
+        roles: ["SUPERADMIN", "INSTRUCTOR"],
     },
     {
         label: "Analytics",
         icon: BarChart3,
         route: "/dashboard/analytics",
-        roles: ["SUPERADMIN", "USER"],
+        roles: ["SUPERADMIN", "INSTRUCTOR"],
     },
     {
         label: "Forum Moderation",
         icon: MessageSquare,
         route: "/dashboard/moderation",
-        roles: ["SUPERADMIN", "USER"],
+        roles: ["SUPERADMIN", "INSTRUCTOR"],
     },
 ]
 
+const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
+    <div
+        className={cn(
+            "pt-16 z-40 h-screen bg-white border-r border-border flex flex-col transition-all duration-500 relative",
+            isOpen ? "min-w-64 w-64" : "w-16 min-w-16"
+        )}
+    >
+        {/* Navigation Skeleton */}
+        <nav className="flex-1 p-4">
+            <ul className="space-y-2">
+                {/* Skeleton for navigation items */}
+                {Array.from({ length: 6 }).map((_, index) => (
+                    <li key={index}>
+                        <div
+                            className={cn(
+                                "flex items-center space-x-3 p-2 rounded-lg",
+                                !isOpen && "justify-center"
+                            )}
+                        >
+                            <Skeleton className="h-5 w-5 rounded" />
+                            {isOpen && <Skeleton className="h-4 w-24" />}
+                        </div>
+                    </li>
+                ))}
+                
+                {/* Logout button skeleton */}
+                <li className="pt-2">
+                    <div
+                        className={cn(
+                            "flex items-center space-x-3 p-2 rounded-lg",
+                            !isOpen && "justify-center"
+                        )}
+                    >
+                        <Skeleton className="h-5 w-5 rounded" />
+                        {isOpen && <Skeleton className="h-4 w-16" />}
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        {/* Footer Skeleton */}
+        <div className="p-4">
+            {/* User info skeleton */}
+            {isOpen && (
+                <div className="mb-4 px-3 py-2 rounded-lg bg-muted/50 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-40" />
+                </div>
+            )}
+
+            {/* Toggle button skeleton */}
+            <div className="text-end flex justify-end items-end -mr-8">
+                <Skeleton className="h-9 w-9 rounded-md" />
+            </div>
+        </div>
+    </div>
+);
+
 export function Sidebar() {
+       const { data, isLoading, error } = useGetMeQuery(undefined);
     const [isOpen, setIsOpen] = useState(true);
     const router = useRouter()
     const dispatch = useAppDispatch()
     const path = usePathname();
+
+     if (isLoading) {
+        return (
+            <>
+                <Topbar isOpen={isOpen} />
+                <SidebarSkeleton isOpen={isOpen} />
+            </>
+        );
+    }
+
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
     };
 
-    const userData = {
-        profile: '',
-        firstName: 'User',
-        lastName: 'Name',
-        role: 'USER',
-        email: 'admin@gmail.com'
-    }
+
     const handleLogOut = () => {
         dispatch(logout())
         router.push('/auth/sign-in')
     };
+    
+    const userData = data?.data;
     return (
         <>
             <Topbar isOpen={isOpen} />
@@ -148,7 +215,7 @@ export function Sidebar() {
                     {isOpen && userData && (
                         <div className="mb-4 px-3 py-2 rounded-lg bg-muted/50">
                             <p className="text-sm font-medium text-foreground truncate">
-                                {userData?.firstName} {userData?.lastName}
+                                {userData?.fullName}
                             </p>
                             <p className="text-xs text-muted-foreground truncate">
                                 {userData?.email}
