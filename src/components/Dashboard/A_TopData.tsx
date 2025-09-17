@@ -44,30 +44,23 @@ export default function A_TopData({ title }: { title: string }) {
     );
   }
 
-  const stat = {
-    totalUsers: 5,
-    activeCourses: 5,
-    monthlyRevenue: 10,
-    supportTickets: 10
-  };
-
   // Create dynamic stats array based on API data
   const stats = [
     {
       title: "Total Users",
-      value: stat?.totalUsers || 0,
+      value: 5,
     },
     {
       title: "Active Courses",
-      value: stat?.monthlyRevenue || 0,
+      value: 5 ,
     },
     {
       title: "Monthly Revenue",
-      value: `$${stat?.activeCourses || 0}`,
+      value: `$10`,
     },
     {
       title: "Support Tickets",
-      value: stat?.supportTickets || 0,
+      value: 10,
     },
   ];
 
