@@ -5,6 +5,7 @@ import {
   SubmitHandler,
   FieldValues,
   FormProvider,
+  UseFormReturn
 } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -14,10 +15,11 @@ type TFormConfig = {
   className?: string;
 };
 
+// Update the onSubmit type to accept both data and methods
 type TFormProps = {
-  onSubmit: SubmitHandler<FieldValues>;
+  onSubmit: (data: FieldValues, methods: UseFormReturn<any>) => Promise<void> | void;
   children: ReactNode;
-  defaultValues?: Record<string, any>; // Ensure this is passed to initialize form state
+  defaultValues?: Record<string, any>;
 } & TFormConfig;
 
 const CustomForm = ({
@@ -27,6 +29,7 @@ const CustomForm = ({
   resolver,
   className,
 }: TFormProps) => {
+  
   // Configure React Hook Form with passed props
   const formConfig: TFormConfig = {};
   if (defaultValues) formConfig.defaultValues = defaultValues;
@@ -36,8 +39,7 @@ const CustomForm = ({
 
   const submit: SubmitHandler<FieldValues> = async (data) => {
     try {
-      await onSubmit(data);
-      methods.reset(); // Optional: Reset form after submit
+      await onSubmit(data, methods);
     } catch {
       toast.error("Error submitting form:");
     }

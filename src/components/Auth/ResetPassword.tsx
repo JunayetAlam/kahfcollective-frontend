@@ -1,36 +1,55 @@
 'use client';
+import { useState } from "react"
+import { Eye, EyeClosed, LockKeyhole } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import CustomForm from "../Forms/CustomForm"
+import CustomInput from "../Forms/CustomInput"
+import Subtitle from "../Global/Subtitle"
+import { FieldValues } from "react-hook-form"
+import Link from "next/link"
+import { toast } from "sonner"
+import { useResetPasswordMutation } from "@/redux/api/userApi"
+import { useRouter, useSearchParams } from "next/navigation"
 
-import React, { FormEvent, useState } from 'react';
-import { Eye, EyeClosed, LockKeyhole, LockKeyholeIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import Subtitle from '../Global/Subtitle';
-import Link from 'next/link';
+const defaultValues = {
+    newPassword: "",
+    confirmPassword: "",
+}
 
 export default function ResetPassword() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [resetPassword, { isLoading }] = useResetPasswordMutation()
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const token = searchParams.get('token')
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const newPassword = formData.get('newPassword')?.toString();
-        const confirmPassword = formData.get('confirmPassword')?.toString();
-
-        if (newPassword !== confirmPassword) {
-            alert('Passwords do not match!');
-            return;
+    const handleSubmit = async (data: FieldValues) => {
+        if (data.newPassword !== data.confirmPassword) {
+            toast.error('Passwords do not match')
+            return
         }
 
-        console.log('Password reset submitted:', {
-            newPassword,
-            confirmPassword,
-        });
+        if (!token) {
+            toast.error('Invalid reset token')
+            return
+        }
 
-        // You can now perform your password reset API call here
-    };
+        const formData = {
+            newPassword: data.newPassword,
+            token: token,
+        }
+
+        const toastId = toast.loading('Resetting your password...')
+        try {
+            const result = await resetPassword(formData).unwrap()
+            toast.success(result?.message || 'Password reset successfully', { id: toastId })
+            router.push('/auth/sign-in')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            toast.error(error?.data?.message || 'Password reset failed', { id: toastId })
+        }
+    }
 
     return (
         <div className="w-full max-w-md">
@@ -38,72 +57,56 @@ export default function ResetPassword() {
                 Reset your password
             </Subtitle>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* New Password Field */}
-                <div className="space-y-2">
-                    <div className="relative">
-                        <LockKeyholeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                            id="newPassword"
-                            name="newPassword"
-                            type={showPassword ? 'text' : 'password'}
-                            required
-                            className="pl-10 pr-12 h-11"
-                            placeholder="New password"
-                        />
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        >
-                            {!showPassword ? <EyeClosed className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                    </div>
-                </div>
+           <CustomForm 
+                onSubmit={handleSubmit} 
+                defaultValues={defaultValues} 
+                className="rounded-lg border border-gray-200 p-6 space-y-6"
+            >
+                <div className="space-y-4">
+                    {/* New Password Field */}
+                    <CustomInput
+                        required
+                        name="newPassword"
+                        type={showPassword ? "text" : "password"}
+                        label="New Password"
+                        placeholder="Enter new password"
+                        Icon={<LockKeyhole size={16} />}
+                        RightIcon={showPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
+                        onRightIconClick={() => setShowPassword(!showPassword)}
+                        disabled={isLoading}
+                    />
 
-                {/* Confirm Password Field */}
-                <div className="space-y-2">
-                    <div className="relative">
-                        <LockKeyhole className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            required
-                            className="pl-10 pr-12 h-11"
-                            placeholder="Confirm password"
-                        />
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        >
-                            {!showConfirmPassword ? <EyeClosed className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                    </div>
+                    {/* Confirm Password Field */}
+                    <CustomInput
+                        required
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        label="Confirm Password"
+                        placeholder="Confirm new password"
+                        Icon={<LockKeyhole size={16} />}
+                        RightIcon={showConfirmPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
+                        onRightIconClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        disabled={isLoading}
+                    />
                 </div>
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full mt-4" size="lg" variant="secondary">
-                    Reset Password
+                <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Resetting Password...' : 'Reset Password'}
                 </Button>
-            </form>
 
-            {/* Back to Sign In */}
-            <div className="text-center mt-6">
-                <p className="text-sm text-gray-600">
-                    Remember your password?{' '}
-                    <Link href="/auth/sign-in">
-                        <Button variant="link" className="px-0 text-sm">
-                            Sign in
-                        </Button>
-                    </Link>
-                </p>
-            </div>
+                {/* Back to Sign In */}
+                <div className="text-center">
+                    <p className="text-sm text-gray-600">
+                        Remember your password?{' '}
+                        <Link href="/auth/sign-in">
+                            <Button variant="link" className="px-0 text-sm text-primary" disabled={isLoading}>
+                                Sign in
+                            </Button>
+                        </Link>
+                    </p>
+                </div>
+            </CustomForm>
         </div>
     );
 }

@@ -26,6 +26,12 @@ const navigation = [
         roles: ["USER"],
     },
     {
+        label: "My Students",
+        icon: Users,
+        route: "/dashboard/my-students",
+        roles: ["USER"],
+    },
+    {
         label: "User Management",
         icon: Users,
         route: "/dashboard/users",

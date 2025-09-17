@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+import { JSX, useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,9 @@ type TInputProps = {
   className?: string; // container class
   labelClassName?: string;
   fieldClassName?: string; // input class
+  Icon?: JSX.Element
+  RightIcon?: JSX.Element
+  onRightIconClick?: () => void
 };
 
 const CustomInput = ({
@@ -27,6 +30,9 @@ const CustomInput = ({
   className,
   labelClassName,
   fieldClassName,
+  Icon,
+  RightIcon,
+  onRightIconClick
 }: TInputProps) => {
   const {
     control,
@@ -43,7 +49,11 @@ const CustomInput = ({
       }
     }
   }, [name, type]);
-
+  const handleRightClick = () => {
+    if (onRightIconClick) {
+      onRightIconClick()
+    }
+  }
   return (
     <Controller
       name={name}
@@ -59,18 +69,26 @@ const CustomInput = ({
               {label}
             </label>
           )}
-
-          <Input
-            {...field}
-            type={type}
-            id={name}
-            placeholder={placeholder}
-            disabled={disabled}
-            min={type === "number" ? 0 : undefined}
-            step={type === "number" ? 0.01 : undefined}
-            className={cn("w-full text-sm", fieldClassName)}
-          />
-
+          <div className={`w-full  relative`}>
+            {
+              Icon && <div className="absolute text-sm w-8 h-9 flex justify-center items-center">{Icon}</div>
+            }
+            {
+              RightIcon && <div onClick={handleRightClick} className="absolute text-sm w-8 h-9 flex justify-center items-center right-0 cursor-pointer">{RightIcon}</div>
+            }
+            <Input
+              {...field}
+              type={type}
+              id={name}
+              placeholder={placeholder}
+              disabled={disabled}
+              min={type === "number" ? 0 : undefined}
+              step={type === "number" ? 0.01 : undefined}
+              className={cn("w-full text-sm  disabled:opacity-95",
+                fieldClassName, Icon && 'pl-8', RightIcon && 'pr-8'
+              )}
+            />
+          </div>
           {errors?.[name] && (
             <small className="text-red-500 text-sm mt-1">
               {errors?.[name]?.message as string}

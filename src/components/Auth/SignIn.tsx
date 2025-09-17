@@ -6,23 +6,45 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Subtitle from '../Global/Subtitle';
 import Link from 'next/link';
+import { useLoginMutation } from '@/redux/api/userApi';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function SignIn() {
+    const [login, { isLoading }] = useLoginMutation();
+    const router = useRouter()
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
         const formData = new FormData(form);
 
-        const email = formData.get('email');
-        const password = formData.get('password');
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
 
-        console.log('Login attempt:', { email, password });
+        if (!email || !password) return;
+        const toastId = toast.loading('Logging in...');
+        try {
 
-        // You can now use email and password for authentication logic
+            const result = await login({ email, password }).unwrap();
+
+            form.reset();
+
+            if (result?.data) {
+                router.push('/')
+                toast.success('Login successful!', { id: toastId });
+            } else {
+                router.push(`/auth/check-email?email=${email}`)
+                toast.warning('Please Verify Email first!', { id: toastId });
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            toast.error(error?.data?.message || 'Login failed', { id: toastId });
+        }
     };
+
 
     return (
         <div className="w-full max-w-md">
@@ -41,6 +63,7 @@ export default function SignIn() {
                             required
                             className="pl-10 md:h-11"
                             placeholder="Enter your email"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -56,6 +79,7 @@ export default function SignIn() {
                             required
                             className="pl-10 pr-12 md:h-11"
                             placeholder="Enter your password"
+                            disabled={isLoading}
                         />
                         <Button
                             type="button"
@@ -63,6 +87,7 @@ export default function SignIn() {
                             size="sm"
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                            disabled={isLoading}
                         >
                             {!showPassword ? <EyeClosed /> : <Eye />}
                         </Button>
@@ -72,15 +97,15 @@ export default function SignIn() {
                 {/* Forgot Password */}
                 <div className="flex items-center justify-end">
                     <Link href={'/auth/forget-password'}>
-                        <Button variant="link" className="px-0 text-sm">
+                        <Button variant="link" type='button' className="px-0 text-sm" disabled={isLoading}>
                             Forgot password?
                         </Button>
                     </Link>
                 </div>
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full" size="lg" variant="secondary">
-                    Sign In
+                <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                    {isLoading ? 'Signing In...' : 'Sign In'}
                 </Button>
             </form>
 
@@ -89,7 +114,7 @@ export default function SignIn() {
                 <p className="text-sm text-gray-600">
                     Don&apos;t have an account?{' '}
                     <Link href="/auth/sign-up">
-                        <Button variant="link" className="px-0 text-sm">
+                        <Button variant="link" className="px-0 text-sm" disabled={isLoading}>
                             Sign up
                         </Button>
                     </Link>

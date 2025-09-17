@@ -3,6 +3,7 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import authReducer from "../authSlice";
+import signUpReducer from "../signUpSlice";
 import { baseApi } from "../api/baseApi";
 import {
   FLUSH,
@@ -42,6 +43,7 @@ const persistedReducer = persistReducer(authPersistConfig, authReducer);
 const rootReducer = combineReducers({
   [baseApi.reducerPath]: baseApi.reducer,
   auth: persistedReducer,
+  signUp: signUpReducer
 });
 
 export const store = configureStore({

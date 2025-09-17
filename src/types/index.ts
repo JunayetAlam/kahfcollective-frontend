@@ -1,3 +1,4 @@
+import { BaseQueryApi } from "@reduxjs/toolkit/query";
 import { SVGProps } from "react";
 export * from './course.type'
 export * from './instructor.type'
@@ -8,6 +9,7 @@ export * from './study-circle.type'
 export * from './post.type'
 export * from './fraternity.type'
 export * from './content.type'
+export * from './user.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
@@ -54,3 +56,5 @@ export type TResponse<T> = {
   success: boolean;
   message: string;
 };
+
+export type TResponseRedux<T> = TResponse<T> & BaseQueryApi

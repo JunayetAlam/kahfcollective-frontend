@@ -6,18 +6,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Subtitle from '../Global/Subtitle';
 import Link from 'next/link';
+import { useForgetPasswordMutation } from '@/redux/api/userApi';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function ForgetPassword() {
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const [forgetPassword, { isLoading }] = useForgetPasswordMutation();
+    const router = useRouter();
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-        const email = formData.get('email');
+        const email = formData.get('email') as string;
 
-        console.log('Password reset request for:', email);
+        if (!email) return;
 
-        // You can now use the email for password reset logic (API call, etc.)
+        const toastId = toast.loading('Sending reset link...');
+        
+        try {
+            const result = await forgetPassword({ email }).unwrap();
+            
+            form.reset();
+            
+            
+            if (result?.success) {
+                router.push(`/auth/check-email?email=${email}`);
+                toast.success('Reset link sent successfully!', { id: toastId });
+            } else {
+                toast.error(result?.message || 'Failed to send reset link', { id: toastId });
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            toast.error(error?.data?.message || 'Failed to send reset link', { id: toastId });
+        }
     };
 
     return (
@@ -27,7 +50,6 @@ export default function ForgetPassword() {
                 Forgot your password?
             </Subtitle>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Email Field */}
                 <div className="space-y-2">
@@ -40,13 +62,14 @@ export default function ForgetPassword() {
                             required
                             className="pl-10 md:h-11"
                             placeholder="Enter your email"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full" size="lg" variant="secondary">
-                    Send Reset Link
+                <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                    {isLoading ? 'Sending Reset Link...' : 'Send Reset Link'}
                 </Button>
             </form>
 
@@ -55,7 +78,7 @@ export default function ForgetPassword() {
                 <p className="text-sm text-gray-600">
                     Go back to{' '}
                     <Link href="/auth/sign-in">
-                        <Button variant="link" className="px-0 text-sm">
+                        <Button variant="link" className="px-0 text-sm" disabled={isLoading}>
                             Sign In
                         </Button>
                     </Link>
