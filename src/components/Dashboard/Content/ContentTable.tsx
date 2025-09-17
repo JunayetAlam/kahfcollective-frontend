@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Pagination } from "@/components/Global/Pagination";
 import SearchContent from "./SearchContent";

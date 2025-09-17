@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { resetData, setCurrentPage, setData, useCurrentSignUpData } from "@/redux/signUpSlice";
+import { resetData, setCurrentPage, useCurrentSignUpData } from "@/redux/signUpSlice";
 import CustomForm from "../Forms/CustomForm";
 import CustomInput from "../Forms/CustomInput";
 import { FieldValues } from "react-hook-form";

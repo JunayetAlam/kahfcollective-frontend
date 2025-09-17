@@ -9,6 +9,7 @@ import NextSessions from "./Next-Session";
 
 export default function Dashboard() {
     const userRole = useAppSelector(useCurrentUser)?.role
+    console.log(userRole)
     return (
         <div className="w-full h-full space-y-8">
 

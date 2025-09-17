@@ -4,7 +4,6 @@ import React from 'react';
 import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Subtitle from '../Global/Subtitle';
-import Title from '../Global/Title';
 import { useSearchParams } from 'next/navigation';
 import { useResendVerificationEmailMutation } from '@/redux/api/userApi';
 import { toast } from 'sonner';

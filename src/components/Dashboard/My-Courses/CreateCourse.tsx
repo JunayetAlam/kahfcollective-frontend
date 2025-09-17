@@ -12,16 +12,7 @@ import { Button } from "@/components/ui/button";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import CustomForm from "@/components/Forms/CustomForm";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+
 import CourseForm from "./CourseForm";
 
 const defaultValues = {

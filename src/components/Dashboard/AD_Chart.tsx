@@ -88,7 +88,6 @@ export default function VisitorsChart() {
     const currentData = chartDataSets[selectedPeriod as keyof typeof chartDataSets]
     const totalMobile = currentData.reduce((sum, item) => sum + item.mobile, 0)
     const totalDesktop = currentData.reduce((sum, item) => sum + item.desktop, 0)
-    const totalVisitors = totalMobile + totalDesktop
 
     return (
         <Card className="w-full ">

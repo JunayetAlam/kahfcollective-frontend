@@ -69,7 +69,7 @@ const enrolledStudents: Student[] = [
 
 export default function ManageCourse() {
   const [open, setOpen] = useState(false);
-  const [courseData, setCourseData] = useState<CourseData>({
+  const [courseData, ] = useState<CourseData>({
     title: "Principles of Adab",
     description: "Learn the fundamental principles of Islamic etiquette and proper conduct in daily life.",
     tierLevel: "Awaken",

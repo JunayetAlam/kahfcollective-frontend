@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, {  } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -36,8 +36,6 @@ export default function CourseManagementDashboard() {
     }
   ];
 
-  const filterButtons = ["Awaken", "Ascend", "Actualize"];
-  const [activeFilter, setActiveFilter] = useState("Awaken");
 
   return (
     <div className="py-6 space-y-6">

@@ -75,9 +75,7 @@ export default function ContentForm() {
             accept="image/*"
             // You would need to handle file uploads with react-hook-form
             // This is a simplified version
-            onChange={(e) => {
-              // Handle file upload logic here
-            }}
+           
           />
           <label
             htmlFor="cover-image"

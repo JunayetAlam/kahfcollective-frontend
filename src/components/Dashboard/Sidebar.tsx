@@ -118,7 +118,7 @@ const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
 );
 
 export function Sidebar() {
-       const { data, isLoading, error } = useGetMeQuery(undefined);
+       const { data, isLoading } = useGetMeQuery(undefined);
     const [isOpen, setIsOpen] = useState(true);
     const router = useRouter()
     const dispatch = useAppDispatch()

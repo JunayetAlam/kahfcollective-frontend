@@ -26,7 +26,7 @@ export default function CustomRadioCheckpoint({
   otherFieldName,
   placeholder,
 }: TProps) {
-  const { control, watch, setValue } = useFormContext();
+  const { control, watch } = useFormContext();
   const selectedValue = watch(name);
   const [focused, setFocused] = useState(false);
 

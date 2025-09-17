@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Define types for the student data
 interface Student {
@@ -26,16 +26,16 @@ interface StudentCardProps {
 const StudentCard: React.FC<StudentCardProps> = ({ student }) => {
     const { name, email, course, tier, progress, status } = student;
 
-    const getStatusColor = (status: Student['status']) => {
-        switch (status) {
-            case 'completed':
-                return 'bg-green-500';
-            case 'in-progress':
-                return 'bg-blue-500';
-            default:
-                return 'bg-gray-500';
-        }
-    };
+    // const getStatusColor = (status: Student['status']) => {
+    //     switch (status) {
+    //         case 'completed':
+    //             return 'bg-green-500';
+    //         case 'in-progress':
+    //             return 'bg-blue-500';
+    //         default:
+    //             return 'bg-gray-500';
+    //     }
+    // };
 
     return (
         <Card className="mb-4">
