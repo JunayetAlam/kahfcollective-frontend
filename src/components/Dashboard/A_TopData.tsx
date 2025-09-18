@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Title from "@/components/Global/Title";
 import Subtitle from "@/components/Global/Subtitle";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,7 +18,7 @@ const StatCardSkeleton = () => (
   </div>
 );
 
-export default function A_TopData({ title }: { title: string }) {
+export default function A_TopData() {
   const isLoading = false
   const error = false
   if (isLoading) {
@@ -52,7 +51,7 @@ export default function A_TopData({ title }: { title: string }) {
     },
     {
       title: "Active Courses",
-      value: 5 ,
+      value: 5,
     },
     {
       title: "Monthly Revenue",
@@ -66,18 +65,14 @@ export default function A_TopData({ title }: { title: string }) {
 
   return (
     <>
-      <div className="w-full flex justify-between items-center">
-        <Title>{title}</Title>
-       
 
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((item, idx) => (
           <div
             key={idx}
             className={
-              "bg-white border border-gray-200 rounded-lg px-4 py-6 flex justify-between items-center"
+              "bg-background border border-border rounded-lg px-4 py-6 flex justify-between items-center"
             }
           >
             <div className="space-y-2">
@@ -86,7 +81,7 @@ export default function A_TopData({ title }: { title: string }) {
                 {item.value}
               </h4>
             </div>
-            
+
           </div>
         ))}
       </div>

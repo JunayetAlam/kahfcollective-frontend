@@ -37,9 +37,9 @@ export default function UserTable() {
 
 
     return (
-        <div className="rounded-lg p-6 bg-white border border-gray-200">
+        <div className="rounded-lg p-6 bg-background border border-border">
             {/* Header */}
-            <div className="flex items-center justify-between pb-6 border-b border-gray-200">
+            <div className="flex items-center justify-between pb-6 border-b border-border">
                 <h1 className="text-lg font-semibold">Users</h1>
                 <SearchUser />
             </div>

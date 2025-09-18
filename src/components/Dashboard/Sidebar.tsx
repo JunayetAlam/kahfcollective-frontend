@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, Users, FileText, BarChart3, MessageSquare, LogOut, ArrowLeft, GraduationCap } from "lucide-react"
+import { LayoutDashboard, Users, FileText, BarChart3, MessageSquare, LogOut, ArrowLeft, GraduationCap, Brain, MessageCircleMore, Home } from "lucide-react"
 
 import Topbar from "./Topbar"
 import { useState } from "react"
@@ -12,6 +12,7 @@ import { logout } from "@/redux/authSlice"
 import { useAppDispatch } from "@/redux/store"
 import { useGetMeQuery } from "@/redux/api/userApi"
 import { Skeleton } from "../ui/skeleton"
+import { ThemeToggle } from "../ui/theme-toggle"
 
 
 const navigation = [
@@ -20,49 +21,58 @@ const navigation = [
         icon: LayoutDashboard,
         route: "/dashboard",
         roles: ["SUPERADMIN", "INSTRUCTOR"],
+        title: 'Dashboard'
     },
     {
         label: "My Classes",
         icon: GraduationCap,
         route: "/dashboard/my-classes",
         roles: ["INSTRUCTOR"],
+        title: 'Class Management'
+
     },
     {
         label: "My Students",
         icon: Users,
         route: "/dashboard/my-students",
         roles: ["INSTRUCTOR"],
+        title: 'Student Management'
     },
     {
         label: "User Management",
         icon: Users,
         route: "/dashboard/users",
-        roles: ["SUPERADMIN", "INSTRUCTOR"],
+        roles: ["SUPERADMIN"],
+        title: 'User Management'
     },
     {
         label: "Content Management",
         icon: FileText,
         route: "/dashboard/content",
         roles: ["SUPERADMIN", "INSTRUCTOR"],
+        title: 'Content Management'
     },
     {
-        label: "Analytics",
-        icon: BarChart3,
-        route: "/dashboard/analytics",
-        roles: ["SUPERADMIN", "INSTRUCTOR"],
+        label: "Quiz Performance",
+        icon: Brain,
+        route: "/dashboard/quiz",
+        roles: ["INSTRUCTOR"],
+        title: 'Analyze Quiz'
     },
+
     {
-        label: "Forum Moderation",
-        icon: MessageSquare,
-        route: "/dashboard/moderation",
+        label: "Discussion",
+        icon: MessageCircleMore,
+        route: "/dashboard/discussion",
         roles: ["SUPERADMIN", "INSTRUCTOR"],
+        title: 'Forum Moderation'
     },
 ]
 
 const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
     <div
         className={cn(
-            "pt-16 z-40 h-screen bg-white border-r border-border flex flex-col transition-all duration-500 relative",
+            "pt-16 z-40 h-screen bg-background border-r border-border flex flex-col transition-all duration-500 relative",
             isOpen ? "min-w-64 w-64" : "w-16 min-w-16"
         )}
     >
@@ -83,7 +93,7 @@ const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
                         </div>
                     </li>
                 ))}
-                
+
                 {/* Logout button skeleton */}
                 <li className="pt-2">
                     <div
@@ -118,16 +128,16 @@ const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
 );
 
 export function Sidebar() {
-       const { data, isLoading } = useGetMeQuery(undefined);
+    const { data, isLoading } = useGetMeQuery(undefined);
     const [isOpen, setIsOpen] = useState(true);
     const router = useRouter()
     const dispatch = useAppDispatch()
     const path = usePathname();
-
-     if (isLoading) {
+    const activeRouteTitle = navigation.find(item => item.route === path)?.title || ''
+    if (isLoading) {
         return (
             <>
-                <Topbar isOpen={isOpen} />
+                <Topbar isOpen={isOpen} title={activeRouteTitle} />
                 <SidebarSkeleton isOpen={isOpen} />
             </>
         );
@@ -142,11 +152,12 @@ export function Sidebar() {
         dispatch(logout())
         router.push('/auth/sign-in')
     };
-    
+
     const userData = data?.data;
+
     return (
         <>
-            <Topbar isOpen={isOpen} />
+            <Topbar isOpen={isOpen} title={activeRouteTitle} />
             <div
                 className={cn(
                     "pt-20 z-40 h-screen border-r border-border flex flex-col transition-all duration-500 sticky left-0 top-0",
@@ -154,7 +165,7 @@ export function Sidebar() {
                 )}
             >
                 {/* Logo Section */}
-                
+
 
                 <nav className="flex-1 p-4">
                     <ul className="space-y-2">
@@ -175,9 +186,9 @@ export function Sidebar() {
                                     <Button
                                         size={isOpen ? 'default' : 'icon'}
                                         className={cn(
-                                            'justify-center overflow-hidden relative border-0 shadow-none hover:bg-primary/10 hover:border-r-3 border-primary transition-all duration-300',
+                                            'justify-center !text-foreground overflow-hidden relative border-0 shadow-none hover:bg-primary/10 hover:border-r-3 border-primary transition-all duration-300',
                                             isOpen && 'justify-start w-full',
-                                            isActive && 'bg-primary/10 border-r-3 border-primary'
+                                            isActive && '!bg-primary/20 border-r-3 border-primary'
                                         )}
                                         variant={'outline'}
                                     >
@@ -210,8 +221,43 @@ export function Sidebar() {
 
                 {/* Account Section */}
 
-                <div className="p-4">
+                <div className="p-4 space-y-2">
                     {/* User info */}
+                    <ThemeToggle isOpen={isOpen} />
+                    <Link
+                        href={'/'}
+                        className="block"
+                    >
+                        <Button
+                            size={isOpen ? 'default' : 'icon'}
+                            className={cn(
+                                'justify-center !text-foreground overflow-hidden relative border-0 shadow-none hover:bg-primary/10 hover:border-r-3 border-primary transition-all duration-300',
+                                isOpen && 'justify-start w-full',
+                            )}
+                            variant={'outline'}
+                        >
+                            <Home className="h-5 w-5" />
+                            <span className="block absolute left-10 w-max">Home</span>
+                        </Button>
+                    </Link>
+                    <Link
+                        href={'/about-us'}
+                        className="block"
+                    >
+                        <Button
+                            size={isOpen ? 'default' : 'icon'}
+                            className={cn(
+                                'justify-center !text-foreground overflow-hidden relative border-0 shadow-none hover:bg-primary/10 hover:border-r-3 border-primary transition-all duration-300',
+                                isOpen && 'justify-start w-full',
+                            )}
+                            variant={'outline'}
+                        >
+                            <Home className="h-5 w-5" />
+                            <span className="block absolute left-10 w-max">About Us</span>
+                        </Button>
+                    </Link>
+
+
                     {isOpen && userData && (
                         <div className="mb-4 px-3 py-2 rounded-lg bg-muted/50">
                             <p className="text-sm font-medium text-foreground truncate">

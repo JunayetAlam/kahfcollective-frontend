@@ -9,15 +9,18 @@ import Link from "next/link";
 import Container from "../Global/Container";
 import { Skeleton } from "@/components/ui/skeleton"; // make sure ShadCN skeleton is imported
 
-import userImg from '@/assets/user1.jpg'
+import userImg from '@/assets/user.png'
+import { useAppSelector } from "@/redux/store";
+import { useCurrentToken } from "@/redux/authSlice";
+import { useGetMeQuery } from "@/redux/api/userApi";
 
-const Topbar = ({ isOpen }: { isOpen: boolean }) => {
-  // const { data, isLoading } = useGetMeQuery(undefined);
-  const isLoading = false
+const Topbar = ({ isOpen, title = 'Welcome' }: { isOpen: boolean, title: string }) => {
+  const token = useAppSelector(useCurrentToken);
+  const { data, isLoading } = useGetMeQuery(undefined, { skip: !token });
   // Loader while fetching user
   if (isLoading) {
     return (
-      <div className={`bg-white border-b h-16 fixed top-0 left-0 w-full z-50 translate-all duration-200 pl-16 ${isOpen && 'md:pl-64'}`}>
+      <div className={`bg-background border-b h-16 fixed top-0 left-0 w-full z-50 translate-all duration-200 pl-16 ${isOpen && 'md:pl-64'}`}>
         <Container className="flex items-center justify-between h-full">
           <div className="flex items-center">
             <Skeleton className="w-40 h-6 rounded-md" />
@@ -33,17 +36,9 @@ const Topbar = ({ isOpen }: { isOpen: boolean }) => {
       </div>
     );
   }
-
-  // const user = data?.data;
-  const user = {
-    profile: '',
-    firstName: 'User',
-    lastName: 'Name',
-    role: 'admin'
-  }
-
+  const user = data?.data
   return (
-    <div className={`bg-white border-b h-20 fixed top-0 left-0 w-full z-50   flex `}>
+    <div className={`bg-background border-b h-20 fixed top-0 left-0 w-full z-50   flex `}>
       <div className="py-2 px-3">
         <div className="w-16  aspect-square relative rounded-3xl overflow-hidden">
           <Image
@@ -56,8 +51,8 @@ const Topbar = ({ isOpen }: { isOpen: boolean }) => {
       </div>
       <Container className={`flex items-center justify-between h-full ${isOpen && 'md:pl-45'} translate-all duration-200`}>
         <div className="flex items-center">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Welcome back
+          <h2 className="text-xl font-semibold text-foreground">
+            {title}
           </h2>
         </div>
         <div className="flex items-center space-x-4">
@@ -67,14 +62,14 @@ const Topbar = ({ isOpen }: { isOpen: boolean }) => {
           >
             <Image
               src={!user?.profile ? userImg : `${user?.profile}`}
-              alt={`${user?.firstName}`}
+              alt={`${user?.fullName}`}
               width={50}
               height={50}
               className="w-10 h-10 rounded-full object-cover"
             />
           </Link>
           <div>
-            <h4 className="text-sm md:text-base font-semibold text-foreground">{user?.firstName} {user?.lastName}</h4>
+            <h4 className="text-sm md:text-base font-semibold text-foreground">{user?.fullName}</h4>
             <h4 className="text-xs md:text-sm text-foreground/70">{user?.role}</h4>
           </div>
         </div>

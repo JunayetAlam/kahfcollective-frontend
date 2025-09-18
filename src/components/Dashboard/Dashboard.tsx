@@ -13,7 +13,7 @@ export default function Dashboard() {
     return (
         <div className="w-full h-full space-y-8">
 
-            <A_TopData title="Dashboard" />
+            <A_TopData />
             <AD_BottomComponents />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <MyCourses />

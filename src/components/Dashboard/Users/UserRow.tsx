@@ -26,7 +26,7 @@ const roleDisplay: Record<string, string> = {
 };
 
 const roleColors: Record<string, string> = {
-  SUPERADMIN: 'bg-secondary',
+  SUPERADMIN: 'bg-secondary !text-foreground',
   INSTRUCTOR: 'bg-foreground',
   USER: 'bg-primary',
 };
@@ -89,7 +89,7 @@ export default function UserRow({ user }: { user: User }) {
           <SelectContent>
             {Object.keys(roleDisplay).map((r) => (
               <SelectItem key={r} value={r}>
-                <Badge className={`${roleColors[r]} text-white`}>
+                <Badge className={`${roleColors[r]} text-background`}>
                   {roleDisplay[r]}
                 </Badge>
               </SelectItem>

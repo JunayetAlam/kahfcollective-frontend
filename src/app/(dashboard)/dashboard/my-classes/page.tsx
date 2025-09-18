@@ -5,7 +5,7 @@ import React from 'react';
 export default function page() {
     return (
         <div className='space-y-6'>
-            <A_TopData title='My Classes' />
+            <A_TopData />
             <MyCoursesList />
         </div>
     );

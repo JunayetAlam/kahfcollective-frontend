@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import { Providers } from "../providers";
 import { Sidebar } from "@/components/Dashboard/Sidebar";
 import Container from "@/components/Global/Container";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,12 +31,20 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${quantico.variable}`}>
         <Providers>
-          <div className="flex relative">
-            <Sidebar />
-            <Container className="py-6 pt-24">
-              {children}
-            </Container>
-          </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="flex relative">
+              <Sidebar />
+              <Container className="py-6 pt-24">
+                {children}
+              </Container>
+            </div>
+          </ThemeProvider>
+
         </Providers>
       </body>
     </html>

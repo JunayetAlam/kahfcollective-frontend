@@ -6,7 +6,7 @@ export default function Users() {
     return (
         <div className="w-full h-full space-y-8">
 
-            <A_TopData title="Manage Users" />
+            <A_TopData />
             <UserTable />
         </div>
     );

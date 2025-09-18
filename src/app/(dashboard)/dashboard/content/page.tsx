@@ -5,7 +5,7 @@ import React from 'react';
 export default function page() {
   return (
     <div className="w-full h-full space-y-8">
-        <A_TopData title='Content Management' />
+        <A_TopData />
         <ContentTable/>
     </div>
   );

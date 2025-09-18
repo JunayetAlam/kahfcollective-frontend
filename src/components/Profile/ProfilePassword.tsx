@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useState } from "react"
@@ -12,7 +13,7 @@ import { useChangePasswordMutation } from "@/redux/api/userApi"
 const defaultValues = {
   oldPassword: "",
   newPassword: "",
-  confirmPassword: ""
+  confirmPassword: "",
 }
 
 export default function ProfilePassword() {
@@ -35,22 +36,20 @@ export default function ProfilePassword() {
       return
     }
 
-
-
-    const formData = {
-      oldPassword,
-      newPassword,
-    }
+    const formData = { oldPassword, newPassword }
 
     const toastId = toast.loading("Updating your password...")
     try {
       const result = await changePassword(formData).unwrap()
-      toast.success(result?.message || "Password updated successfully", { id: toastId })
+      toast.success(result?.message || "Password updated successfully", {
+        id: toastId,
+      })
       setIsEditing(false)
       method.reset()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update password", { id: toastId })
+      toast.error(error?.data?.message || "Failed to update password", {
+        id: toastId,
+      })
     }
   }
 
@@ -58,11 +57,11 @@ export default function ProfilePassword() {
     <CustomForm
       onSubmit={handleSave}
       defaultValues={defaultValues}
-      className="bg-white rounded-lg border border-gray-200 p-6"
+      className="bg-background rounded-lg border border-border p-6"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Password</h3>
+        <h3 className="text-lg font-semibold text-foreground">Password</h3>
 
         {!isEditing ? (
           <Button
@@ -82,17 +81,23 @@ export default function ProfilePassword() {
               variant="outline"
               size="sm"
               onClick={handleCancel}
-              className="text-gray-600"
+              className="text-muted-foreground"
               disabled={isLoading}
             >
               <X className="w-4 h-4 mr-2" /> Cancel
             </Button>
             <Button
               size="sm"
-              className="bg-primary hover:bg-primary/90 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isLoading}
             >
-              {isLoading ? "Updating..." : <><Check className="w-4 h-4 mr-2" /> Update Password</>}
+              {isLoading ? (
+                "Updating..."
+              ) : (
+                <>
+                  <Check className="w-4 h-4 mr-2" /> Update Password
+                </>
+              )}
             </Button>
           </div>
         )}
@@ -100,7 +105,7 @@ export default function ProfilePassword() {
 
       {/* Form Fields */}
       {!isEditing ? (
-        <p className="text-sm text-gray-600"></p>
+        <p className="text-sm text-muted-foreground"></p>
       ) : (
         <div className="space-y-6">
           {/* Current Password */}

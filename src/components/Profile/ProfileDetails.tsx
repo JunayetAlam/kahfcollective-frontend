@@ -11,95 +11,119 @@ import { useUpdateProfileMutation } from "@/redux/api/userApi"
 import Spinner from "../Global/Spinner"
 
 type DefaultValues = {
-    fullName: string
-    email: string;
-    phoneNumber: string;
-    introduction: string;
-    address: string;
+  fullName: string
+  email: string
+  phoneNumber: string
+  introduction: string
+  address: string
 }
 
 export default function ProfileDetails({ userData }: { userData: DefaultValues }) {
-    const [isEditing, setIsEditing] = useState(false)
-    const [editProfile, { isLoading }] = useUpdateProfileMutation()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editProfile, { isLoading }] = useUpdateProfileMutation()
 
-    const handleEdit = () => {
-        setIsEditing(true)
+  const handleEdit = () => setIsEditing(true)
+  const handleCancel = () => setIsEditing(false)
+
+  const handleSave = async (data: FieldValues) => {
+    try {
+      const { email, ...rest } = data
+      await editProfile(rest).unwrap()
+      setIsEditing(false)
+    } catch (error) {
+      console.error(error)
     }
+  }
 
-    const handleCancel = () => {
-        setIsEditing(false)
-    }
+  return (
+    <CustomForm
+      onSubmit={handleSave}
+      defaultValues={userData}
+      className="bg-background rounded-lg border border-border p-6"
+    >
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-foreground">
+          Personal Information
+        </h3>
 
-    const handleSave = async (data: FieldValues) => {
-        try {
-            const { email, ...rest } = data
-            console.log(email)
-            await editProfile(rest).unwrap()
-            setIsEditing(false)
-        } catch (error) {
-            console.error(error)
-        }
-    }
+        {!isEditing ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleEdit}
+            className="text-primary border-primary hover:bg-primary/10"
+            disabled={isLoading}
+          >
+            <Edit3 className="w-4 h-4 mr-2" /> Edit
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleCancel}
+              className="text-muted-foreground"
+              disabled={isLoading}
+            >
+              <X className="w-4 h-4 mr-2" /> Cancel
+            </Button>
+            <Button
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center"
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner /> : <Check className="w-4 h-4 mr-2" />}
+              Save
+            </Button>
+          </div>
+        )}
+      </div>
 
-    return (
-        <CustomForm
-            onSubmit={handleSave}
-            defaultValues={userData}
-            className="bg-white rounded-lg border border-gray-200 p-6"
-        >
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
-                {!isEditing ? (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleEdit}
-                        className="text-primary border-primary hover:bg-primary/10"
-                        disabled={isLoading}
-                    >
-                        <Edit3 className="w-4 h-4 mr-2" /> Edit
-                    </Button>
-                ) : (
-                    <div className="flex gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleCancel}
-                            className="text-gray-600"
-                            disabled={isLoading}
-                        >
-                            <X className="w-4 h-4 mr-2" /> Cancel
-                        </Button>
-                        <Button
-                            size="sm"
-                            className="bg-primary hover:bg-primary/90 text-white flex items-center"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <Spinner /> : <Check className="w-4 h-4 mr-2" />}
-                            Save
-                        </Button>
-                    </div>
-                )}
-            </div>
+      <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CustomInput
+            required
+            name="fullName"
+            type="text"
+            label="Full name"
+            disabled={!isEditing || isLoading}
+          />
 
-            <div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CustomInput required name="fullName" type="text" label="Full name" disabled={!isEditing || isLoading} />
-                   
-                    <CustomInput required name="email" type="email" label="Email" disabled={true} />
-                    <CustomInput required name="phoneNumber" type="text" label="Phone" disabled={!isEditing || isLoading} />
-                    <CustomInput required name="address" type="text" label="Address" disabled={!isEditing || isLoading} />
-                    <CustomTextarea
-                        required={false}
-                        className="col-span-2"
-                        name="introduction"
-                        label="Introduction"
-                        disabled={!isEditing || isLoading}
-                    />
-                </div>
-            </div>
-        </CustomForm>
-    )
+          <CustomInput
+            required
+            name="email"
+            type="email"
+            label="Email"
+            disabled={true}
+          />
+
+          <CustomInput
+            required
+            name="phoneNumber"
+            type="text"
+            label="Phone"
+            disabled={!isEditing || isLoading}
+          />
+
+          <CustomInput
+            required
+            name="address"
+            type="text"
+            label="Address"
+            disabled={!isEditing || isLoading}
+          />
+
+          <CustomTextarea
+            required={false}
+            className="col-span-2"
+            name="introduction"
+            label="Introduction"
+            disabled={!isEditing || isLoading}
+          />
+        </div>
+      </div>
+    </CustomForm>
+  )
 }

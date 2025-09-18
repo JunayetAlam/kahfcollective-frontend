@@ -10,6 +10,7 @@ export * from './post.type'
 export * from './fraternity.type'
 export * from './content.type'
 export * from './user.type'
+export * from './payment.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };

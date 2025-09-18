@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import CreateForum from "./CreateForum";
 import CreateFraternityGroup from "./CreateFruternityGroup";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 // Forum Data matching the screenshots
 const forumData = [
@@ -59,7 +60,7 @@ export default function ForumTable() {
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h1 className="text-xl font-semibold mb-1">All Forums</h1>
-                        <p className="text-sm text-gray-600">Manage class discussions, workshop themes, and open topics</p>
+                        <p className="text-sm text-muted-foreground">Manage class discussions, workshop themes, and open topics</p>
                     </div>
                     {
                         activeTab === 'Location Based' ? <CreateFraternityGroup /> : <CreateForum />
@@ -70,14 +71,14 @@ export default function ForumTable() {
 
             {/* Tabs */}
             <div className="mb-6">
-                <div className="flex border rounded-lg p-1 bg-gray-50">
+                <div className="flex border rounded-lg p-1 bg-background">
                     {(["Study Circles", "Location Based"] as TTab[]).map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === tab
-                                ? "bg-white shadow-sm"
-                                : "text-gray-600 hover:text-gray-900"
+                                ? "bg-secondary shadow-sm"
+                                : "text-muted-foreground"
                                 }`}
                         >
                             {tab}
@@ -94,44 +95,31 @@ export default function ForumTable() {
             </div>
 
             {/* Table */}
-            <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
-                <table className="w-full">
-                    <thead className="bg-gray-50">
-                        <tr className="border-b">
-                            <th className="text-left py-3 px-4 font-medium text-gray-900">Forum Name</th>
-                            <th className="text-left py-3 px-4 font-medium text-gray-900">Course</th>
-                            <th className="text-left py-3 px-4 font-medium text-gray-900">Posts</th>
-                            <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredData.map((forum, index) => (
-                            <tr key={forum.id} className={`border-b hover:bg-gray-50 transition-colors ${index === filteredData.length - 1 ? 'border-b-0' : ''}`}>
-                                {/* Forum Name */}
-                                <td className="py-3 px-4 font-medium text-gray-900">
-                                    {forum.forumName}
-                                </td>
-
-                                {/* Course */}
-                                <td className="py-3 px-4 text-gray-600">
-                                    {forum.course}
-                                </td>
-
-                                {/* Posts */}
-                                <td className="py-3 px-4 text-gray-600">
-                                    {forum.posts}
-                                </td>
-
-                                {/* Actions */}
-                                <td className="py-3 px-4">
-                                    <button className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors">
+            <div className="border rounded-lg overflow-hidden bg-background shadow-sm">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Forum Name</TableHead>
+                            <TableHead>Course</TableHead>
+                            <TableHead>Posts</TableHead>
+                            <TableHead>Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredData.map((forum) => (
+                            <TableRow key={forum.id}>
+                                <TableCell className="font-medium">{forum.forumName}</TableCell>
+                                <TableCell>{forum.course}</TableCell>
+                                <TableCell>{forum.posts}</TableCell>
+                                <TableCell>
+                                    <button className="px-3 py-1 border rounded-md text-sm">
                                         Moderate
                                     </button>
-                                </td>
-                            </tr>
+                                </TableCell>
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

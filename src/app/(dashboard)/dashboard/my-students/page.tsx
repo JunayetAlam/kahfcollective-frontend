@@ -4,7 +4,7 @@ import MyStudentList from "@/components/Dashboard/My-Students/MyStudentList";
 export default function page() {
     return (
         <div className='space-y-6'>
-            <A_TopData title='My Students' />
+            <A_TopData />
             <MyStudentList />
         </div>
     );

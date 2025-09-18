@@ -94,10 +94,10 @@ const TableSkeleton = ({
 
     return (
         <div className={`pb-10 ${className}`}>
-            <div className="bg-white rounded-lg border border-gray-200">
+            <div className="bg-background rounded-lg border border-border">
                 {/* Header Skeleton */}
                 {showHeader && (
-                    <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between p-6 border-b border-border">
                         {title ? (
                             <Skeleton className="h-7 w-32" />
                         ) : (
