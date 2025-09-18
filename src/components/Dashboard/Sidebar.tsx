@@ -24,9 +24,9 @@ const navigation = [
         title: 'Dashboard'
     },
     {
-        label: "My Classes",
+        label: "My Courses",
         icon: GraduationCap,
-        route: "/dashboard/my-classes",
+        route: "/dashboard/my-courses",
         roles: ["INSTRUCTOR"],
         title: 'Class Management'
 

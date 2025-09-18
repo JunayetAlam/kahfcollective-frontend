@@ -3,80 +3,75 @@ import { NextResponse } from "next/server";
 import { verifyJWT } from "./utils/verifyJWT";
 import { User } from "./types";
 
-// Public auth routes
-const AuthRoutes = ["/auth/sign-in", "/auth/sign-up"] as const;
+const AuthRoutes = ["/auth/sign-in", "/auth-sign-up"];
 
-// Role-based allowed routes
+const authNormalRoutes = [
+  "/",
+  "/checkout",
+  "/checkout/complete",
+  "/profile",
+  "/study-circles",
+  "/study-circles/feed",
+] as const;
+
 const roleBasedRoutes = {
   USER: [
-    "/",
-    "/dashboard",
-    "/dashboard/help-support",
-    "/dashboard/messages",
-    "/dashboard/my-products",
-    "/dashboard/categories",
-    "/dashboard/profile",
-    "/dashboard/transaction-history",
-    "/messages",
-    "/profile",
-    "/checkout",
-    "/checkout/complete",
-    "/checkout/cancel",
+    ...authNormalRoutes,
+    "/course-details/*",
   ],
   INSTRUCTOR: [
-    "/",
     "/dashboard",
-    "/dashboard/help-support",
-    "/dashboard/messages",
-    "/dashboard/my-products",
-    "/dashboard/categories",
+    "/dashboard/discussion",
+    "/dashboard/my-courses",
+    "/dashboard/students",
     "/dashboard/profile",
-    "/dashboard/transaction-history",
-    "/messages",
-    "/profile",
-    "/checkout",
-    "/checkout/complete",
-    "/checkout/cancel",
+    "/dashboard/quiz",
+    ...authNormalRoutes,
+    "/course-details/*",
   ],
   SUPERADMIN: [
-    "/",
-    "/dashboard",
-    "/dashboard/help-support",
-    "/dashboard/users",
-    "/dashboard/products",
-    "/dashboard/categories",
+    "/dashboard/content",
+    "/dashboard/discussion",
     "/dashboard/profile",
-    "/dashboard/transaction-history",
-    "/dashboard/category",
-    "/messages",
-    "/profile",
-    "/checkout",
-    "/checkout/complete",
-    "/checkout/cancel",
+    "/dashboard/users",
+    ...authNormalRoutes,
+    "/course-details/*",
   ],
 } as const;
 
 type Role = keyof typeof roleBasedRoutes;
-type AllowedRoute = typeof roleBasedRoutes[Role][number];
 
-// Protected routes (any route starting with these requires auth)
-const protectedRoutes: AllowedRoute[] = ["/dashboard", "/messages", "/profile", '/checkout/cancel', '/checkout/complete'];
+const protectedRoutes: string[] = [
+  "/dashboard",
+  "/profile",
+  "/checkout",
+  "/checkout/cancel",
+  "/checkout/complete",
+  // "/course-details/*",
+];
+
+const matchRoute = (pathname: string, route: string) => {
+  if (route.endsWith("/*")) {
+    const baseRoute = route.slice(0, -2);
+    return pathname.startsWith(baseRoute);
+  }
+  return pathname === route;
+};
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
   const token = request.cookies.get("accessToken")?.value;
 
-  // If user has no token
   if (!token) {
-    const isAuthRoute = (AuthRoutes as readonly string[]).includes(pathname);
-    const isProtectedRoute = protectedRoutes.some((route) =>
-      pathname.startsWith(route)
-    );
-
-    if (isAuthRoute || !isProtectedRoute) {
+    const isAuthRoute = AuthRoutes.includes(pathname);
+    console.log({kikhobor: protectedRoutes.some((route) => matchRoute(pathname, route))})
+    if (
+      isAuthRoute ||
+      !protectedRoutes.some((route) => matchRoute(pathname, route))
+    ) {
       return NextResponse.next();
     }
-
     return NextResponse.redirect(
       new URL(`/auth/sign-in?redirect=${pathname}`, request.url)
     );
@@ -84,16 +79,13 @@ export async function middleware(request: NextRequest) {
 
   try {
     const user = verifyJWT(token) as User;
-
-    // Prevent logged-in user from accessing auth pages
-    if ((AuthRoutes as readonly string[]).includes(pathname)) {
+    if (AuthRoutes.includes(pathname)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // Check if the user role allows access to this route
     if (user?.role && roleBasedRoutes[user.role as Role]) {
       const allowedRoutes = roleBasedRoutes[user.role as Role] as readonly string[];
-      if (allowedRoutes.some((route) => pathname === route)) {
+      if (allowedRoutes.some((route) => matchRoute(pathname, route))) {
         return NextResponse.next();
       }
     }
@@ -101,17 +93,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }
 
-  // Default redirect if no access
   return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {
   matcher: [
     "/dashboard/:page*",
-    "/checkout/:page*",
     "/auth/:page*",
-    "/messages",
     "/profile",
-    "/checkout"
+    "/checkout/:path*",
+    "/study-circles/:path*",
+    // "/course-details/:path*",
+    "/course-details/:path*",
   ],
 };

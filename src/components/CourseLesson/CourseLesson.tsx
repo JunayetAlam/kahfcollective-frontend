@@ -8,10 +8,17 @@ import CourseModuleList from "./CourseModuleList";
 import TopTitle from "../Global/TopTitle";
 import Subtitle from "../Global/Subtitle";
 import QuizPage from "./ModuleQuiz";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { courseModules } from "@/data";
+import { useAppSelector } from "@/redux/store";
+import { useCurrentToken } from "@/redux/authSlice";
 
 export default function CourseLesson({ slug }: { slug: string }) {
+    const token = useAppSelector(useCurrentToken);
+    const router = useRouter()
+    if (!token) {
+        router.push('/auth/sign-in')
+    }
     const searchParams = useSearchParams();
     const moduleName = searchParams.get('module');
     const moduleItem = searchParams.get('moduleItem');
