@@ -46,7 +46,7 @@ const contentApi = baseApi.injectEndpoints({
       transformResponse: (
         response: TResponseRedux<NormalContent[]>,
       ): { data: NormalContent[]; meta?: TMeta } => ({
-        data: (response.data as any).data || [],
+        data: response.data || [],
         meta: response.meta,
       }),
       providesTags: ["Contents"],
@@ -58,6 +58,6 @@ export const {
   useCreateNewContentMutation,
   useGetAllContentsQuery,
   useGetContentByIdQuery,
-  // useUpdateContentMutation,
+  useUpdateContentMutation,
   useDeleteContentByIdMutation,
 } = contentApi;

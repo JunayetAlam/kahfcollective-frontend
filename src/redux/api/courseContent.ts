@@ -41,6 +41,14 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CourseContents", "Courses"],
     }),
+    updateVideoMutation: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/course-contents/video/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
     getAllContents: builder.query({
       query: (args: TQueryParam[]) => {
         const params = new URLSearchParams();
@@ -56,6 +64,20 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CourseContents"],
     }),
+
+    deleteSingleQuiz: builder.mutation({
+      query: (id: string) => ({
+        url: `/course-contents/quiz/${id}/toggle-delete`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+
+    getAllQuizzesForCourse: builder.query({
+      query: (id: string) => ({
+        url: `/course-contents/${id}/quizzes`,
+      }),
+    }),
   }),
 });
 
@@ -65,5 +87,8 @@ export const {
   useGetContentByIdQuery,
   useDeleteCourseContentByIdMutation,
   useGetAllContentsQuery,
+  useDeleteSingleQuizMutation,
   useCreateQuizContentMutation,
+  useGetAllQuizzesForCourseQuery,
+  useUpdateVideoMutationMutation,
 } = courseContentApi;

@@ -27,7 +27,6 @@ const roleBasedRoutes = {
     "/course-details/*",
   ],
   SUPERADMIN: [
-    "/dashboard",
     "/dashboard/content",
     "/dashboard/discussion",
     "/dashboard/profile",
@@ -73,7 +72,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     return NextResponse.redirect(
-      new URL(`/auth/sign-in?redirect=${pathname}`, request.url)
+      new URL(`/auth/sign-in?redirect=${pathname}`, request.url),
     );
   }
 
