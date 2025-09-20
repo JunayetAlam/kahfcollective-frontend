@@ -34,4 +34,6 @@ export interface CourseContent {
   status: string;
   index: number;
   createdAt: string;
+  title: string;
+  description: string;
 }

@@ -19,7 +19,7 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
 
   const { data: courseData } = useGetCourseByIdQuery(courseId);
 
-  console.log({ courseData });
+  console.log({ sdfsdaf: courseData });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

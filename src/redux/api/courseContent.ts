@@ -9,7 +9,15 @@ const courseContentApi = baseApi.injectEndpoints({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+    createQuizContent: builder.mutation({
+      query: (formData: FormData) => ({
+        url: `/course-contents/quiz`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     updateContent: builder.mutation({
       query: ({ id, data }: { id: string; data: any }) => ({
@@ -57,4 +65,5 @@ export const {
   useGetContentByIdQuery,
   useDeleteContentByIdMutation,
   useGetAllContentsQuery,
+  useCreateQuizContentMutation,
 } = courseContentApi;
