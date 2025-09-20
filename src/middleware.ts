@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { verifyJWT } from "./utils/verifyJWT";
 import { User } from "./types";
+import { verifyJWT } from "./utils/verifyJWT";
 
 const AuthRoutes = ["/auth/sign-in", "/auth-sign-up"];
 
@@ -15,10 +15,7 @@ const authNormalRoutes = [
 ] as const;
 
 const roleBasedRoutes = {
-  USER: [
-    ...authNormalRoutes,
-    "/course-details/*",
-  ],
+  USER: [...authNormalRoutes, "/course-details/*"],
   INSTRUCTOR: [
     "/dashboard",
     "/dashboard/discussion",
@@ -30,6 +27,7 @@ const roleBasedRoutes = {
     "/course-details/*",
   ],
   SUPERADMIN: [
+    "/dashboard",
     "/dashboard/content",
     "/dashboard/discussion",
     "/dashboard/profile",
@@ -60,12 +58,14 @@ const matchRoute = (pathname: string, route: string) => {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   const token = request.cookies.get("accessToken")?.value;
 
   if (!token) {
     const isAuthRoute = AuthRoutes.includes(pathname);
-    console.log({kikhobor: protectedRoutes.some((route) => matchRoute(pathname, route))})
+    console.log({
+      kikhobor: protectedRoutes.some((route) => matchRoute(pathname, route)),
+    });
     if (
       isAuthRoute ||
       !protectedRoutes.some((route) => matchRoute(pathname, route))
@@ -84,7 +84,9 @@ export async function middleware(request: NextRequest) {
     }
 
     if (user?.role && roleBasedRoutes[user.role as Role]) {
-      const allowedRoutes = roleBasedRoutes[user.role as Role] as readonly string[];
+      const allowedRoutes = roleBasedRoutes[
+        user.role as Role
+      ] as readonly string[];
       if (allowedRoutes.some((route) => matchRoute(pathname, route))) {
         return NextResponse.next();
       }

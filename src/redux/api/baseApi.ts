@@ -8,11 +8,11 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
-import { RootState } from "../store";
+import { AppConfig } from "@/config";
 import { TResponse, User } from "@/types";
 import { toast } from "sonner";
 import { logout } from "../authSlice";
-import { AppConfig } from "@/config";
+import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${AppConfig.backendUrl}/api/v1`,
@@ -38,7 +38,7 @@ const baseQueryWithToken: BaseQueryFn<
   if (result.error?.data?.message === "Expired token") {
     toast.error("Login Expired");
     api.dispatch(logout());
-     window.location.href = '/auth/sign-in';
+    window.location.href = "/auth/sign-in";
   }
 
   return result;
@@ -47,6 +47,6 @@ const baseQueryWithToken: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithToken,
-  tagTypes: ["User", "Payment"],
+  tagTypes: ["User", "Payment", "Contents", "Tier"],
   endpoints: () => ({}),
 });

@@ -1,12 +1,11 @@
-import CustomInput from '@/components/Forms/CustomInput';
-import CustomSelect from '@/components/Forms/CustomSelect';
-import CustomTextarea from '@/components/Forms/CustomTextarea';
-import { Upload } from 'lucide-react';
-import React from 'react';
+import CustomInput from "@/components/Forms/CustomInput";
+import CustomSelect from "@/components/Forms/CustomSelect";
+import CustomTextarea from "@/components/Forms/CustomTextarea";
+import { Upload } from "lucide-react";
 
 export default function ContentForm() {
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       {/* Content Type */}
       <CustomSelect
         required
@@ -14,10 +13,8 @@ export default function ContentForm() {
         label="Content Type"
         placeholder="Select content type"
         options={[
-          { value: "article", label: "Article" },
-          { value: "blog", label: "Blog Post" },
-          { value: "news", label: "News" },
-          { value: "business", label: "Tutorial" },
+          { value: "ARTICLE", label: "Article" },
+          { value: "SERMONS", label: "Sermons" },
         ]}
       />
 
@@ -64,10 +61,10 @@ export default function ContentForm() {
 
       {/* Cover Image Upload */}
       <div className="space-y-2">
-        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
           Cover Image
         </label>
-        <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-gray-300 transition-colors">
+        <div className="rounded-lg border-2 border-dashed border-gray-200 p-8 text-center transition-colors hover:border-gray-300">
           <input
             type="file"
             id="cover-image"
@@ -75,13 +72,12 @@ export default function ContentForm() {
             accept="image/*"
             // You would need to handle file uploads with react-hook-form
             // This is a simplified version
-           
           />
           <label
             htmlFor="cover-image"
-            className="cursor-pointer flex flex-col items-center space-y-2"
+            className="flex cursor-pointer flex-col items-center space-y-2"
           >
-            <Upload className="w-8 h-8 text-gray-400" />
+            <Upload className="h-8 w-8 text-gray-400" />
             <span className="text-sm font-medium text-gray-600">
               Click to upload file
             </span>
@@ -91,7 +87,6 @@ export default function ContentForm() {
           </label>
         </div>
       </div>
-
     </div>
   );
 }

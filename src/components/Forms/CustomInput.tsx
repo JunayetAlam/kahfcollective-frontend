@@ -1,9 +1,9 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { JSX, useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { cn } from "@/lib/utils";
 
 type TInputProps = {
   type: string;
@@ -15,9 +15,9 @@ type TInputProps = {
   className?: string; // container class
   labelClassName?: string;
   fieldClassName?: string; // input class
-  Icon?: JSX.Element
-  RightIcon?: JSX.Element
-  onRightIconClick?: () => void
+  Icon?: JSX.Element;
+  RightIcon?: JSX.Element;
+  onRightIconClick?: () => void;
 };
 
 const CustomInput = ({
@@ -32,7 +32,7 @@ const CustomInput = ({
   fieldClassName,
   Icon,
   RightIcon,
-  onRightIconClick
+  onRightIconClick,
 }: TInputProps) => {
   const {
     control,
@@ -51,9 +51,9 @@ const CustomInput = ({
   }, [name, type]);
   const handleRightClick = () => {
     if (onRightIconClick) {
-      onRightIconClick()
+      onRightIconClick();
     }
-  }
+  };
   return (
     <Controller
       name={name}
@@ -64,18 +64,28 @@ const CustomInput = ({
           {label && (
             <label
               htmlFor={name}
-              className={cn("text-sm md:text-sm font-semibold pb-2", labelClassName)}
+              className={cn(
+                "pb-2 text-sm font-semibold md:text-sm",
+                labelClassName,
+              )}
             >
               {label}
             </label>
           )}
-          <div className={`w-full  relative`}>
-            {
-              Icon && <div className="absolute text-sm w-8 h-9 flex justify-center items-center">{Icon}</div>
-            }
-            {
-              RightIcon && <div onClick={handleRightClick} className="absolute text-sm w-8 h-9 flex justify-center items-center right-0 cursor-pointer">{RightIcon}</div>
-            }
+          <div className={`relative w-full`}>
+            {Icon && (
+              <div className="absolute flex h-9 w-8 items-center justify-center text-sm">
+                {Icon}
+              </div>
+            )}
+            {RightIcon && (
+              <div
+                onClick={handleRightClick}
+                className="absolute right-0 flex h-9 w-8 cursor-pointer items-center justify-center text-sm"
+              >
+                {RightIcon}
+              </div>
+            )}
             <Input
               {...field}
               type={type}
@@ -84,13 +94,16 @@ const CustomInput = ({
               disabled={disabled}
               min={type === "number" ? 0 : undefined}
               step={type === "number" ? 0.01 : undefined}
-              className={cn("w-full text-sm  disabled:opacity-95",
-                fieldClassName, Icon && 'pl-8', RightIcon && 'pr-8'
+              className={cn(
+                "w-full text-sm disabled:opacity-95",
+                fieldClassName,
+                Icon && "pl-8",
+                RightIcon && "pr-8",
               )}
             />
           </div>
           {errors?.[name] && (
-            <small className="text-red-500 text-sm mt-1">
+            <small className="mt-1 text-sm text-red-500">
               {errors?.[name]?.message as string}
             </small>
           )}

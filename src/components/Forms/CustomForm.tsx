@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import {
-  useForm,
-  SubmitHandler,
   FieldValues,
   FormProvider,
-  UseFormReturn
+  SubmitHandler,
+  useForm,
+  UseFormReturn,
 } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -17,7 +17,10 @@ type TFormConfig = {
 
 // Update the onSubmit type to accept both data and methods
 type TFormProps = {
-  onSubmit: (data: FieldValues, methods: UseFormReturn<any>) => Promise<void> | void;
+  onSubmit: (
+    data: FieldValues,
+    methods: UseFormReturn<any>,
+  ) => Promise<void> | void;
   children: ReactNode;
   defaultValues?: Record<string, any>;
 } & TFormConfig;
@@ -29,7 +32,6 @@ const CustomForm = ({
   resolver,
   className,
 }: TFormProps) => {
-  
   // Configure React Hook Form with passed props
   const formConfig: TFormConfig = {};
   if (defaultValues) formConfig.defaultValues = defaultValues;
