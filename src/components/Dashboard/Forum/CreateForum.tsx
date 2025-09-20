@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -13,32 +14,29 @@ import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import CustomForm from "@/components/Forms/CustomForm";
 import ForumForm from "./ForumForm";
+import { useCreateCircleForumMutation } from "@/redux/api/forumApi";
 
 const defaultValues = {
     title: "",
     description: "",
-    associatedCourse: "",
-    membership: "",
+    courseId: "",
+    tierId: "",
 };
 
 export default function CreateForum() {
     const [open, setOpen] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [createForum, { isLoading }] = useCreateCircleForumMutation();
 
     const handleSubmit = async (data: FieldValues) => {
-        setIsSubmitting(true);
-
         try {
-            console.log("Creating forum:", data);
+           await createForum(data).unwrap();
 
-            toast.success("✅ Forum created successfully!");
+            toast.success("Forum created successfully!");
 
             setOpen(false);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Forum creation error:", error);
-            toast.error("❌ Oops! Something went wrong. Please try again.");
-        } finally {
-            setIsSubmitting(false);
+            toast.error(error?.data?.message || "Oops! Something went wrong. Please try again.");
         }
     };
 
@@ -54,7 +52,9 @@ export default function CreateForum() {
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Study Circles Forum</DialogTitle>
-                    <p className="text-sm text-gray-600">Create a new discussion forum for your community.</p>
+                    <p className="text-sm text-gray-600">
+                        Create a new discussion forum for your community.
+                    </p>
                 </DialogHeader>
 
                 <CustomForm
@@ -70,18 +70,16 @@ export default function CreateForum() {
                             type="button"
                             variant="outline"
                             onClick={handleCancel}
+                            disabled={isLoading}
                         >
                             Cancel
                         </Button>
-                        <Button
-                            type="submit"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <div className="flex items-center">
                                     <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                     Creating Forum...
-                                </>
+                                </div>
                             ) : (
                                 "Create Forum"
                             )}
@@ -92,4 +90,3 @@ export default function CreateForum() {
         </Dialog>
     );
 }
-

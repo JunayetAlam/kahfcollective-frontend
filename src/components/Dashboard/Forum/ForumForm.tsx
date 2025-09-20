@@ -1,9 +1,29 @@
 import CustomInput from '@/components/Forms/CustomInput';
+import { CustomSearchSelect } from '@/components/Forms/CustomSearchSelect';
 import CustomSelect from '@/components/Forms/CustomSelect';
 import CustomTextarea from '@/components/Forms/CustomTextarea';
+import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
+import { useGetAllTiersQuery } from '@/redux/api/tierApi';
 import React from 'react';
-
+import { useForm } from 'react-hook-form';
+type Option = {
+    label: string
+    value: string
+}
 export default function ForumForm() {
+    const { data: course, isLoading: courseLoading } = useGetAllCoursesQuery([{name: 'limit', value: '1000'}]);
+    const { data: tier, isLoading: tierLoading } = useGetAllTiersQuery([{name: 'limit', value: '1000'}]);
+
+
+
+if(courseLoading || tierLoading){
+    return  ''
+}
+
+    const courseOption: Option[] =  (course?.data || [])?.map((u) => ({ value: u.id, label: u.title })) || [];
+    const tierOption: Option[] =  (tier?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
+
+   
     return (
         <div className='space-y-6'>
             {/* Forum Title */}
@@ -27,30 +47,21 @@ export default function ForumForm() {
             {/* Associated Course and Membership in a row */}
             <div className="grid grid-cols-2 gap-4">
                 {/* Associated Course */}
-                <CustomSelect
+                <CustomSearchSelect
                     required
-                    name="associatedCourse"
+                    name="courseId"
                     label="Associated Course"
                     placeholder="Textbook Fundamentals"
-                    options={[
-                        { value: "textbook-fundamentals", label: "Textbook Fundamentals" },
-                        { value: "advanced-studies", label: "Advanced Studies" },
-                        { value: "research-methods", label: "Research Methods" },
-                        { value: "practical-applications", label: "Practical Applications" },
-                    ]}
+                    options={courseOption}
                 />
 
                 {/* Membership */}
-                <CustomSelect
-                    name="membership"
+                <CustomSearchSelect
+                 required
+                    name="tierId"
                     label="Membership"
                     placeholder="Medium"
-                    options={[
-                        { value: "open", label: "Open" },
-                        { value: "medium", label: "Medium" },
-                        { value: "restricted", label: "Restricted" },
-                        { value: "private", label: "Private" },
-                    ]}
+                    options={tierOption}
                 />
             </div>
         </div>

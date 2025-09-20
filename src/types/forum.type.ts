@@ -4,20 +4,21 @@ import { Tier } from "./tiers.type";
 import { User } from "./user.type";
 
 export type ForumTypeEnum = "STUDY_CIRCLES" | "LOCATION_BASED";
-
+export type ForumStatus = "PENDING" | 'PUBLISHED'
 export interface Event {
-  id: string;
-  eventName?: string | null;
-  about?: string | null;
-  location?: string | null;
-  date?: string | null;
-  time?: string | null;
+  id?: string;
+  eventName?: string;
+  about?: string;
+  location?: string;
+  date?: string;
+  time: string;
 }
 
 export interface Forum {
   id: string;
   title: string;
   forumType: ForumTypeEnum;
+  status: ForumStatus;
   description: string;
   courseId?: string | null;
   tierId?: string | null;
@@ -30,6 +31,9 @@ export interface Forum {
   tier?: Tier | null;
   createdAt: string;
   updatedAt: string;
+  _count: {
+    posts: number
+  }
 }
 
 export interface JoinForum {

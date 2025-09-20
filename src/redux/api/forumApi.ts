@@ -15,7 +15,7 @@ const forumApi = baseApi.injectEndpoints({
 
         // Create Location Forum
         createLocationForum: builder.mutation({
-            query: (forumData: Partial<Forum>) => ({
+            query: (forumData) => ({
                 url: "/forums/location",
                 method: "POST",
                 body: forumData,
@@ -66,20 +66,20 @@ const forumApi = baseApi.injectEndpoints({
 
         // Update Circle Forum
         updateCircleForum: builder.mutation({
-            query: ({ forumId, ...updateData }: { forumId: string } & Partial<Forum>) => ({
-                url: `/forums/circle/${forumId}`,
+            query: ({ id, body }) => ({
+                url: `/forums/circle/${id}`,
                 method: "PATCH",
-                body: updateData,
+                body: body,
             }),
             invalidatesTags: ["Forum"],
         }),
 
         // Update Location Forum
         updateLocationForum: builder.mutation({
-            query: ({ forumId, ...updateData }: { forumId: string } & Partial<Forum>) => ({
-                url: `/forums/location/${forumId}`,
+            query: ({ id, body }) => ({
+                url: `/forums/location/${id}`,
                 method: "PATCH",
-                body: updateData,
+                body: body,
             }),
             invalidatesTags: ["Forum"],
         }),
