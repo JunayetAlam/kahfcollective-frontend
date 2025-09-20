@@ -9,8 +9,8 @@ export interface Question {
 export interface CourseContentData {
   title: string;
   description: string;
-  type: string;
-  status: string;
+  type: "VIDEO" | "QUIZ";
+  status: "PUBLISHED" | "DRAFT";
   videoFile: File | null;
   questions: Question[];
 }

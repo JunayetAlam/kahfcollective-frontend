@@ -1,46 +1,37 @@
-export type CourseCardType = {
-  title: string
-  rating: number
-  instructor: string
-  instructorProfile: string
-  lessons: number
-  image: string
-  id: string
-}
+import { Tier } from "./tiers.type";
 
-export type ModuleCourseItem = {
+export type T_Course = {
   id: string;
-  title: string;
-  duration: string;
-  type: 'video' | 'document' | 'quiz';
-};
-
-export type Module = {
-  id: string;
-  name: string;
-  courseCount: number;
-  items: ModuleCourseItem[];
-};
-
-export interface CourseData {
   title: string;
   description: string;
-  tierLevel: string;
+  tierId: string;
   status: string;
+  language: string;
+  isDeleted: boolean;
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  tier: Tier;
+  instructor: Instructor;
+  courseContents: CourseContent[];
+  lessons: number;
+  tests: number;
+  _count: {
+    courseContents: number;
+  };
+};
+
+export interface Instructor {
+  id: string;
+  fullName: string;
+  email: string;
+  profile: any;
 }
 
-export interface Student {
-  id: number;
-  name: string;
-  progress: number;
-  lastAccess: string;
-}
-
-export interface ManageCourseProps {
-  courseData: CourseData;
-  onCourseDataChange: (field: keyof CourseData, value: string) => void;
-  onSaveChanges: () => void;
-  onCancel: () => void;
-  contentItems: CourseData[];
-  students: Student[];
+export interface CourseContent {
+  id: string;
+  type: string;
+  status: string;
+  index: number;
+  createdAt: string;
 }

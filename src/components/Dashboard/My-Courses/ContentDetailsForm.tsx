@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,9 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { ContentDetailsFormProps } from "@/types";
 
-export function ContentDetailsForm({ contentData, onInputChange }: ContentDetailsFormProps) {
+export function ContentDetailsForm({
+  contentData,
+  onInputChange,
+}: ContentDetailsFormProps) {
   return (
     <div className="space-y-4">
       {/* Content Title */}
@@ -43,8 +45,8 @@ export function ContentDetailsForm({ contentData, onInputChange }: ContentDetail
         {/* Content Type */}
         <div className="space-y-2">
           <Label>Content Type</Label>
-          <Select 
-            value={contentData.type} 
+          <Select
+            value={contentData.type}
             onValueChange={(value) => onInputChange("type", value)}
           >
             <SelectTrigger>
@@ -60,8 +62,8 @@ export function ContentDetailsForm({ contentData, onInputChange }: ContentDetail
         {/* Status */}
         <div className="space-y-2">
           <Label>Status</Label>
-          <Select 
-            value={contentData.status} 
+          <Select
+            value={contentData.status}
             onValueChange={(value) => onInputChange("status", value)}
           >
             <SelectTrigger>

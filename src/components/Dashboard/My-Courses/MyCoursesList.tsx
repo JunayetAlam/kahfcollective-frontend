@@ -1,120 +1,122 @@
-'use client'
-import React, {  } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Users, Star, Search } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import CreateCourse from './CreateCourse';
-import ManageCourse from './ManageCourse';
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
+import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { TQueryParam } from "@/types";
+import { Search, Users } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
+import CreateCourse from "./CreateCourse";
+import ManageCourse from "./ManageCourse";
 
 export default function CourseManagementDashboard() {
-  const courses = [
-    {
-      id: 1,
-      title: "Foundations of Faith",
-      participants: 89,
-      rating: 4.9,
-      status: "12 to grade",
-      nextSession: "Tomorrow 8:00 PM"
-    },
-    {
-      id: 2,
-      title: "Advanced Tafsir Studies",
-      participants: 89,
-      rating: 4.9,
-      status: "12 to grade",
-      nextSession: "Tomorrow 8:00 PM"
-    },
-    {
-      id: 3,
-      title: "Foundations of Faith",
-      participants: 89,
-      rating: 4.9,
-      status: "12 to grade",
-      nextSession: "Tomorrow 8:00 PM"
-    }
-  ];
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const tierId = searchParams?.get("tierId") || "";
+
+  const { data: tiers } = useGetAllTiersQuery([]);
+  const queryFilter: TQueryParam[] = tierId
+    ? [{ name: "tierId", value: tierId }]
+    : [];
+
+  const { data: courses, isLoading } = useGetAllCoursesQuery(queryFilter);
+
+  const handleSetUrl = useCallback(
+    (selectedTierId: string) => {
+      const params = new URLSearchParams(searchParams as any);
+      if (selectedTierId === "all") params.delete("tierId");
+      else params.set("tierId", selectedTierId);
+      router.replace(`?${params.toString()}`);
+    },
+    [searchParams, router],
+  );
+
+  const filteredCourses = useMemo(() => {
+    if (!courses?.data) return [];
+    return courses.data.filter((course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [courses, searchTerm]);
 
   return (
-    <div className="py-6 space-y-6">
+    <div className="space-y-6 py-6">
       {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+      <div className="relative w-full max-w-md">
+        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <Input
-          placeholder="Search users..."
+          placeholder="Search courses..."
           className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Header with Add Course Button */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Courses</h1>
         <CreateCourse />
       </div>
 
-      {/* Tabs for filtering */}
-      <Tabs defaultValue="awaken" className="w-full">
-        <TabsList className="grid w-fit grid-cols-3">
-          <TabsTrigger value="awaken">Awaken</TabsTrigger>
-          <TabsTrigger value="ascend">Ascend</TabsTrigger>
-          <TabsTrigger value="actualize">Actualize</TabsTrigger>
-        </TabsList>
+      {/* Tier Buttons */}
+      <div className="bg-card flex w-fit flex-wrap items-center gap-1.5 rounded-md border p-2 py-1">
+        <Button
+          size="sm"
+          variant={!tierId ? "default" : "outline"}
+          onClick={() => handleSetUrl("all")}
+          className="h-8"
+        >
+          All
+        </Button>
 
-        <TabsContent value="awaken" className="mt-6">
-          {/* Course Cards */}
-          <div className="space-y-4">
-            {courses.map((course) => (
-              <Card key={course.id} className="w-full">
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg font-semibold">
-                      {course.title}
-                    </CardTitle>
-                    <ManageCourse />
+        {tiers?.data?.map((tier) => (
+          <Button
+            key={tier.id}
+            size="sm"
+            variant={tierId === tier.id ? "default" : "outline"}
+            onClick={() => handleSetUrl(tier.id)}
+          >
+            {tier.name}
+          </Button>
+        ))}
+      </div>
+
+      {/* Course Cards */}
+      <div className="mt-6 space-y-3">
+        {isLoading ? (
+          <p>Loading courses...</p>
+        ) : filteredCourses.length ? (
+          filteredCourses.map((course) => (
+            <Card key={course.id} className="w-full">
+              <CardHeader className="flex items-center justify-between pb-4">
+                <CardTitle className="text-lg font-semibold">
+                  {course.title}
+                </CardTitle>
+                <ManageCourse courseId={course.id} />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-muted-foreground mb-3 flex items-center gap-6 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    <span>{course._count?.courseContents || 0}</span>
                   </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground mb-3">
-                    <div className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      <span>{course.participants}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span>{course.rating}</span>
-                    </div>
-
-                    <Badge variant="secondary" className="text-xs">
-                      {course.status}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <span>Next:</span>
-                    <span>{course.nextSession}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="ascend" className="mt-6">
-          <div className="space-y-4">
-            <p className="text-muted-foreground">Ascend courses will be displayed here.</p>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="actualize" className="mt-6">
-          <div className="space-y-4">
-            <p className="text-muted-foreground">Actualize courses will be displayed here.</p>
-          </div>
-        </TabsContent>
-      </Tabs>
+                  <Badge variant="secondary" className="text-xs">
+                    {course.status}
+                  </Badge>
+                </div>
+                <p>{course.description}</p>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p>No courses found for this tier.</p>
+        )}
+      </div>
     </div>
   );
 }

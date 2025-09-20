@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,23 +10,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { T_Course } from "@/types";
 import { Trash2 } from "lucide-react";
-import { MF_AddContentButton, MF_EditContentButton } from "./MC_Button";
-import { CourseContentData } from "@/types";
+import { MF_AddContentButton } from "./MC_Button";
 
 interface ContentTabProps {
-  contentItems: CourseContentData[];
+  setOpen: (s: boolean) => void;
+  courseData: T_Course;
 }
 
-export function ContentTab({
-  contentItems,
-}: ContentTabProps) {
+export function ContentTab({ setOpen, courseData }: ContentTabProps) {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Manage Course Content</h3>
-      <MF_AddContentButton />
+      <MF_AddContentButton courseData={courseData} />
       <Table>
         <TableHeader>
           <TableRow>
@@ -36,24 +34,28 @@ export function ContentTab({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {contentItems.map((item, idx) => (
-            <TableRow key={idx}>
-              <TableCell className="font-medium">{item.title}</TableCell>
+          {courseData?.courseContents.map((item, idx) => (
+            <TableRow key={item.id}>
+              <TableCell className="font-medium">{item.type}</TableCell>
               <TableCell>
-                <Badge variant="secondary">
-                  {item.status}
-                </Badge>
+                <Badge variant="secondary">{item.status}</Badge>
               </TableCell>
               <TableCell>
-                <Badge variant={item.status === "Published" ? "default" : "outline"}>
+                <Badge
+                  variant={item.status === "PUBLISHED" ? "default" : "outline"}
+                >
                   {item.status}
                 </Badge>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                  <MF_EditContentButton content={item}  />
-                  <Button variant="ghost" size="sm" onClick={() => console.log(item.title)}>
-                    <Trash2 className="w-4 h-4" />
+                  {/* <MF_EditContentBuMF_CONtton content={courseData} /> */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => console.log(item.status)}
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </TableCell>
@@ -63,13 +65,11 @@ export function ContentTab({
       </Table>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 pt-4 border-t">
-        <Button variant="outline">
+      <div className="flex justify-end space-x-3 border-t pt-4">
+        <Button onClick={() => setOpen(false)} variant="outline">
           Cancel
         </Button>
-        <Button>
-          Save Changes
-        </Button>
+        <Button>Save Changes</Button>
       </div>
     </div>
   );

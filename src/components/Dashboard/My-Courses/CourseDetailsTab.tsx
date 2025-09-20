@@ -1,8 +1,11 @@
 "use client";
 
-import React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,86 +14,164 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { CourseData } from "@/types";
+import { Textarea } from "@/components/ui/textarea";
+import { useUpdateCourseMutation } from "@/redux/api/courseApi";
+import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { T_Course } from "@/types";
 
 interface CourseDetailsTabProps {
-  courseData: CourseData;
+  courseData: T_Course;
+  setOpen: (s: boolean) => void;
 }
 
-export function CourseDetailsTab({ 
-  courseData, 
+const courseSchema = z.object({
+  title: z.string().min(1, "Title must be at least 1 characters"),
+  description: z.string().min(1, "Description must be at least 1 characters"),
+  tierId: z.string().min(1, "Tier is required"),
+  status: z.enum(["ACTIVE", "HIDDEN"]),
+  language: z.string().min(2, "Language must be at least 2 characters"),
+});
+
+type CourseFormValues = z.infer<typeof courseSchema>;
+
+export function CourseDetailsTab({
+  courseData,
+  setOpen,
 }: CourseDetailsTabProps) {
+  const { data: tiersData } = useGetAllTiersQuery([]);
+  const tierOptions = tiersData?.data || [];
+
+  const [updateCourse, { isLoading }] = useUpdateCourseMutation();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+
+    formState: { errors },
+  } = useForm<CourseFormValues>({
+    resolver: zodResolver(courseSchema),
+    defaultValues: {
+      title: courseData.title,
+      description: courseData.description || "",
+      tierId: courseData?.tier?.id || "",
+      status: courseData.status as "ACTIVE",
+      language: courseData.language || "",
+    },
+  });
+
+  const onSubmit = async (values: CourseFormValues) => {
+    try {
+      await updateCourse({
+        id: courseData.id,
+        data: {
+          title: values.title,
+          description: values.description,
+          tierId: values.tierId,
+          status: values.status,
+          language: values.language,
+        },
+      }).unwrap();
+
+      console.log("Course updated successfully!");
+    } catch (err) {
+      console.error("Failed to update course:", err);
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
         {/* Course Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Course Title</Label>
-          <Input
-            id="title"
-            value={courseData.title}
-            onChange={(e) => console.log("title", e.target.value)}
-          />
+          <Input id="title" {...register("title")} />
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
+          )}
         </div>
 
         {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={courseData.description}
-            onChange={(e) => console.log("description", e.target.value)}
-            rows={6}
-          />
+          <Textarea id="description" rows={6} {...register("description")} />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
         </div>
 
-        {/* Tier Level and Status */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Tier, Status, Language */}
+        <div className="grid grid-cols-3 gap-4">
+          {/* Tier Level */}
           <div className="space-y-2">
             <Label>Tier Level</Label>
-            <Select 
-              value={courseData.tierLevel} 
-              onValueChange={(value) => console.log("tierLevel", value)}
+            <Select
+              value={watch("tierId")}
+              onValueChange={(val) => setValue("tierId", val)}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select tier" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Awaken">Awaken</SelectItem>
-                <SelectItem value="Ascend">Ascend</SelectItem>
-                <SelectItem value="Actualize">Actualize</SelectItem>
+                {tierOptions.map((tier) => (
+                  <SelectItem key={tier.id} value={tier.id}>
+                    {tier.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {errors.tierId && (
+              <p className="text-sm text-red-500">{errors.tierId.message}</p>
+            )}
           </div>
 
+          {/* Status */}
           <div className="space-y-2">
             <Label>Status</Label>
-            <Select 
-              value={courseData.status} 
-              onValueChange={(value) => console.log("status", value)}
+            <Select
+              value={watch("status")}
+              onValueChange={(val) =>
+                setValue("status", val as "ACTIVE" | "HIDDEN")
+              }
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="HIDDEN">Hidden</SelectItem>
               </SelectContent>
             </Select>
+            {errors.status && (
+              <p className="text-sm text-red-500">{errors.status.message}</p>
+            )}
+          </div>
+
+          {/* Language */}
+          <div className="space-y-2">
+            <Label htmlFor="language">Language</Label>
+            <Input
+              id="language"
+              {...register("language")}
+              placeholder="e.g. English"
+            />
+            {errors.language && (
+              <p className="text-sm text-red-500">{errors.language.message}</p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 pt-4 border-t">
-        <Button variant="outline" >
+      <div className="flex justify-end space-x-3 border-t pt-4">
+        <Button variant="outline" type="button" onClick={() => setOpen(false)}>
           Cancel
         </Button>
-        <Button>
-          Save Changes
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Saving..." : "Save Changes"}
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

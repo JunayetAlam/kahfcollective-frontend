@@ -1,25 +1,29 @@
 "use client";
 
-import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
 import { CourseContentData } from "@/types";
+import { Edit } from "lucide-react";
 import { MF_ContentForm } from "./MF_ContentForm";
 
-export function MF_EditContentButton({ content }: { content: CourseContentData }) {
+export function MF_EditContentButton({
+  content,
+}: {
+  content: CourseContentData;
+}) {
   return (
-    <MF_ContentForm 
+    <MF_ContentForm
       isEdit={true}
       existingContent={content}
       trigger={
         <Button variant="ghost" size="sm">
-          <Edit className="w-4 h-4" />
+          <Edit className="h-4 w-4" />
         </Button>
       }
     />
   );
 }
 
-export function MF_AddContentButton() {
-  return <MF_ContentForm />;
+export function MF_AddContentButton({ courseData }: any) {
+  console.log({ aaaaa: courseData });
+  return <MF_ContentForm courseData={courseData} />;
 }
