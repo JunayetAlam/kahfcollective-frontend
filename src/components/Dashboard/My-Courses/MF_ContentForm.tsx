@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
@@ -38,8 +38,8 @@ import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
 const contentSchema = z
   .object({
     courseId: z.string().optional(),
-    title: z.string().min(3, "Title must be at least 3 characters"),
-    description: z.string().min(5, "Description must be at least 5 characters"),
+    title: z.string().min(1, "Title must be at least 1 characters"),
+    description: z.string().min(2, "Description must be at least 2 characters"),
     type: z.enum(["VIDEO", "QUIZ"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
@@ -189,12 +189,6 @@ export function MF_ContentForm({
       { shouldValidate: true },
     );
   };
-
-  const watchedQuestions = watch();
-
-  useEffect(() => {
-    console.log("Questions updated:", watchedQuestions);
-  }, [watchedQuestions]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter") e.preventDefault();
@@ -505,7 +499,7 @@ export function MF_ContentForm({
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isContentQuizLoading}>
               {isEdit ? "Save Changes" : "Create Content"}
             </Button>
           </div>

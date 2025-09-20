@@ -19,13 +19,13 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CourseContents", "Courses"],
     }),
-    updateContent: builder.mutation({
+    updateCourseContent: builder.mutation({
       query: ({ id, data }: { id: string; data: any }) => ({
         url: `/course-contents/${id}`,
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     getContentById: builder.query({
       query: (id: string) => ({
@@ -34,12 +34,12 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CourseContents"],
     }),
-    deleteContentById: builder.mutation({
+    deleteCourseContentById: builder.mutation({
       query: (id: string) => ({
-        url: `/course-contents/${id}`,
-        method: "DELETE",
+        url: `/course-contents/${id}/toggle-delete`,
+        method: "PATCH",
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     getAllContents: builder.query({
       query: (args: TQueryParam[]) => {
@@ -61,9 +61,9 @@ const courseContentApi = baseApi.injectEndpoints({
 
 export const {
   useCreateVideoCourseContentMutation,
-  useUpdateContentMutation,
+  useUpdateCourseContentMutation,
   useGetContentByIdQuery,
-  useDeleteContentByIdMutation,
+  useDeleteCourseContentByIdMutation,
   useGetAllContentsQuery,
   useCreateQuizContentMutation,
 } = courseContentApi;

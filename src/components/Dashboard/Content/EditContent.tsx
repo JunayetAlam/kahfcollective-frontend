@@ -16,8 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload } from "lucide-react";
-
 import { Option, SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -26,8 +24,9 @@ import {
 } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
+import { Upload } from "lucide-react";
 
-// -------- Schema --------
+// -------- Zod Schema --------
 const updateSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Content/Description is required"),
@@ -61,14 +60,9 @@ export default function EditContent({ contentId }: { contentId: string }) {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = form;
+  const { register, handleSubmit, watch, setValue, reset, formState } = form;
+  const { errors } = formState;
+
   const selectedFile = watch("file");
 
   // Prefill form when contentData is fetched
@@ -113,11 +107,15 @@ export default function EditContent({ contentId }: { contentId: string }) {
       formData.append("authorId", values.authorId);
       if (values.file) formData.append("content", values.file);
 
-      await updateContent({ id: contentId, data: formData }).unwrap();
+      const data = await updateContent({
+        id: contentId,
+        data: formData,
+      }).unwrap();
+
       toast.success("✅ Content updated successfully!");
-      setOpen(false);
       reset();
       setPreview(null);
+      setOpen(false); // close dialog after success
     } catch (err: any) {
       console.error(err);
       toast.error(err?.data?.message || "❌ Failed to update content");
@@ -125,16 +123,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) {
-          reset();
-          setPreview(null);
-        }
-      }}
-    >
+    <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
       <DialogTrigger asChild>
         <Button variant="outline">Edit</Button>
       </DialogTrigger>
@@ -147,7 +136,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
           <p className="py-6 text-center">Loading content...</p>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-4">
-            {/* Title */}
             <div>
               <Label>Title</Label>
               <Input {...register("title")} placeholder="Enter title" />
@@ -156,7 +144,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
               )}
             </div>
 
-            {/* Author */}
             <SearchableSelect
               label="Author / Speaker"
               options={userOptions}
@@ -168,7 +155,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.authorId.message}</p>
             )}
 
-            {/* Tier */}
             <SearchableSelect
               label="Tier"
               options={tierOptions}
@@ -180,7 +166,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.tierId.message}</p>
             )}
 
-            {/* Content / Description */}
             <div>
               <Label>Content / Description</Label>
               <Textarea
@@ -194,7 +179,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
               )}
             </div>
 
-            {/* File Upload */}
             <div>
               <Label>Upload File (Optional)</Label>
               <div className="rounded-lg border-2 border-dashed border-gray-200 p-4 text-center hover:border-gray-300">
@@ -230,7 +214,6 @@ export default function EditContent({ contentId }: { contentId: string }) {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex justify-end space-x-3 border-t pt-4">
               <Button
                 type="button"

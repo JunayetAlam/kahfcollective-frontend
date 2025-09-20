@@ -54,6 +54,7 @@ export const baseApi = createApi({
     "Tier",
     "Courses",
     "CourseContents",
+    "Forum"
   ],
   endpoints: () => ({}),
 });
