@@ -1,10 +1,19 @@
+'use client'
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
 import { Edit, Eye, FileText, Search, Trash2 } from "lucide-react";
+import { useGetAllForumsQuery } from '@/redux/api/forumApi';
+import { TQueryParam } from '@/types';
 export default function RecentPosts() {
+    const args: TQueryParam[] = [
+        {name: 'sort', value: '-createdAt'},
+        {name: 'limit', value: '4'},
+    ]
+    const {data, isLoading} = useGetAllForumsQuery(args);
+    console.log(data)
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
