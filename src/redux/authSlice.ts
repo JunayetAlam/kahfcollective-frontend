@@ -30,7 +30,7 @@ export const authSlice = createSlice({
       state.token = null;
 
       // Remove token from cookies
-      Cookies.remove("authToken");
+      Cookies.remove("accessToken");
     },
   },
 });
