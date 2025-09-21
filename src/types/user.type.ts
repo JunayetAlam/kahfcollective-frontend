@@ -1,8 +1,10 @@
+import { Payment } from "./payment.type";
+import { Post } from "./post.type";
+import { Course, CourseContents, CourseEnroll, Quiz } from "./course.type";
+
 export type UserRoleEnum = "USER" | "INSTRUCTOR" | "SUPERADMIN";
-
 export type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
-
-export type GenderEnum = "MALE" | "FEMALE" | "OTHER"; // Adjust based on your Prisma GenderEnum
+export type GenderEnum = "MALE" | "FEMALE" | "OTHER";
 
 export interface User {
   id: string;
@@ -18,16 +20,17 @@ export interface User {
   referredBy?: string | null;
   gender: GenderEnum;
 
+  // education
   majorOrProfession: string;
   haveTakenCoursesBefore: boolean;
-  coursesName: string;
+  isTakeCourseWithSheikh: boolean;
+  coursesName?: string | null;
   howLongInCourse?: string | null;
 
   status: UserStatus;
 
   bio?: string | null;
   profile?: string | null;
-
   otp?: string | null;
   otpExpiry?: string | null;
 
@@ -35,7 +38,16 @@ export interface User {
   emailVerificationToken?: string | null;
   emailVerificationTokenExpires?: string | null;
 
-  //   payments?: Payment[];
+  // Relations
+  payments?: Payment[];
+  content?: Content[];
+  posts?: Post[];
+  joinForums?: JoinForum[];
+  quizAnswers?: QuizAnswers[];
+  courses?: Course[];
+  coursesContents?: CourseContents[];
+  quizzes?: Quiz[];
+  coursesEnroll?: CourseEnroll[];
 
   createdAt: string;
   updatedAt: string;
