@@ -17,10 +17,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCourseMutation } from "@/redux/api/courseApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
-import { T_Course } from "@/types";
+import { Course } from "@/types";
+import { toast } from "sonner";
 
 interface CourseDetailsTabProps {
-  courseData: T_Course;
+  courseData: Course;
   setOpen: (s: boolean) => void;
 }
 
@@ -61,22 +62,13 @@ export function CourseDetailsTab({
     },
   });
 
-  const onSubmit = async (values: CourseFormValues) => {
+  const onSubmit = async (data: any) => {
     try {
-      await updateCourse({
-        id: courseData.id,
-        data: {
-          title: values.title,
-          description: values.description,
-          tierId: values.tierId,
-          status: values.status,
-          language: values.language,
-        },
-      }).unwrap();
-
-      console.log("Course updated successfully!");
-    } catch (err) {
-      console.error("Failed to update course:", err);
+      await updateCourse({ id: courseData.id, data }).unwrap(); // wrap fields in data
+      toast.success("Course updated successfully");
+      setOpen(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Update failed");
     }
   };
 

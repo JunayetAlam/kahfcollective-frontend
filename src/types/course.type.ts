@@ -65,19 +65,23 @@ export interface CourseContents {
 }
 
 export interface Quiz {
+  options: QuizOptions;
   id: string;
   courseContentId: string;
   instructorId: string;
   question: string;
-  options: Options;
-  rightAnswer: RightAnswer;
+  rightAnswer: string;
   isDeleted: boolean;
   index: number;
-  courseContent: CourseContents;
-  instructor: User;
   createdAt: string;
   updatedAt: string;
-  quizAnswers?: QuizAnswers[];
+}
+
+export interface QuizOptions {
+  A: string;
+  B: string;
+  C: string;
+  D: string;
 }
 
 export interface QuizAnswers {
