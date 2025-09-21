@@ -9,7 +9,7 @@ import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { TQueryParam } from "@/types";
 import { Search, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import CreateCourse from "./CreateCourse";
 import ManageCourse from "./ManageCourse";
 
@@ -37,12 +37,7 @@ export default function CourseManagementDashboard() {
     [searchParams, router],
   );
 
-  const filteredCourses = useMemo(() => {
-    if (!courses?.data) return [];
-    return courses.data.filter((course) =>
-      course.title.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [courses, searchTerm]);
+  const filteredCourses = courses?.data ?? [];
 
   return (
     <div className="space-y-6 py-6">

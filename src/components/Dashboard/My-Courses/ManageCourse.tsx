@@ -13,13 +13,12 @@ import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
 import { useState } from "react";
 import { ContentTab } from "./ContentTab";
 import { CourseDetailsTab } from "./CourseDetailsTab";
+import { StudentsTab } from "./StudentsTab";
 
 export default function ManageCourse({ courseId }: { courseId: string }) {
   const [open, setOpen] = useState(false);
 
   const { data: courseData } = useGetCourseByIdQuery(courseId);
-
-  console.log({ courseData });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -61,7 +60,7 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
 
           {/* Students Tab */}
           <TabsContent value="students" className="mt-6">
-            {/* <StudentsTab students={enrolledStudents} /> */}
+            <StudentsTab courseId={courseData?.id} />
           </TabsContent>
         </Tabs>
       </DialogContent>

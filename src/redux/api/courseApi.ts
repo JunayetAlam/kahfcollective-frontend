@@ -41,6 +41,13 @@ const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Courses"],
     }),
+    getEnrolledStudents: builder.query({
+      query: (id: string) => ({
+        url: `/courses?courseId=${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
     getAllCourses: builder.query({
       query: (args: TQueryParam[]) => {
         const params = new URLSearchParams();
@@ -65,5 +72,6 @@ export const {
   useGetCourseByIdQuery,
   useDeleteCourseByIdMutation,
   useGetAllCoursesQuery,
-  useToggleStatusOfForumMutation
+  useToggleStatusOfForumMutation,
+  useGetEnrolledStudentsQuery,
 } = courseApi;

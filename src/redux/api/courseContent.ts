@@ -9,15 +9,23 @@ const courseContentApi = baseApi.injectEndpoints({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
-    updateContent: builder.mutation({
+    createQuizContent: builder.mutation({
+      query: (formData: FormData) => ({
+        url: `/course-contents/quiz`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+    updateCourseContent: builder.mutation({
       query: ({ id, data }: { id: string; data: any }) => ({
         url: `/course-contents/${id}`,
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     getContentById: builder.query({
       query: (id: string) => ({
@@ -26,12 +34,20 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CourseContents"],
     }),
-    deleteContentById: builder.mutation({
+    deleteCourseContentById: builder.mutation({
       query: (id: string) => ({
-        url: `/course-contents/${id}`,
-        method: "DELETE",
+        url: `/course-contents/${id}/toggle-delete`,
+        method: "PATCH",
       }),
-      invalidatesTags: ["CourseContents"],
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+    updateVideoMutation: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/course-contents/video/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     getAllContents: builder.query({
       query: (args: TQueryParam[]) => {
@@ -48,13 +64,31 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CourseContents"],
     }),
+
+    deleteSingleQuiz: builder.mutation({
+      query: (id: string) => ({
+        url: `/course-contents/quiz/${id}/toggle-delete`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+
+    getAllQuizzesForCourse: builder.query({
+      query: (id: string) => ({
+        url: `/course-contents/${id}/quizzes`,
+      }),
+    }),
   }),
 });
 
 export const {
   useCreateVideoCourseContentMutation,
-  useUpdateContentMutation,
+  useUpdateCourseContentMutation,
   useGetContentByIdQuery,
-  useDeleteContentByIdMutation,
+  useDeleteCourseContentByIdMutation,
   useGetAllContentsQuery,
+  useDeleteSingleQuizMutation,
+  useCreateQuizContentMutation,
+  useGetAllQuizzesForCourseQuery,
+  useUpdateVideoMutationMutation,
 } = courseContentApi;

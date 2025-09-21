@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,10 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateVideoCourseContentMutation } from "@/redux/api/courseContent";
+import {
+  useCreateQuizContentMutation,
+  useCreateVideoCourseContentMutation,
+} from "@/redux/api/courseContent";
 import { CourseContentData } from "@/types";
 import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
 
@@ -34,14 +38,15 @@ import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
 const contentSchema = z
   .object({
     courseId: z.string().optional(),
-    title: z.string().min(3, "Title must be at least 3 characters"),
-    description: z.string().min(5, "Description must be at least 5 characters"),
+    title: z.string().min(1, "Title must be at least 1 characters"),
+    description: z.string().min(2, "Description must be at least 2 characters"),
     type: z.enum(["VIDEO", "QUIZ"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
     questions: z
       .array(
         z.object({
+          id: z.string(),
           question: z.string().min(1, "Question is required"),
           options: z
             .array(z.string().min(1, "Option cannot be empty"))
@@ -75,9 +80,7 @@ export function MF_ContentForm({
   trigger = null,
   existingContent,
   courseData,
-}: any & {
-  existingContent: CourseContentData;
-}) {
+}: any & { existingContent?: CourseContentData }) {
   const [open, setOpen] = useState(false);
 
   const {
@@ -102,19 +105,22 @@ export function MF_ContentForm({
 
   const watchedType = watch("type");
 
+  const [createQuizContent, { isLoading: isContentQuizLoading }] =
+    useCreateQuizContentMutation();
   const [createVideoCourse, { isLoading }] =
     useCreateVideoCourseContentMutation();
 
+  // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
     if (data.type === "VIDEO") {
-      if (!data.videoFile) return; // safety check
+      if (!data.videoFile) return;
 
       const formData = new FormData();
       formData.append("courseId", courseData.id);
       formData.append("title", data.title);
       formData.append("description", data.description);
       formData.append("status", data.status);
-      formData.append("file", data.videoFile); // append actual file
+      formData.append("file", data.videoFile);
 
       try {
         const res = await createVideoCourse(formData).unwrap();
@@ -125,7 +131,33 @@ export function MF_ContentForm({
     }
 
     if (data.type === "QUIZ") {
-      // handle quiz submission separately if needed
+      if (!data.questions?.length) return;
+
+      const formattedQuizzes = data.questions.map((q) => ({
+        question: q.question,
+        options: {
+          A: q.options[0],
+          B: q.options[1],
+          C: q.options[2],
+          D: q.options[3],
+        },
+        rightAnswer: String.fromCharCode(65 + q.correctAnswer),
+      }));
+
+      const payload = {
+        courseId: data.courseId,
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        quizzes: formattedQuizzes,
+      };
+
+      try {
+        const res = await createQuizContent(payload as any).unwrap();
+        console.log("Quiz content created:", res);
+      } catch (err) {
+        console.error("Error creating quiz content:", err);
+      }
     }
 
     setOpen(false);
@@ -138,7 +170,12 @@ export function MF_ContentForm({
       "questions",
       [
         ...questions,
-        { question: "", options: ["", "", "", ""], correctAnswer: 0 },
+        {
+          id: uuidv4(),
+          question: "",
+          options: ["", "", "", ""],
+          correctAnswer: 0,
+        },
       ],
       { shouldValidate: true },
     );
@@ -224,8 +261,8 @@ export function MF_ContentForm({
                       control={control}
                       render={({ field }) => (
                         <Select
-                          onValueChange={field.onChange}
                           value={field.value}
+                          onValueChange={field.onChange}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
@@ -246,8 +283,8 @@ export function MF_ContentForm({
                       control={control}
                       render={({ field }) => (
                         <Select
-                          onValueChange={field.onChange}
                           value={field.value}
+                          onValueChange={field.onChange}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />
@@ -283,8 +320,6 @@ export function MF_ContentForm({
                           <p className="mb-2 text-sm text-gray-600">
                             Drag & drop or click to upload
                           </p>
-
-                          {/* Hidden input */}
                           <input
                             type="file"
                             accept="video/*"
@@ -294,8 +329,6 @@ export function MF_ContentForm({
                               field.onChange(e.target.files?.[0])
                             }
                           />
-
-                          {/* Button triggers hidden input */}
                           <label htmlFor="video-upload-input">
                             <Button variant="outline" asChild>
                               <span>
@@ -304,15 +337,11 @@ export function MF_ContentForm({
                               </span>
                             </Button>
                           </label>
-
-                          {/* Show selected file */}
                           {field.value && (
                             <div className="mt-2 text-sm text-green-700">
                               ✓ {field.value.name} selected
                             </div>
                           )}
-
-                          {/* Error */}
                           {errors.videoFile && (
                             <p className="mt-2 text-sm text-red-500">
                               {errors.videoFile.message?.toString()}
@@ -345,7 +374,7 @@ export function MF_ContentForm({
 
                     {(watch("questions") || []).map((question, qIndex) => (
                       <Card
-                        key={question.question || qIndex}
+                        key={question.id}
                         className="border-l-4 border-l-blue-500"
                       >
                         <CardHeader className="flex items-start justify-between pb-3">
@@ -411,6 +440,45 @@ export function MF_ContentForm({
                               )}
                             </div>
                           ))}
+
+                          {/* Correct Answer Selector */}
+                          <div className="mt-2 flex items-center gap-2">
+                            <Label className="whitespace-nowrap">
+                              Correct Answer:
+                            </Label>
+                            <Controller
+                              name={
+                                `questions.${qIndex}.correctAnswer` as const
+                              }
+                              control={control}
+                              render={({ field }) => (
+                                <Select
+                                  value={field.value?.toString()}
+                                  onValueChange={(val) =>
+                                    field.onChange(Number(val))
+                                  }
+                                >
+                                  <SelectTrigger className="w-24">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="0">A</SelectItem>
+                                    <SelectItem value="1">B</SelectItem>
+                                    <SelectItem value="2">C</SelectItem>
+                                    <SelectItem value="3">D</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            />
+                            {errors.questions?.[qIndex]?.correctAnswer && (
+                              <p className="text-sm text-red-500">
+                                {
+                                  errors.questions[qIndex]?.correctAnswer
+                                    ?.message
+                                }
+                              </p>
+                            )}
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
@@ -431,7 +499,7 @@ export function MF_ContentForm({
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isContentQuizLoading}>
               {isEdit ? "Save Changes" : "Create Content"}
             </Button>
           </div>

@@ -3,6 +3,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -10,20 +17,66 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { T_Course } from "@/types";
-import { Trash2 } from "lucide-react";
+import { useDeleteCourseContentByIdMutation } from "@/redux/api/courseContent";
+import { Course } from "@/types";
+import { Pen, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import * as z from "zod";
+import EditContentForm from "./EditCourseContent";
 import { MF_AddContentButton } from "./MC_Button";
 
-interface ContentTabProps {
-  setOpen: (s: boolean) => void;
-  courseData: T_Course;
-}
+// -------- Zod Schema (matches create) --------
+const editSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(2, "Description is required"),
+  status: z.enum(["DRAFT", "PUBLISHED"]),
+  type: z.enum(["VIDEO", "QUIZ"]),
+});
 
-export function ContentTab({ setOpen, courseData }: ContentTabProps) {
+type EditFormType = z.infer<typeof editSchema>;
+
+export function ContentTab({
+  setOpen,
+  courseData,
+}: {
+  setOpen: (s: boolean) => void;
+  courseData: Course;
+}) {
+  const [editingItem, setEditingItem] = useState<
+    Course["courseContents"][0] | null
+  >(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<
+    Course["courseContents"][0] | null
+  >(null);
+  const [deleteCourseContent] = useDeleteCourseContentByIdMutation();
+
+  const confirmDelete = (item: Course["courseContents"][0]) => {
+    setItemToDelete(item);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!itemToDelete) return;
+    try {
+      await deleteCourseContent(itemToDelete.id).unwrap();
+      toast.success("✅ Content deleted successfully!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.data?.message || "❌ Failed to delete content");
+    } finally {
+      setDeleteConfirmOpen(false);
+      setItemToDelete(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Manage Course Content</h3>
       <MF_AddContentButton courseData={courseData} />
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -34,42 +87,80 @@ export function ContentTab({ setOpen, courseData }: ContentTabProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {courseData?.courseContents.map((item, idx) => (
+          {courseData.courseContents?.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className="font-medium">{item.type}</TableCell>
+              <TableCell>{item.title}</TableCell>
+              <TableCell>
+                <Badge variant="secondary">{item.type}</Badge>
+              </TableCell>
               <TableCell>
                 <Badge variant="secondary">{item.status}</Badge>
               </TableCell>
-              <TableCell>
-                <Badge
-                  variant={item.status === "PUBLISHED" ? "default" : "outline"}
+              <TableCell className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => confirmDelete(item)}
                 >
-                  {item.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  {/* <MF_EditContentBuMF_CONtton content={courseData} /> */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => console.log(item.status)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="icon"
+                      onClick={() => {
+                        setEditingItem(item);
+                        setDialogOpen(true);
+                      }}
+                    >
+                      <Pen />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Edit Content</DialogTitle>
+                    </DialogHeader>
+                    <EditContentForm
+                      item={editingItem}
+                      onClose={() => setDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 border-t pt-4">
+      {/* Delete Confirmation */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">{itemToDelete?.title}</span>? This
+            action cannot be undone.
+          </p>
+          <div className="mt-4 flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex justify-end border-t pt-4">
         <Button onClick={() => setOpen(false)} variant="outline">
-          Cancel
+          Close
         </Button>
-        <Button>Save Changes</Button>
       </div>
     </div>
   );

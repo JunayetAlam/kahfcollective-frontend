@@ -139,7 +139,7 @@ export default function CreateContent() {
       }}
     >
       <DialogTrigger asChild>
-        <Button>Create Content</Button>
+        <Button disabled={isSubmitting}>Create Content</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>

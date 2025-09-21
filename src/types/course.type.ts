@@ -24,12 +24,15 @@ export interface Course {
   isDeleted: boolean;
   instructorId: string;
   forums?: Forum[];
-  courseContents?: CourseContents[];
+  courseContents: CourseContents[];
   coursesEnroll?: CourseEnroll[];
   tier: Tier;
   instructor: User;
   createdAt: string;
   updatedAt: string;
+  _count: {
+    courseContents: number;
+  };
 }
 
 export interface CourseEnroll {

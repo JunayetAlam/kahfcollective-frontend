@@ -14,7 +14,7 @@ const contentApi = baseApi.injectEndpoints({
     }),
     updateContent: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/contents/${id}`,
+        url: `/course-contents/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -46,7 +46,7 @@ const contentApi = baseApi.injectEndpoints({
       transformResponse: (
         response: TResponseRedux<NormalContent[]>,
       ): { data: NormalContent[]; meta?: TMeta } => ({
-        data: (response.data as any).data || [],
+        data: response.data || [],
         meta: response.meta,
       }),
       providesTags: ["Contents"],
