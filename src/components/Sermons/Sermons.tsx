@@ -1,12 +1,23 @@
-import { sermons } from "@/data";
+'use client'
 import Container from "../Global/Container";
 import TopTitle from "../Global/TopTitle";
 import SermonCard from "./SermonCard";
+import { useGetAllContentsQuery } from "@/redux/api/contentApi";
+import { TQueryParam } from "@/types";
+import { Pagination } from "../Global/Pagination";
+
+
 
 export default function Sermons() {
+    const args: TQueryParam[] = [
+        { name: "contentType", value: "SERMONS" }
+    ]
 
-
-
+    const { data, isLoading } = useGetAllContentsQuery(args);
+    if (isLoading) {
+        return ''
+    }
+    const sermons = data?.data || []
     return (
         <Container className="pb-20">
             <div className='flex flex-col sm:flex-row justify-between items-end pb-4 sm:pb-8 space-y-8 sm:space-y-0'>
@@ -22,6 +33,7 @@ export default function Sermons() {
                     sermons.map(item => <SermonCard key={item.id} sermon={item}></SermonCard>)
                 }
             </div>
+            <Pagination totalPages={data?.meta?.totalPage || 0} />
         </Container>
     );
 }

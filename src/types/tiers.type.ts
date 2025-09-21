@@ -1,13 +1,24 @@
+import { Forum } from "./forum.type";
+import { NormalContent } from "./normal-content.type";
+import { User } from "./user.type";
+
 export type Tier = {
   id: string;
   name: string;
-  price: number;
-  points: string[];
-  isHide: boolean;
-  isMostPopular: boolean;
   isDeleted: boolean;
-  stripePriceId: string;
-  stripeProductId: string;
   createdAt: string;
   updatedAt: string;
+  contents?: NormalContent[];
+  forums?: Forum[];
+  userTiers?: UserTier[];
+};
+
+export type UserTier = {
+  id: string;
+  tierId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  tier?: Tier;
+  user?: User;
 };

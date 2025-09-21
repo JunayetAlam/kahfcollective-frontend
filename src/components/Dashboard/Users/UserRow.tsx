@@ -8,7 +8,6 @@ import { User } from '@/types';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import avatarImg from "@/assets/user.png";
-import { UserDetailsModal } from './UserDetailsModal';
 import {
   Select,
   SelectContent,
@@ -17,7 +16,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
-import { useUpdateUserRoleMutation } from '@/redux/api/userApi';
+import { useUpdateUserRoleMutation, useToggleIsUserVerifiedMutation } from '@/redux/api/userApi';
+import { Switch } from "@/components/ui/switch";
+import { UserDetailsModal } from '../Users/UserDetailsModal';
+import { useGetAllTiersQuery, useToggleAssignTierMutation } from '@/redux/api/tierApi';
 
 const roleDisplay: Record<string, string> = {
   SUPERADMIN: 'SUPERADMIN',
@@ -32,20 +34,38 @@ const roleColors: Record<string, string> = {
 };
 
 export default function UserRow({ user }: { user: User }) {
-  const [updating, setUpdating] = useState(false);
-  const [updateUserRole] = useUpdateUserRoleMutation();
+
+  const [updateUserRole, { isLoading }] = useUpdateUserRoleMutation();
+  const [toggleTierAssignInBackend, { isLoading: assignLoading }] = useToggleAssignTierMutation()
+  const { data, isLoading: tierIsLoading } = useGetAllTiersQuery([{ name: 'limit', value: '100' }])
+  const [toggleVerify, { isLoading: isVerifyLoading }] = useToggleIsUserVerifiedMutation();
 
   const handleRoleChange = async (newRole: string) => {
-    setUpdating(true);
     try {
-      await updateUserRole({ id: user.id, data: {role: newRole} }).unwrap();
+      await updateUserRole({ id: user.id, data: { role: newRole } }).unwrap();
     } catch (err) {
       console.error(err);
-    } finally {
-      setUpdating(false);
     }
   };
 
+  const handleToggleVerify = async () => {
+    try {
+      await toggleVerify(user.id).unwrap();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const toggleTierAssign = async (tierId: string, userId: string) => {
+    await toggleTierAssignInBackend({ tierId, userId }).unwrap()
+  }
+
+  if (tierIsLoading) {
+    return ''
+  }
+  const tierData = data?.data || []
+  const userTier = user?.userTiers.map(item => item?.tier?.id)
+  console.log(user?.userTiers)
   return (
     <TableRow key={user.id}>
       {/* Name + Avatar */}
@@ -68,12 +88,26 @@ export default function UserRow({ user }: { user: User }) {
 
       {/* Phone */}
       <TableCell>{user.phoneNumber}</TableCell>
+      <TableCell>
+        {user.isReferredBySheikhSalmam
+          ? "Sheikh Salman"
+          : user.referredBy || "—"}
+      </TableCell>
 
       {/* Tier */}
       <TableCell>
-        <Button variant="outline" size="sm">
-          Ascend
-        </Button>
+        <div className='flex flex-wrap gap-3'>
+          {tierData?.map((item, index) => (
+            <Button
+              disabled={assignLoading}
+              onClick={() => toggleTierAssign(item.id, user.id)}
+              key={index}
+              variant={userTier.includes(item.id) ? 'default' : 'outline'}
+              size="sm">
+              {item?.name}
+            </Button>
+          ))}
+        </div>
       </TableCell>
 
       {/* Role */}
@@ -81,7 +115,7 @@ export default function UserRow({ user }: { user: User }) {
         <Select
           value={user.role}
           onValueChange={handleRoleChange}
-          disabled={updating}
+          disabled={isLoading}
         >
           <SelectTrigger className="w-40">
             <SelectValue placeholder={roleDisplay[user.role]} />
@@ -96,22 +130,29 @@ export default function UserRow({ user }: { user: User }) {
             ))}
           </SelectContent>
         </Select>
-        {updating && <Loader2 className="w-4 h-4 ml-2 inline animate-spin" />}
+        {isLoading && <Loader2 className="w-4 h-4 ml-2 inline animate-spin" />}
       </TableCell>
 
       {/* Referrals */}
+
+      {/* Verify Toggle */}
       <TableCell>
-        {user.isReferredBySheikhSalmam
-          ? "Referred by Sheikh Salman"
-          : user.referredBy || "—"}
+        <div className="relative">
+          <Switch
+            checked={user.isUserVerified}
+            onCheckedChange={handleToggleVerify}
+            disabled={isVerifyLoading}
+          />
+          {isVerifyLoading && (
+            <Loader2 className="absolute top-1/2 left-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 animate-spin text-gray-500" />
+          )}
+        </div>
       </TableCell>
 
       {/* Action */}
       <TableCell className="flex gap-2">
         <UserDetailsModal user={user} />
-        <Button variant="outline" size="sm">
-          Edit
-        </Button>
+
       </TableCell>
     </TableRow>
   );

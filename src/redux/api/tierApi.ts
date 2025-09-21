@@ -19,7 +19,15 @@ const tierApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Tier"],
     }),
+    toggleAssignTier: builder.mutation({
+      query: (data) => ({
+        url: `/tiers/toggle-tier`,
+        method: "PATCH",
+        body: data
+      }),
+      invalidatesTags: ["User"],
+    })
   }),
 });
 
-export const { useGetAllTiersQuery } = tierApi;
+export const { useGetAllTiersQuery, useToggleAssignTierMutation } = tierApi;

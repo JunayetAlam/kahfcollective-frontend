@@ -27,6 +27,7 @@ const roleBasedRoutes = {
     "/course-details/*",
   ],
   SUPERADMIN: [
+    "/dashboard",
     "/dashboard/content",
     "/dashboard/discussion",
     "/dashboard/profile",

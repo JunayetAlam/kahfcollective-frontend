@@ -18,8 +18,8 @@ export default function PostItem({ post }: PostItemProps) {
     const [open, setOpen] = useState(false);
     const [togglePublish, { isLoading: isToggleLoading }] = useTogglePublishMutation();
     const [deletePost, { isLoading: isDeleteLoading }] = useToggleDeletePostMutation();
-    const handleToggle = () => {
-        togglePublish(post.id);
+    const handleToggle = async() => {
+        await togglePublish(post.id);
     };
 
     const handleDelete = () => {

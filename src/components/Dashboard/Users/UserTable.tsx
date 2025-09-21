@@ -57,9 +57,11 @@ export default function UserTable() {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Phone</TableHead>
+                                 <TableHead>Referrals</TableHead>
                                 <TableHead>Tier</TableHead>
                                 <TableHead>Role</TableHead>
-                                <TableHead>Referrals</TableHead>
+                               
+                                <TableHead>Verify Status</TableHead>
                                 <TableHead>Action</TableHead>
                             </TableRow>
                         </TableHeader>

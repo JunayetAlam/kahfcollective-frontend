@@ -20,6 +20,13 @@ const contentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Contents"],
     }),
+    toggleIsFeatured: builder.mutation({
+      query: (id) => ({
+        url: `/course-contents/toggle-feature/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["Contents"],
+    }),
     getContentById: builder.query({
       query: (id) => ({
         url: `/contents/${id}`,
@@ -60,4 +67,5 @@ export const {
   useGetContentByIdQuery,
   useUpdateContentMutation,
   useDeleteContentByIdMutation,
+  useToggleIsFeaturedMutation
 } = contentApi;

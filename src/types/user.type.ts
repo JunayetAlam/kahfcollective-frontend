@@ -1,6 +1,9 @@
 import { Payment } from "./payment.type";
 import { Post } from "./post.type";
-import { Course, CourseContents, CourseEnroll, Quiz } from "./course.type";
+import { Course, CourseContents, CourseEnroll, Quiz, QuizAnswers } from "./course.type";
+import { NormalContent } from "./normal-content.type";
+import { JoinForum } from "./forum.type";
+import { UserTier } from "./tiers.type";
 
 export type UserRoleEnum = "USER" | "INSTRUCTOR" | "SUPERADMIN";
 export type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
@@ -34,21 +37,20 @@ export interface User {
   otp?: string | null;
   otpExpiry?: string | null;
 
+  isUserVerified: boolean
   isEmailVerified: boolean;
   emailVerificationToken?: string | null;
   emailVerificationTokenExpires?: string | null;
 
   // Relations
   payments?: Payment[];
-  content?: Content[];
+  content?: NormalContent[];
   posts?: Post[];
-  joinForums?: JoinForum[];
   quizAnswers?: QuizAnswers[];
   courses?: Course[];
   coursesContents?: CourseContents[];
   quizzes?: Quiz[];
-  coursesEnroll?: CourseEnroll[];
-
+  userTiers: UserTier[]
   createdAt: string;
   updatedAt: string;
 }

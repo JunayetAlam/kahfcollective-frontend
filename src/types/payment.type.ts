@@ -1,24 +1,30 @@
-import {User } from ".";
+import { Tier } from "./tiers.type";
+import { User } from "./user.type";
 
-export type Payment = {
+export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELED";
+export type Currency = "usd" | "eur" | "gbp" | "bdt" | "inr";
+export type PaymentMethodType = "CARD" | "BANK_TRANSFER" | "PAYPAL" | "STRIPE" | "OTHER";
+
+export interface Payment {
     id: string;
-    productId: string;
     userId: string;
-    categoryId: string;
+    tierId: string;
     amount: number;
-    currency: string;
-    status: string;
-    paymentMethodType: string;
-    cardBrand: string;
-    cardLast4: string;
-    cardExpMonth: number;
-    cardExpYear: number;
-    stripePaymentId: string;
-    stripeSessionId: string;
-    stripeCustomerId: string | null;
-    createdAt: string;
-    updatedAt: string;
+    currency: Currency;
+    status: PaymentStatus;
+
+    paymentMethodType?: PaymentMethodType;
+    cardBrand?: string;
+    cardLast4?: string;
+    cardExpMonth?: number;
+    cardExpYear?: number;
     user: User
-    // product: TProduct
-    // category: TCategory
-};
+    tier: Tier
+
+    stripePaymentId?: string;
+    stripeSessionId?: string;
+    stripeCustomerId?: string;
+
+    createdAt: Date;
+    updatedAt: Date;
+}

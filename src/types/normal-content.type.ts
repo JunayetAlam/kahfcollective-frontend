@@ -1,9 +1,12 @@
+import { Tier } from "./tiers.type";
+import { User } from "./user.type";
+
 export interface NormalContent {
-  author: Author;
+  author: User;
   tier: Tier;
   description: string;
   contentType: string;
-  coverImage: any;
+  coverImage: string;
   createdAt: string;
   fileLink: string;
   id: string;
@@ -11,14 +14,3 @@ export interface NormalContent {
   updatedAt: string;
 }
 
-export interface Author {
-  id: string;
-  fullName: string;
-  email: string;
-  profile: any;
-}
-
-export interface Tier {
-  id: string;
-  name: string;
-}

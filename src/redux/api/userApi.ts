@@ -134,6 +134,13 @@ const userApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: ["User"],
+    }),
+    toggleIsUserVerified: builder.mutation({
+      query: (id) => ({
+        url: `/users/toggle-verify-status/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["User"],
     })
   }),
 });
@@ -154,4 +161,5 @@ export const {
   useUpdateProfileImgMutation,
   useUpdateUserRoleMutation,
   useUpdateUserStatusMutation,
+  useToggleIsUserVerifiedMutation
 } = userApi;

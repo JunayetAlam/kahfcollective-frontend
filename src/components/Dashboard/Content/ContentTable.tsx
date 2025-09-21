@@ -74,6 +74,7 @@ export default function ContentTable() {
       setLoadingDeleteId(null);
     }
   };
+  
 
   return (
     <div className="rounded-lg">
