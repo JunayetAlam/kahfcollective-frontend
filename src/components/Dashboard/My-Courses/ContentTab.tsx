@@ -146,6 +146,7 @@ export function ContentTab({
           <div className="mt-4 flex justify-end gap-3">
             <Button
               variant="outline"
+              type="button"
               onClick={() => setDeleteConfirmOpen(false)}
             >
               Cancel
@@ -158,7 +159,7 @@ export function ContentTab({
       </Dialog>
 
       <div className="flex justify-end border-t pt-4">
-        <Button onClick={() => setOpen(false)} variant="outline">
+        <Button type="button" onClick={() => setOpen(false)} variant="outline">
           Close
         </Button>
       </div>

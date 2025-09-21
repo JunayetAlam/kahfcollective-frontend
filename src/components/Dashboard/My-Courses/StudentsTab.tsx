@@ -46,7 +46,9 @@ export function StudentsTab({ courseId }: { courseId: string }) {
 
       {/* Action Buttons */}
       <div className="flex justify-end space-x-3 border-t pt-4">
-        <Button variant="outline">Cancel</Button>
+        <Button type="button" variant="outline">
+          Cancel
+        </Button>
         <Button>Save Changes</Button>
       </div>
     </div>

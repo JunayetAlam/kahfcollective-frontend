@@ -1,4 +1,4 @@
-import { TQueryParam, TResponseRedux } from "@/types";
+import { Quiz, TQueryParam, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 
 const courseContentApi = baseApi.injectEndpoints({
@@ -77,6 +77,32 @@ const courseContentApi = baseApi.injectEndpoints({
       query: (id: string) => ({
         url: `/course-contents/${id}/quizzes`,
       }),
+      transformResponse: (response: TResponseRedux<Quiz[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+    }),
+    updateSingleQuiz: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/course-contents/quiz/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      transformResponse: (response: TResponseRedux<Quiz[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+    }),
+    addSingleQuiz: builder.mutation({
+      query: (data) => ({
+        url: `/course-contents/quiz/single`,
+        method: "POST",
+        body: data,
+      }),
+      transformResponse: (response: TResponseRedux<Quiz[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
     }),
   }),
 });
@@ -91,4 +117,6 @@ export const {
   useCreateQuizContentMutation,
   useGetAllQuizzesForCourseQuery,
   useUpdateVideoMutationMutation,
+  useUpdateSingleQuizMutation,
+  useAddSingleQuizMutation,
 } = courseContentApi;
