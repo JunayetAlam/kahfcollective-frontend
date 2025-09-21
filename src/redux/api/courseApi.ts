@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Course, TQueryParam, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 
@@ -8,6 +9,13 @@ const courseApi = baseApi.injectEndpoints({
         url: `/courses`,
         method: "POST",
         body: formData,
+      }),
+      invalidatesTags: ["Courses"],
+    }),
+    toggleStatusOfForum: builder.mutation({
+      query: (id: string) => ({
+        url: `/courses/toggle-status/${id}`,
+        method: "PUT",
       }),
       invalidatesTags: ["Courses"],
     }),
@@ -64,5 +72,6 @@ export const {
   useGetCourseByIdQuery,
   useDeleteCourseByIdMutation,
   useGetAllCoursesQuery,
+  useToggleStatusOfForumMutation,
   useGetEnrolledStudentsQuery,
 } = courseApi;

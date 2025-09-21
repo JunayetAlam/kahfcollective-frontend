@@ -80,9 +80,9 @@ export default function CreateContent() {
   const { data: tiersData } = useGetAllTiersQuery([]);
 
   const userOptions: Option[] =
-    usersData?.data?.map((u: any) => ({ id: u.id, name: u.fullName })) || [];
+    usersData?.data?.map((u) => ({ id: u.id, name: u.fullName })) || [];
   const tierOptions: Option[] =
-    tiersData?.data?.map((t: any) => ({ id: t.id, name: t.name })) || [];
+    tiersData?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
 
   // ---------------- File Change Handlers ----------------
   const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {

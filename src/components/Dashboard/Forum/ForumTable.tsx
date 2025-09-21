@@ -3,55 +3,20 @@ import React, { useState } from "react";
 import CreateForum from "./CreateForum";
 import CreateFraternityGroup from "./CreateFruternityGroup";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useGetAllForumsQuery } from "@/redux/api/forumApi";
+import { Forum, ForumTypeEnum } from "@/types";
+import TableSkeleton from "@/components/Global/TableSkeleton";
+import EditForum from "./EditForum";
+import EditFruternityGroup from "./EditFruternityGroup";
 
-// Forum Data matching the screenshots
-const forumData = [
-    {
-        id: 1,
-        forumName: "Adab Discussion Group",
-        course: "Principles of Adab",
-        posts: 23,
-        type: "Study Circles",
-        state: "Active",
-    },
-    {
-        id: 2,
-        forumName: "Adab Discussion Group",
-        course: "Principles of Adab",
-        posts: 23,
-        type: "Study Circles",
-        state: "Active",
-    },
-    {
-        id: 3,
-        forumName: "Adab Discussion Group",
-        course: "Principles of Adab",
-        posts: 23,
-        type: "Study Circles",
-        state: "Inactive",
-    },
-    {
-        id: 4,
-        forumName: "Advanced Islamic Studies",
-        course: "Principles of Fiqh",
-        posts: 45,
-        type: "Location Based",
-        state: "Active",
-    },
-    {
-        id: 5,
-        forumName: "Quranic Studies Group",
-        course: "Tafsir Fundamentals",
-        posts: 67,
-        type: "Location Based",
-        state: "Active",
-    },
-];
-type TTab = "Study Circles" | "Location Based"
 export default function ForumTable() {
-    const [activeTab, setActiveTab] = useState<TTab>("Study Circles");
+    const [activeTab, setActiveTab] = useState<ForumTypeEnum>("STUDY_CIRCLES");
 
-    const filteredData = forumData.filter(item => item.type === activeTab);
+    const { data, isLoading } = useGetAllForumsQuery([{ name: "limit", value: '1000', }, { name: 'forumType', value: activeTab }]);
+    if (isLoading) {
+        return <TableSkeleton headers={['Forum Name', 'Course', 'Posts', 'Action']} />
+    };
+    const forumData = data?.data || []
 
     return (
         <div className="py-6">
@@ -63,7 +28,7 @@ export default function ForumTable() {
                         <p className="text-sm text-muted-foreground">Manage class discussions, workshop themes, and open topics</p>
                     </div>
                     {
-                        activeTab === 'Location Based' ? <CreateFraternityGroup /> : <CreateForum />
+                        activeTab === 'LOCATION_BASED' ? <CreateFraternityGroup /> : <CreateForum />
 
                     }
                 </div>
@@ -72,7 +37,7 @@ export default function ForumTable() {
             {/* Tabs */}
             <div className="mb-6">
                 <div className="flex border rounded-lg p-1 bg-background">
-                    {(["Study Circles", "Location Based"] as TTab[]).map((tab) => (
+                    {(["STUDY_CIRCLES", "LOCATION_BASED"] as ForumTypeEnum[]).map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -106,21 +71,26 @@ export default function ForumTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredData.map((forum) => (
-                            <TableRow key={forum.id}>
-                                <TableCell className="font-medium">{forum.forumName}</TableCell>
-                                <TableCell>{forum.course}</TableCell>
-                                <TableCell>{forum.posts}</TableCell>
-                                <TableCell>
-                                    <button className="px-3 py-1 border rounded-md text-sm">
-                                        Moderate
-                                    </button>
-                                </TableCell>
-                            </TableRow>
+                        {forumData.map((forum) => (
+                            <ForumTableRow key={forum.id} forum={forum} />
                         ))}
                     </TableBody>
                 </Table>
             </div>
         </div>
     );
+}
+
+
+function ForumTableRow({ forum }: { forum: Forum }) {
+    return <TableRow key={forum.id}>
+        <TableCell className="font-medium">{forum.title}</TableCell>
+        <TableCell>{forum.course?.title}</TableCell>
+        <TableCell>{forum._count.posts}</TableCell>
+        <TableCell>
+            {
+                forum.forumType === 'LOCATION_BASED' ? <EditFruternityGroup forumId={forum.id} /> : <EditForum forumId={forum.id} />
+            }
+        </TableCell>
+    </TableRow>
 }
