@@ -31,13 +31,13 @@ export default function SignIn() {
             const result = await login({ email, password }).unwrap();
 
             form.reset();
-
             if (result?.data) {
-                router.push('/')
+                window.location.href = '/';
                 toast.success('Login successful!', { id: toastId });
             } else {
                 router.push(`/auth/check-email?email=${email}`)
-                toast.warning('Please Verify Email first!', { id: toastId });
+                // toast.warning('Please Verify Email first!', { id: toastId });
+                window.location.href = `/auth/check-email?email=${email}`;
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

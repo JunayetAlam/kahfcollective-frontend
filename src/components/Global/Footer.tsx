@@ -14,21 +14,11 @@ const footerLinks = [
       },
     ],
   },
-  {
-    title: 'Community',
-    links: [
-      { label: 'Study Groups', href: '/study-groups' },
-      { label: 'Discussion Forums', href: '/forums' },
-      { label: 'About Us', href: '/about-us' },
-    ],
-  },
+
   {
     title: 'Platform',
     links: [
-      { label: 'Contact Us', href: '/contact' },
       { label: 'Donate', href: '/donate' },
-      { label: 'Privacy Policy', href: '/privacy-policy' },
-      { label: 'Terms of Service', href: '/terms' },
     ],
   },
 ];
