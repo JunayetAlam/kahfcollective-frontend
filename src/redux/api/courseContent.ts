@@ -1,4 +1,5 @@
-import { Quiz, TQueryParam, TResponseRedux } from "@/types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {  CourseContents, Quiz, TQueryParam, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 
 const courseContentApi = baseApi.injectEndpoints({
@@ -64,6 +65,16 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CourseContents"],
     }),
+    getAllContentForSpecificCourse: builder.query({
+      query: (id) => {
+
+        return { url: `/course-contents/course/${id}/user`, method: "GET", };
+      },
+      transformResponse: (response: TResponseRedux<CourseContents[]>) => ({
+        data: response.data,
+      }),
+      providesTags: ["CourseContents"],
+    }),
 
     deleteSingleQuiz: builder.mutation({
       query: (id: string) => ({
@@ -75,7 +86,7 @@ const courseContentApi = baseApi.injectEndpoints({
 
     getAllQuizzesForCourse: builder.query({
       query: (id: string) => ({
-        url: `/course-contents/${id}/quizzes`,
+        url: `/course-contents/${id}/quizzes/user`,
       }),
       transformResponse: (response: TResponseRedux<Quiz[]>) => ({
         data: response.data,
@@ -119,4 +130,5 @@ export const {
   useUpdateVideoMutationMutation,
   useUpdateSingleQuizMutation,
   useAddSingleQuizMutation,
+  useGetAllContentForSpecificCourseQuery
 } = courseContentApi;

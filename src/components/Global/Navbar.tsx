@@ -29,6 +29,7 @@ const Navbar = () => {
   const userData = useAppSelector(useCurrentUser);
   const isLogIn = !!userData;
 
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -57,7 +58,8 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="flex items-center gap-1 xl:gap-2">
+
+            {userData?.isUserVerified && <div className="flex items-center gap-1 xl:gap-2">
               {navContent.map((link, idx) => (
                 <Link
                   key={idx}
@@ -72,13 +74,14 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-            </div>
+            </div>}
+
 
             {/* Desktop Actions */}
             <div className="flex items-center gap-3">
               {isLogIn ? (
                 <>
-                  
+
                   <NavProfile />
                 </>
               ) : (
@@ -131,7 +134,7 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {isLogIn ? (
               <>
-                
+
                 <NavProfile />
               </>
             ) : (
@@ -156,7 +159,8 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Bottom Navbar */}
-      <div
+
+      {userData?.isUserVerified && <div
         className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t"
         style={{
           backgroundColor: "#304437",
@@ -166,9 +170,8 @@ const Navbar = () => {
         <Container className="py-2">
           <div className="flex justify-center">
             <div
-              className={`grid gap-1 w-full ${
-                isLogIn ? "grid-cols-7" : "grid-cols-6"
-              }`}
+              className={`grid gap-1 w-full ${isLogIn ? "grid-cols-6" : "grid-cols-5"
+                }`}
             >
               {navContent.map((link, idx) => {
                 const Icon = link.icon;
@@ -202,15 +205,12 @@ const Navbar = () => {
                 );
               })}
 
-              {isLogIn && (
-                <div className="flex items-center justify-center">
-                  <NavProfile />
-                </div>
-              )}
+             
             </div>
           </div>
         </Container>
-      </div>
+      </div>}
+
     </>
   );
 };

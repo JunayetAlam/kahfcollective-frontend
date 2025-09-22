@@ -12,6 +12,13 @@ const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Courses"],
     }),
+    toggleCompleteCourse: builder.mutation({
+      query: (id) => ({
+        url: `/courses/${id}/toggle-complete`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Courses"],
+    }),
     toggleStatusOfForum: builder.mutation({
       query: (id: string) => ({
         url: `/courses/toggle-status/${id}`,
@@ -31,6 +38,9 @@ const courseApi = baseApi.injectEndpoints({
       query: (id: string) => ({
         url: `/courses/${id}`,
         method: "GET",
+      }),
+      transformResponse: (response: TResponseRedux<Course>) => ({
+        data: response.data,
       }),
       providesTags: ["Courses"],
     }),
@@ -74,4 +84,5 @@ export const {
   useGetAllCoursesQuery,
   useToggleStatusOfForumMutation,
   useGetEnrolledStudentsQuery,
+  useToggleCompleteCourseMutation
 } = courseApi;

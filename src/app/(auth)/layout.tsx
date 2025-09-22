@@ -14,10 +14,7 @@ export const metadata: Metadata = {
   title: "Kahf Collective",
   description: "Kahf Collective",
 };
-import img from '@/assets/auth.png'
 import Container from "@/components/Global/Container";
-import Title from "@/components/Global/Title";
-import Subtitle from "@/components/Global/Subtitle";
 import Link from "next/link";
 export default function RootLayout({
   children,
@@ -28,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} `}>
         <Providers>
-          <Container className="w-full grid lg:grid-cols-2 gap-20 min-h-screen md:p-10">
+          <Container className="w-full grid grid-cols-1 gap-20 min-h-screen md:p-10">
 
             <div className="flex justify-center items-center flex-col gap-5">
               <Link href="/" className='flex gap-2 justify-center items-center'>
@@ -47,20 +44,7 @@ export default function RootLayout({
               </Link>
               {children}
             </div>
-            {/* Right Column: Promotional Section */}
-            <div className="relative min-h-full rounded-4xl overflow-hidden hidden lg:block">
-              <div className="relative z-10 text-center px-5  xl:px-20 pt-20">
-                <Title>Qualified Islamic Scholars Ready to Guide You</Title>
-                <Subtitle className="text-accent max-w-[400px] mx-auto pt-4">Learn authentic Islam from qualified scholars—beginner to advanced.</Subtitle>
-              </div>
-              <Image
-                src={img}
-                alt="Tablet displaying an online course"
-                fill
-                className="object-cover h-full"
-
-              />
-            </div>
+          
           </Container>
         </Providers>
       </body>

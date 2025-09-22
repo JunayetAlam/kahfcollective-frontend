@@ -3,19 +3,8 @@ import { NextResponse } from "next/server";
 import { User } from "./types";
 import { verifyJWT } from "./utils/verifyJWT";
 
-const AuthRoutes = ["/auth/sign-in", "/auth-sign-up"];
-
-const authNormalRoutes = [
-  "/",
-  "/checkout",
-  "/checkout/complete",
-  "/profile",
-  "/study-circles",
-  "/study-circles/feed",
-] as const;
-
 const roleBasedRoutes = {
-  USER: [...authNormalRoutes, "/course-details/*"],
+  USER: ["/", "/checkout", "/checkout/complete", "/profile", "/study-circles", "/study-circles/feed", "/course-details/*"],
   INSTRUCTOR: [
     "/dashboard",
     "/dashboard/discussion",
@@ -23,7 +12,12 @@ const roleBasedRoutes = {
     "/dashboard/students",
     "/dashboard/profile",
     "/dashboard/quiz",
-    ...authNormalRoutes,
+    "/",
+    "/checkout",
+    "/checkout/complete",
+    "/profile",
+    "/study-circles",
+    "/study-circles/feed",
     "/course-details/*",
   ],
   SUPERADMIN: [
@@ -32,21 +26,17 @@ const roleBasedRoutes = {
     "/dashboard/discussion",
     "/dashboard/profile",
     "/dashboard/users",
-    ...authNormalRoutes,
+    "/",
+    "/checkout",
+    "/checkout/complete",
+    "/profile",
+    "/study-circles",
+    "/study-circles/feed",
     "/course-details/*",
   ],
 } as const;
 
 type Role = keyof typeof roleBasedRoutes;
-
-const protectedRoutes: string[] = [
-  "/dashboard",
-  "/profile",
-  "/checkout",
-  "/checkout/cancel",
-  "/checkout/complete",
-  // "/course-details/*",
-];
 
 const matchRoute = (pathname: string, route: string) => {
   if (route.endsWith("/*")) {
@@ -62,31 +52,26 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("accessToken")?.value;
 
   if (!token) {
-    const isAuthRoute = AuthRoutes.includes(pathname);
-    console.log({
-      kikhobor: protectedRoutes.some((route) => matchRoute(pathname, route)),
-    });
-    if (
-      isAuthRoute ||
-      !protectedRoutes.some((route) => matchRoute(pathname, route))
-    ) {
-      return NextResponse.next();
-    }
+    if (pathname.startsWith("/auth")) return NextResponse.next();
     return NextResponse.redirect(
-      new URL(`/auth/sign-in?redirect=${pathname}`, request.url),
+      new URL(`/auth/sign-in?redirect=${pathname}`, request.url)
     );
   }
 
   try {
     const user = verifyJWT(token) as User;
-    if (AuthRoutes.includes(pathname)) {
+
+    if (pathname.startsWith("/auth")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
+    if (user.role === "USER" && !user.isUserVerified) {
+      if (pathname.startsWith("/checkout")) return NextResponse.next();
+      return NextResponse.redirect(new URL("/checkout/purchase", request.url));
+    }
+
     if (user?.role && roleBasedRoutes[user.role as Role]) {
-      const allowedRoutes = roleBasedRoutes[
-        user.role as Role
-      ] as readonly string[];
+      const allowedRoutes = roleBasedRoutes[user.role as Role] as readonly string[];
       if (allowedRoutes.some((route) => matchRoute(pathname, route))) {
         return NextResponse.next();
       }
@@ -100,12 +85,12 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/dashboard/:page*",
     "/auth/:page*",
     "/profile",
     "/checkout/:path*",
     "/study-circles/:path*",
-    // "/course-details/:path*",
     "/course-details/:path*",
   ],
 };

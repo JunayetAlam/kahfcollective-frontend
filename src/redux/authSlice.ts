@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { TUser } from "../types";
 import Cookies from "js-cookie";
+import { User } from "@/types";
 
 type TAuthState = {
-  user: null | TUser;
+  user: null | User;
   token: null | string;
 };
 

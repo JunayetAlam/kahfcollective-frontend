@@ -1,13 +1,19 @@
+'use client'
 import React from 'react';
 import Container from '../Global/Container';
 import TopTitle from '../Global/TopTitle';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { courses } from '@/data';
 import CourseCard from '../Global/CourseCard';
 import Title from '../Global/Title';
+import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
 
 export default function C_SuggestedCourses() {
+     const { data, isLoading } = useGetAllCoursesQuery([{name: "limit", value: 3}]);
+        if (isLoading) {
+            return ''
+        }
+        const courses = data?.data || [];
     return (
         <Container className="pb-20">
             <div className='flex flex-col sm:flex-row justify-between items-end pb-4 sm:pb-8 space-y-8 sm:space-y-0'>

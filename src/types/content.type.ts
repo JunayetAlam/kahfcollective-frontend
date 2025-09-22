@@ -7,6 +7,8 @@ export interface Question {
 }
 
 export interface CourseContentData {
+  id: string;
+  index: number;
   title: string;
   description: string;
   type: "VIDEO" | "QUIZ";

@@ -33,6 +33,13 @@ export interface Course {
   _count: {
     courseContents: number;
   };
+  completeCourses: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    courseId: string;
+    userId: string;
+  }[]
 }
 
 export interface CourseEnroll {

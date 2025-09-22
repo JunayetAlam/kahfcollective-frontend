@@ -12,6 +12,7 @@ export type GenderEnum = "MALE" | "FEMALE" | "OTHER";
 export interface User {
   id: string;
   fullName: string;
+  name?:string
   email: string;
   phoneNumber: string;
   password: string;

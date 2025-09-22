@@ -1,17 +1,15 @@
 'use client'
 
 import { cn, handleSetSearchParams } from '@/lib/utils';
-import { ModuleCourseItem } from '@/types';
+import { CourseContents } from '@/types';
 import { FileText, PlayCircle, HelpCircle } from 'lucide-react'; // Assuming HelpCircle for quiz
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 export default function ModuleItem({
   moduleItem,
-  moduleId
 }: {
-  moduleItem: ModuleCourseItem;
-  moduleId: string;
+  moduleItem: CourseContents;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -19,13 +17,11 @@ export default function ModuleItem({
   // Choose icon based on module item type
   let Icon;
   switch (moduleItem.type) {
-    case 'video':
+    case 'VIDEO':
       Icon = PlayCircle;
       break;
-    case 'document':
-      Icon = FileText;
-      break;
-    case 'quiz':
+   
+    case 'QUIZ':
       Icon = HelpCircle;
       break;
     default:
@@ -34,15 +30,14 @@ export default function ModuleItem({
 
   const handleChangeModuleItem = () => {
     handleSetSearchParams(
-      { module: moduleId, moduleItem: moduleItem.id },
+      { module: moduleItem.index.toString() },
       searchParams,
       router
     );
   };
 
   const searchedModule = searchParams.get('module') || '';
-  const searchedModuleItem = searchParams.get('moduleItem') || '';
-  const isSelected = searchedModule === moduleId && searchedModuleItem === moduleItem.id;
+  const isSelected = Number(searchedModule) === moduleItem.index
 
   return (
     <div
@@ -54,7 +49,6 @@ export default function ModuleItem({
     >
       <Icon className="h-5 w-5 flex-shrink-0" />
       <div className="flex-1 text-sm font-medium">{moduleItem.title}</div>
-      <div className="text-xs">{moduleItem.duration}</div>
     </div>
   );
 }
