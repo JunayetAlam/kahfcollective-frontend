@@ -31,7 +31,7 @@ export default function VerifyMail() {
             try {
                 await verify({ token }).unwrap();
                 toast.success('Your email has been successfully verified.');
-                router.push('/');
+                window.location.href = '/'
             } catch {
                 setStatusMessage('Email verification failed.');
                 setError(true);
