@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { QuizAnswers, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 

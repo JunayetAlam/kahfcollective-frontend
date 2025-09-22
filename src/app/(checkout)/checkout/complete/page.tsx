@@ -22,10 +22,6 @@ export default function Success() {
         router.push('/');
     };
 
-    const handleViewDashboard = () => {
-        router.push('/dashboard/my-products');
-    };
-
     // Loading Skeleton
     if (isLoading) {
         return (

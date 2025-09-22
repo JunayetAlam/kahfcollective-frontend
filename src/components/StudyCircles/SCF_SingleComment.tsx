@@ -1,7 +1,7 @@
 import { Avatar } from '@radix-ui/react-avatar';
 import React from 'react';
 import { AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Button } from '../ui/button';
+
 import { Reply } from '@/types';
 
 export default function SCF_SingleComment({ comment }: { comment: Reply }) {

@@ -6,7 +6,7 @@ import Subtitle from '../Global/Subtitle';
 import StudyCircleFeed from './StudyCircleFeed';
 import { useGetSingleForumQuery } from '@/redux/api/forumApi';
 import { Card, CardContent } from '../ui/card';
-import { CalendarDays, Clock4, MapPin, Users } from 'lucide-react';
+import { CalendarDays, Clock4, MapPin} from 'lucide-react';
 
 export default function Feed({ slug }: { slug: string }) {
     const { data, isLoading } = useGetSingleForumQuery(slug);

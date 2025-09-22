@@ -1,11 +1,11 @@
 import CustomInput from '@/components/Forms/CustomInput';
 import { CustomSearchSelect } from '@/components/Forms/CustomSearchSelect';
-import CustomSelect from '@/components/Forms/CustomSelect';
+
 import CustomTextarea from '@/components/Forms/CustomTextarea';
 import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
 import { useGetAllTiersQuery } from '@/redux/api/tierApi';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+
 type Option = {
     label: string
     value: string

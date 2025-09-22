@@ -1,7 +1,6 @@
-import { Forum, TFraternity } from '@/types';
+import { Forum} from '@/types';
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import Image from 'next/image';
+import { Card, CardContent, CardFooter } from '../ui/card';
 import Subtitle from '../Global/Subtitle';
 import { Button } from '../ui/button';
 import Link from 'next/link';

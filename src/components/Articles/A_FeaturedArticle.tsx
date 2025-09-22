@@ -6,7 +6,6 @@ import Subtitle from '../Global/Subtitle';
 import TopTitle from '../Global/TopTitle';
 import Image from 'next/image';
 import { Calendar } from 'lucide-react';
-import Link from 'next/link';
 import { TQueryParam } from '@/types';
 import { useGetAllContentsQuery } from '@/redux/api/contentApi';
 import ViewArticle from './ViewArticles';

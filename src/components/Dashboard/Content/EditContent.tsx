@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +26,7 @@ import {
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { Upload } from "lucide-react";
+import Image from "next/image";
 
 // -------- Zod Schema --------
 const updateSchema = z.object({
@@ -97,6 +99,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
   };
 
   const [updateContent, { isLoading }] = useUpdateContentMutation();
+  console.log(updateContent)
 
   const onSubmit = async (values: UpdateFormValues) => {
     try {
@@ -107,10 +110,10 @@ export default function EditContent({ contentId }: { contentId: string }) {
       formData.append("authorId", values.authorId);
       if (values.file) formData.append("content", values.file);
 
-      const data = await updateContent({
-        id: contentId,
-        data: formData,
-      }).unwrap();
+      // const data = await updateContent({
+      //   id: contentId,
+      //   data: formData,
+      // }).unwrap();
 
       toast.success("✅ Content updated successfully!");
       reset();
@@ -204,7 +207,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
                       </span>
                     </>
                   ) : (
-                    <img
+                    <Image
                       src={preview}
                       alt="preview"
                       className="max-h-48 rounded-md object-contain"

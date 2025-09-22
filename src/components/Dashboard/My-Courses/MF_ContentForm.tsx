@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,7 +79,6 @@ type ContentFormValues = z.infer<typeof contentSchema>;
 export function MF_ContentForm({
   isEdit = false,
   trigger = null,
-  existingContent,
   courseData,
 }: any & { existingContent?: CourseContentData }) {
   const [open, setOpen] = useState(false);
@@ -107,7 +107,7 @@ export function MF_ContentForm({
 
   const [createQuizContent, { isLoading: isContentQuizLoading }] =
     useCreateQuizContentMutation();
-  const [createVideoCourse, { isLoading }] =
+  const [createVideoCourse] =
     useCreateVideoCourseContentMutation();
 
   // ------------------ Submit Handler ------------------

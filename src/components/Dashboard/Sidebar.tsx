@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
-  Brain,
   FileText,
   GraduationCap,
   Home,
-  LayoutDashboard,
   LogOut,
   MessageCircleMore,
   Users,
@@ -39,7 +37,7 @@ const navigation = [
     roles: ["INSTRUCTOR"],
     title: "Class Management",
   },
-  
+
   {
     label: "User Management",
     icon: Users,

@@ -5,8 +5,7 @@ import Container from '../Global/Container';
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { Badge } from '../ui/badge';
-import { BookOpen, BookText, Brain, CirclePlay, Clock, Globe, Heart, User } from 'lucide-react';
+import { BookOpen, BookText, Brain, CirclePlay, Globe, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import Title from '../Global/Title';
@@ -16,32 +15,7 @@ import TopTitle from '../Global/TopTitle';
 import Link from 'next/link';
 import { useGetCourseByIdQuery } from '@/redux/api/courseApi';
 import courseImg from "@/assets/articles.jpg"
-const topics = [
-    {
-        title: "Introduction to Islamic Creed",
-        lessons: [
-            "What is Aqeedah and its importance",
-            "Sources of Islamic belief",
-            "The role of reason and revelation",
-        ],
-    },
-    {
-        title: "Belief in Allah (Tawheed)",
-        lessons: [
-            "What is Aqeedah and its importance",
-            "Sources of Islamic belief",
-            "The role of reason and revelation",
-        ],
-    },
-    {
-        title: "Belief in Angels",
-        lessons: [
-            "What is Aqeedah and its importance",
-            "Sources of Islamic belief",
-            "The role of reason and revelation",
-        ],
-    },
-];
+
 
 export default function CourseDetails({ slug }: { slug: string }) {
      const [activeTab, setActiveTab] = useState("overview")

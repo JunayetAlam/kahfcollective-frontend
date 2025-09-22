@@ -3,7 +3,6 @@ import { Inter, Quantico } from "next/font/google";
 import "@/app/globals.css";
 import { Providers } from "../providers";
 import Navbar from "@/components/Global/Navbar";
-import Footer from "@/components/Global/Footer";
 
 const inter = Inter({
   variable: "--font-inter",

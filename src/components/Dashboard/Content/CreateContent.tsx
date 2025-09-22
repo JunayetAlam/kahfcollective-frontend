@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +30,7 @@ import { Upload } from "lucide-react";
 import { useCreateNewContentMutation } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
+import Image from "next/image";
 
 // ------------------------- Zod Schema -------------------------
 const contentSchema = z.object({
@@ -318,11 +320,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               </span>
             </>
           ) : value instanceof File && value.type.startsWith("image/") ? (
-            <img
-              src={preview}
-              alt="preview"
-              className="max-h-48 rounded-md object-contain"
-            />
+            <div className="w-full aspect-video relative">
+              <Image
+                src={preview}
+                alt="image"
+                fill
+                className="object-cover"
+              />
+            </div>
           ) : (
             <div className="text-sm font-medium text-gray-600">
               {preview} ✅

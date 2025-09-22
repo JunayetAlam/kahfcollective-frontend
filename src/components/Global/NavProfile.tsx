@@ -9,7 +9,7 @@ import { useGetMeQuery } from "@/redux/api/userApi";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AppConfig } from "@/config";
+
 import defaultUser from "@/assets/user.png";
 
 // icons

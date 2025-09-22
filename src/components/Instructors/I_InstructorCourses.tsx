@@ -3,8 +3,7 @@ import Container from "../Global/Container";
 import Subtitle from "../Global/Subtitle";
 import TopTitle from "../Global/TopTitle";
 import { Button } from "../ui/button";
-import { courses } from "@/data";
-import CourseCard from "../Global/CourseCard";
+// import CourseCard from "../Global/CourseCard";
 
 export default function I_InstructorCourses() {
     return (
@@ -19,9 +18,9 @@ export default function I_InstructorCourses() {
                 </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-                {
+                {/* {
                     courses.slice(0, 4).map((item, idx) => <CourseCard hideInstructor key={idx} course={item} />)
-                }
+                } */}
             </div>
         </Container>
     );

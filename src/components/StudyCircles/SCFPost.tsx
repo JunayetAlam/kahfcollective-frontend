@@ -15,8 +15,6 @@ import {
 } from '@/redux/api/postApi';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { useAppSelector } from '@/redux/store';
-import { useCurrentUser } from '@/redux/authSlice';
 import { useGetMeQuery } from '@/redux/api/userApi';
 
 export default function SCFPost({ post }: { post: Post }) {

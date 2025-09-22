@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -40,7 +40,7 @@ interface QuizResult {
 }
 
 export default function QuizPage({ contents }: { contents: CourseContents }) {
-    const [answerQuiz, { isLoading: answerQuizLoading }] = useAnswerQuizMutation()
+    const [answerQuiz,] = useAnswerQuizMutation()
     const [lockQuiz, { isLoading: lockQuizLoading }] = useLockQuizMutation()
     const { data, isLoading } = useGetAllQuizzesForCourseQuery(contents.id)
     const { data: getQuizResult, isLoading: getQuizResultLoading, refetch: refetchQuizResult } = useGetQuizResultQuery(contents.id)
@@ -169,7 +169,7 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
             // This is the last question, lock the quiz
             try {
                 await lockQuizQuestions()
-            } catch (error) {
+            } catch  {
                 // Error already handled in lockQuizQuestions
             }
         }

@@ -1,5 +1,5 @@
 'use client'
-import { studyCircles } from "@/data";
+
 import Container from "../Global/Container";
 import StudyCircleCard from "./StudyCircleCard";
 import { useGetAllForumsQuery } from "@/redux/api/forumApi";

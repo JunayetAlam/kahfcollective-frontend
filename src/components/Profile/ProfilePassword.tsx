@@ -27,7 +27,7 @@ export default function ProfilePassword() {
   const handleEdit = () => setIsEditing(true)
   const handleCancel = () => setIsEditing(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const handleSave = async (data: FieldValues, method: UseFormReturn<any>) => {
     const { oldPassword, newPassword, confirmPassword } = data
 

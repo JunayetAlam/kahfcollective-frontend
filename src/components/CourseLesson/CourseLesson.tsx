@@ -7,7 +7,6 @@ import { Button } from "../ui/button";
 import CourseModuleList from "./CourseModuleList";
 import TopTitle from "../Global/TopTitle";
 import Subtitle from "../Global/Subtitle";
-import QuizPage from "./ModuleQuiz";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/redux/store";
 import { useCurrentToken } from "@/redux/authSlice";

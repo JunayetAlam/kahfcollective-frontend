@@ -4,7 +4,6 @@ import { Edit } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import defaultUser from '@/assets/user.png'
 import { useUpdateProfileImgMutation } from "@/redux/api/userApi"
-import { AppConfig } from "@/config"
 import Spinner from "../Global/Spinner"
 
 export default function ProfilePicture({

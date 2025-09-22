@@ -3,10 +3,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { AppConfig } from '@/config';
+
 import { User } from '@/types';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import avatarImg from "@/assets/user.png";
 import {
   Select,

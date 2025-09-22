@@ -1,8 +1,8 @@
 import { Payment } from "./payment.type";
 import { Post } from "./post.type";
-import { Course, CourseContents, CourseEnroll, Quiz, QuizAnswers } from "./course.type";
+import { Course, CourseContents,  Quiz, QuizAnswers } from "./course.type";
 import { NormalContent } from "./normal-content.type";
-import { JoinForum } from "./forum.type";
+
 import { UserTier } from "./tiers.type";
 
 export type UserRoleEnum = "USER" | "INSTRUCTOR" | "SUPERADMIN";
