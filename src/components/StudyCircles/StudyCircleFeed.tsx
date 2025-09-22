@@ -19,7 +19,6 @@ export default function StudyCircleFeed() {
   if (isLoading) {
     return ''
   }
-  console.log(data)
   const posts = data?.data || []
   return (
     <Container className="py-20 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">

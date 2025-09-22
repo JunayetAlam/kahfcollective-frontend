@@ -19,7 +19,6 @@ export default function SCF_MembersList() {
         return ''
     }
     const users = data?.data || [];
-    console.log(users)
     return (
         <Card className="bg-transparent shadow-none rounded-lg h-fit">
             <CardHeader className="p-6 pb-0">

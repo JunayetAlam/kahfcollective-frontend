@@ -21,7 +21,6 @@ export default function S_SermonsOfWeek() {
   if (isLoading) {
     return ''
   }
-  console.log(data)
   if (!data?.data[0]) {
     return ''
   }

@@ -65,7 +65,6 @@ export default function UserRow({ user }: { user: User }) {
   }
   const tierData = data?.data || []
   const userTier = user?.userTiers.map(item => item?.tier?.id)
-  console.log(user?.userTiers)
   return (
     <TableRow key={user.id}>
       {/* Name + Avatar */}

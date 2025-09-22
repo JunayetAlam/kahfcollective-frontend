@@ -36,7 +36,6 @@ import Link from "next/link"
 
 export default function Hero() {
     const user = useAppSelector(useCurrentUser);
-    console.log(user)
     return (
         <section className="min-h-screen bg-[#FAFAFB] text-accent relative overflow-hidden">
             {/* Background decorative elements */}

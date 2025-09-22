@@ -56,7 +56,6 @@ export default function EditForum({ forumId }: EditForumProps) {
         courseId: forum?.courseId || '',
         tierId: forum?.tierId || '',
     };
-    console.log(defaultValues)
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

@@ -6,7 +6,6 @@ import { GraduationCap } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 export default function StudyCircleCard({ studyCircle }: { studyCircle: Forum }) {
-    console.log(studyCircle.course?.instructor?.fullName)
     return (
         <Card className="w-full rounded-xl overflow-hidden bg-white p-0 gap-y-0 shadow-none border border-gray-200 max-w-[450px] sm:max-w-full mx-auto">
             {/* <CardHeader className="p-0 ">

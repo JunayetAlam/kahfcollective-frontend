@@ -15,7 +15,6 @@ import { CourseEnroll } from "@/types";
 export function StudentsTab({ courseId }: { courseId: string }) {
   const { data: students } = useGetEnrolledStudentsQuery(courseId);
 
-  console.log({ students });
 
   return (
     <div className="space-y-4">

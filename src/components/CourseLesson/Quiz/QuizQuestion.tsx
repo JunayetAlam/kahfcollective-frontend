@@ -41,7 +41,6 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
 
     const answeredQuestionsCount = Object.keys(quizState.selectedAnswers).length
     const quizAns = data?.data;
-    console.log(quizAns)
     const submitAnswer = async (questionIndex: number, selectedAnswerText: string) => {
         const question = allQuizzes[questionIndex]
         if (!question) return false
@@ -127,7 +126,6 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
             setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex - 1 }))
         }
     }
-    console.log(result)
     return (
         <div className="w-full space-y-6">
             <div className="flex items-center justify-between">

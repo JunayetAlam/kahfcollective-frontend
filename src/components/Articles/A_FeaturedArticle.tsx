@@ -19,12 +19,10 @@ export default function A_FeaturedArticle() {
     if (isLoading) {
         return ''
     }
-    console.log(data)
     if (!data?.data[0]) {
         return ''
     }
     const article = data?.data[0];
-    console.log(article)
     return (
         <Container className='py-20'>
             <div className="grid lg:grid-cols-2 gap-12 items-start relative">

@@ -33,7 +33,6 @@ export default function SIgnUpFirstPage() {
       return
     }
 
-    console.log('Sign up attempt:', data)
     dispatch(setData({ data: data, currentPage: 2 }))
   }
   return (

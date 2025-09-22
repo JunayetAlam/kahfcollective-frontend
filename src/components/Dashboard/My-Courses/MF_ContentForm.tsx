@@ -123,8 +123,7 @@ export function MF_ContentForm({
       formData.append("file", data.videoFile);
 
       try {
-        const res = await createVideoCourse(formData).unwrap();
-        console.log("Video content created:", res);
+        await createVideoCourse(formData).unwrap();
       } catch (err) {
         console.error("Error creating video content:", err);
       }
@@ -153,8 +152,7 @@ export function MF_ContentForm({
       };
 
       try {
-        const res = await createQuizContent(payload as any).unwrap();
-        console.log("Quiz content created:", res);
+        await createQuizContent(payload as any).unwrap();
       } catch (err) {
         console.error("Error creating quiz content:", err);
       }

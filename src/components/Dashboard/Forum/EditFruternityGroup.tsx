@@ -51,7 +51,6 @@ export default function EditFruternityGroup({ forumId }: EditFruternityGroupProp
                 ...data,
                 events,
             };
-            console.log(transformedData)
             await updateLocationForum({ id: forumId, body: transformedData }).unwrap();
 
             toast.success("✅ Fraternity Group updated successfully!");

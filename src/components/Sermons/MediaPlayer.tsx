@@ -5,7 +5,6 @@ import { Button } from '../ui/button';
 import { Calendar, PlayCircle, User, Volume2 } from 'lucide-react';
 export default function MediaPlayer({ sermon, trigger }: { sermon: NormalContent, trigger?: ReactNode }) {
     if (!sermon.fileLink) return null;
-    console.log(sermon.fileLink)
     const isVideo = sermon.fileLink &&
         /\.(mp4|webm|ogg|mov|avi|mkv)$/i.test(sermon.fileLink);
 

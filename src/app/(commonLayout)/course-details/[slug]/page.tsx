@@ -10,7 +10,6 @@ export default async function page({ params }: {
     params: Promise<{ slug: string }>
 }) {
     const { slug } = await params;
-    console.log(slug)
 
     return (
         <div className='bg-[#FFFFFF]'>

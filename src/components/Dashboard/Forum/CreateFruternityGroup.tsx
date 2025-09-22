@@ -41,10 +41,9 @@ export default function CreateFraternityGroup() {
                 events,
             };
 
-            const res = await createLocationForum(transformedData).unwrap();
+           await createLocationForum(transformedData).unwrap();
 
             toast.success("✅ Fraternity Group created successfully!");
-            console.log("Forum created:", res);
 
             setOpen(false);
         } catch (error: any) {

@@ -98,8 +98,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
     if (e.target.files?.[0]) setValue("file", e.target.files[0]);
   };
 
-  const [updateContent, { isLoading }] = useUpdateContentMutation();
-  console.log(updateContent)
+  const [, { isLoading }] = useUpdateContentMutation();
 
   const onSubmit = async (values: UpdateFormValues) => {
     try {

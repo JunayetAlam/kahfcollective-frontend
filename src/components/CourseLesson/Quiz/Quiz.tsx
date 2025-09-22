@@ -69,7 +69,6 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
             </div>
         )
     }
-    console.log({ correct: quizResult?.total, total: quizResult?.correct })
     return (
         <div className="flex flex-col items-center justify-center">
             {quizResult?.isAllAnswered ? (

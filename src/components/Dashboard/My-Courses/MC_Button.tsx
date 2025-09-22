@@ -25,6 +25,5 @@ export function MF_EditContentButton({
 }
 
 export function MF_AddContentButton({ courseData }: any) {
-  console.log({ aaaaa: courseData });
   return <MF_ContentForm courseData={courseData} />;
 }

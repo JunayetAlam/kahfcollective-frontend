@@ -36,7 +36,6 @@ export default function CourseLesson({ slug }: { slug: string }) {
     const courseData = course?.data
     const isCourseComplete = (courseData?.completeCourses || [])?.length > 0
     const selectedContents = courseContents.find(item => item.index === Number(index));
-    console.log(courseData)
     const handleChangeModuleItem = (index: number) => {
         if (index === courseContents[0].index) {
             return

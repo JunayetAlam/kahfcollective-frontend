@@ -57,7 +57,6 @@ export default function ContentRow({ content }: ContentItemProps) {
       toast.error(err?.data?.message || "Failed to toggle featured");
     } 
   };
-console.log(content.isFeatured)
   return (
     <TableRow>
       <TableCell className="font-medium">
