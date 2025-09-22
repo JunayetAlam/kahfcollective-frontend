@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
   if (!token) {
     if (pathname.startsWith("/auth")) return NextResponse.next();
     return NextResponse.redirect(
-      new URL(`/auth/sign-in?redirect=${pathname}`, request.url)
+      new URL(`/auth/sign-in`, request.url)
     );
   }
 
