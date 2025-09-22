@@ -1,15 +1,6 @@
 "use client";
 import { Pagination } from "@/components/Global/Pagination";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Table,
   TableBody,
@@ -19,17 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  useDeleteContentByIdMutation,
   useGetAllContentsQuery,
 } from "@/redux/api/contentApi";
 import { TQueryParam } from "@/types";
-import { Trash } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 import CreateContent from "./CreateContent";
-import EditContent from "./EditContent";
 import SearchContent from "./SearchContent";
+import ContentRow from "./ContentRow";
 
 export default function ContentTable() {
   const searchParams = useSearchParams();
@@ -49,31 +36,11 @@ export default function ContentTable() {
   ].filter((item) => item.value);
 
   const { data, isLoading } = useGetAllContentsQuery(queryFilter);
-  const [deleteContent] = useDeleteContentByIdMutation();
 
-  const [selectedContentId, setSelectedContentId] = useState<string | null>(
-    null,
-  );
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [loadingDeleteId, setLoadingDeleteId] = useState<string | null>(null);
 
   const contents = data?.data || [];
 
-  const handleConfirmDelete = async () => {
-    if (!selectedContentId) return;
-    try {
-      setLoadingDeleteId(selectedContentId);
-      await deleteContent(selectedContentId).unwrap();
-      toast.success("Content deleted successfully!");
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.data?.message || "Failed to delete content");
-    } finally {
-      setOpenConfirm(false);
-      setSelectedContentId(null);
-      setLoadingDeleteId(null);
-    }
-  };
+
   
 
   return (
@@ -123,64 +90,8 @@ export default function ContentTable() {
               </TableRow>
             ) : (
               contents.map((content) => {
-                const isDeletingThis = loadingDeleteId === content.id;
                 return (
-                  <TableRow key={content.id}>
-                    <TableCell className="font-medium">
-                      <Badge variant="secondary">{content.contentType}</Badge>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {content.author.fullName}
-                    </TableCell>
-                    <TableCell className="truncate">{content.title}</TableCell>
-                    <TableCell>{content.tier.name}</TableCell>
-                    <TableCell className="flex flex-row items-center space-x-2">
-                      <EditContent contentId={content.id} />
-                      <Dialog
-                        open={openConfirm && selectedContentId === content.id}
-                        onOpenChange={setOpenConfirm}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => {
-                              setSelectedContentId(content.id);
-                              setOpenConfirm(true);
-                            }}
-                            variant="destructive"
-                            size="icon"
-                            disabled={isDeletingThis}
-                          >
-                            <Trash />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[400px]">
-                          <DialogHeader>
-                            <DialogTitle>Confirm Delete</DialogTitle>
-                            <p>
-                              Are you sure you want to delete this content? This
-                              action cannot be undone.
-                            </p>
-                          </DialogHeader>
-                          <DialogFooter className="flex justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              onClick={() => setOpenConfirm(false)}
-                              disabled={isDeletingThis}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              onClick={handleConfirmDelete}
-                              disabled={isDeletingThis}
-                            >
-                              {isDeletingThis ? "Deleting..." : "Delete"}
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
+                  <ContentRow key={content.id} content={content} />
                 );
               })
             )}

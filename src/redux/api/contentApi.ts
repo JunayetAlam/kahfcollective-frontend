@@ -22,7 +22,7 @@ const contentApi = baseApi.injectEndpoints({
     }),
     toggleIsFeatured: builder.mutation({
       query: (id) => ({
-        url: `/course-contents/toggle-feature/${id}`,
+        url: `/contents/toggle-feature/${id}`,
         method: "PUT",
       }),
       invalidatesTags: ["Contents"],

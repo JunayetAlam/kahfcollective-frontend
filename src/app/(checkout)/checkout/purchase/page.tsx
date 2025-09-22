@@ -11,8 +11,8 @@ export default function Page() {
 
     const handlePayment = async () => {
         try {
-             const result = await createPayment({paymentType: "PURCHASE"}).unwrap();
-            
+            const result = await createPayment({ paymentType: "PURCHASE" }).unwrap();
+
             if (result.success && result.data?.stripUrl) {
                 // Redirect to Stripe checkout
                 window.location.href = result.data.stripUrl;
@@ -39,11 +39,19 @@ export default function Page() {
                 <p className="text-gray-600 leading-relaxed">
                     Please pay for getting access to the website. Your payment will be reviewed by authority and will give you access to the website. You can trust us.
                 </p>
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-700">
-                        <strong>Note:</strong> If you have already paid, please wait for approval or contact the author. 
-                        If your monthly subscription has ended, please pay again to continue access.
-                    </p>
+                <div className="w-full max-w-md p-4 bg-amber-100 border-2 border-amber-400 rounded-xl shadow-sm">
+                    <div className="flex items-start gap-3">
+                        <AlertCircle className="w-6 h-6 text-amber-700 flex-shrink-0 mt-1" />
+                        <div>
+                            <h3 className="text-lg font-bold text-amber-800">
+                                Important Notice
+                            </h3>
+                            <p className="mt-1 text-base font-semibold text-amber-700">
+                                If you have already paid, please wait for approval or contact the author.
+                                If your monthly subscription has ended, please pay again to continue access.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -83,9 +91,9 @@ export default function Page() {
                     )}
 
                     {/* Payment Button */}
-                    <Button 
-                        onClick={handlePayment} 
-                        className="w-full" 
+                    <Button
+                        onClick={handlePayment}
+                        className="w-full"
                         size="lg"
                         disabled={isLoading}
                     >
@@ -113,7 +121,7 @@ export default function Page() {
             {/* Trust Message */}
             <div className="text-center max-w-sm">
                 <p className="text-sm text-gray-500">
-                    Your payment is secure and will be processed immediately. 
+                    Your payment is secure and will be processed immediately.
                     Access will be granted after authority review.
                 </p>
             </div>

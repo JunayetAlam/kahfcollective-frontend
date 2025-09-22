@@ -1,10 +1,25 @@
-import { articles } from "@/data";
+'use client'
 import Container from "../Global/Container";
 import TopTitle from "../Global/TopTitle";
 import ArticleCard from "./ArticleCard";
 import React from "react";
+import { TQueryParam } from "@/types";
+import { useGetAllContentsQuery } from "@/redux/api/contentApi";
+import { useSearchParams } from "next/navigation";
+import { Pagination } from "../Global/Pagination";
 
 export default function Articles() {
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page') || ''
+  const args: TQueryParam[] = [
+    { name: "contentType", value: "ARTICLE" }
+  ]
+  if (page) args.push({ name: 'page', value: page })
+  const { data, isLoading } = useGetAllContentsQuery(args);
+  if (isLoading) {
+    return ''
+  }
+  const articles = data?.data || []
   return (
     <Container className="pb-20">
       <div className="flex flex-col sm:flex-row justify-between items-end pb-4 sm:pb-8 space-y-8 sm:space-y-0">
@@ -26,6 +41,7 @@ export default function Articles() {
           <ArticleCard key={item.id} article={item} />
         ))}
       </div>
+      <Pagination totalPages={data?.meta?.totalPage || 0} />
     </Container>
   );
 }

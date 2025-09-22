@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCourseMutation } from "@/redux/api/courseApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { Course } from "@/types";
 import { toast } from "sonner";
 
@@ -28,7 +28,6 @@ interface CourseDetailsTabProps {
 const courseSchema = z.object({
   title: z.string().min(1, "Title must be at least 1 characters"),
   description: z.string().min(1, "Description must be at least 1 characters"),
-  tierId: z.string().min(1, "Tier is required"),
   status: z.enum(["ACTIVE", "HIDDEN"]),
   language: z.string().min(2, "Language must be at least 2 characters"),
 });
@@ -39,8 +38,6 @@ export function CourseDetailsTab({
   courseData,
   setOpen,
 }: CourseDetailsTabProps) {
-  const { data: tiersData } = useGetAllTiersQuery([]);
-  const tierOptions = tiersData?.data || [];
 
   const [updateCourse, { isLoading }] = useUpdateCourseMutation();
 
@@ -56,7 +53,6 @@ export function CourseDetailsTab({
     defaultValues: {
       title: courseData.title,
       description: courseData.description || "",
-      tierId: courseData?.tier?.id || "",
       status: courseData.status as "ACTIVE",
       language: courseData.language || "",
     },
@@ -94,29 +90,8 @@ export function CourseDetailsTab({
         </div>
 
         {/* Tier, Status, Language */}
-        <div className="grid grid-cols-3 gap-4">
-          {/* Tier Level */}
-          <div className="space-y-2">
-            <Label>Tier Level</Label>
-            <Select
-              value={watch("tierId")}
-              onValueChange={(val) => setValue("tierId", val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select tier" />
-              </SelectTrigger>
-              <SelectContent>
-                {tierOptions.map((tier) => (
-                  <SelectItem key={tier.id} value={tier.id}>
-                    {tier.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.tierId && (
-              <p className="text-sm text-red-500">{errors.tierId.message}</p>
-            )}
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+         
 
           {/* Status */}
           <div className="space-y-2">

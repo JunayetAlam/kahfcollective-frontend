@@ -8,11 +8,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 
 export default function CourseForm() {
-  const { data: tierData, isLoading } = useGetAllTiersQuery([]);
-
   return (
     <div className="space-y-4">
       {/* Course Title Field */}
@@ -38,20 +35,7 @@ export default function CourseForm() {
         />
       </div>
       <div className="grid grid-cols-2 gap-5">
-        {/* Tier Level Field */}
-        <div className="space-y-2">
-          <Label htmlFor="tierLevel">Tier Level</Label>
-          <Select name="tierLevel" required>
-            <SelectTrigger>
-              <SelectValue placeholder="Select tier level" />
-            </SelectTrigger>
-            <SelectContent>
-              {tierData?.data?.map((d) => (
-                <SelectItem value={d.id}>{d.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        
 
         {/* Status Field */}
         <div className="space-y-2">

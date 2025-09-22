@@ -22,8 +22,7 @@ export default function NavProfile() {
   const { data, isLoading } = useGetMeQuery(undefined, { skip: !token });
 
   const profileUrl = data?.data?.profile
-    ? `${AppConfig.backendUrl}${data.data.profile}`
-    : undefined;
+    || undefined;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -58,11 +57,13 @@ export default function NavProfile() {
                 <User size={16} /> Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <LayoutDashboard size={16} /> Dashboard
-              </Link>
-            </DropdownMenuItem>
+            {
+              data?.data?.role !== 'USER' && <DropdownMenuItem asChild>
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+              </DropdownMenuItem>
+            }
           </>
         }
         <DropdownMenuItem

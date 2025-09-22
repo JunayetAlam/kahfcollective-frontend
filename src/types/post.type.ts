@@ -14,6 +14,10 @@ export interface Post {
   updatedAt: string;
   reacts?: React[];
   replies?: Reply[];
+  _count: {
+    reacts: number
+    replies: number
+  }
 }
 
 export interface React {

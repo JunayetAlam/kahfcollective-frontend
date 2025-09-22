@@ -22,19 +22,11 @@ import { Course } from "@/types";
 import { Pen, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import * as z from "zod";
 import EditContentForm from "./EditCourseContent";
 import { MF_AddContentButton } from "./MC_Button";
 
-// -------- Zod Schema (matches create) --------
-const editSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(2, "Description is required"),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
-  type: z.enum(["VIDEO", "QUIZ"]),
-});
 
-type EditFormType = z.infer<typeof editSchema>;
+
 
 export function ContentTab({
   setOpen,

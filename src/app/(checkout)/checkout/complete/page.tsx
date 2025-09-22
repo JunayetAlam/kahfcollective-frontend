@@ -171,9 +171,7 @@ export default function Success() {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 w-full max-w-xs">
-                <Button onClick={handleViewDashboard} className="w-full">
-                    View Dashboard
-                </Button>
+              
                 <Button onClick={handleGoHome} variant="outline" className="w-full">
                     Go to Home
                 </Button>

@@ -21,14 +21,12 @@ const navContent = [
   { name: "Articles", path: "/articles", icon: FaNewspaper },
   { name: "Study Circles", path: "/study-circles", icon: FaUsers },
   { name: "Fraternity", path: "/fraternity", icon: FaHandshake },
-  { name: "Donate", path: "/donate", icon: FaHeart },
 ];
 
 const Navbar = () => {
   const pathname = usePathname();
   const userData = useAppSelector(useCurrentUser);
   const isLogIn = !!userData;
-
 
   return (
     <>
@@ -58,32 +56,38 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-
-            {userData?.isUserVerified && <div className="flex items-center gap-1 xl:gap-2">
-              {navContent.map((link, idx) => (
-                <Link
-                  key={idx}
-                  href={link.path}
-                  className={cn(
-                    "relative px-4 py-2 transition-all duration-300 rounded-lg",
-                    pathname === link.path
-                      ? "font-bold text-base text-title bg-white/10 backdrop-blur-sm"
-                      : "text-sm text-title hover:text-title hover:bg-white/5"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>}
-
+            {userData?.isUserVerified && (
+              <div className="flex items-center gap-1 xl:gap-2">
+                {navContent.map((link, idx) => (
+                  <Link
+                    key={idx}
+                    href={link.path}
+                    className={cn(
+                      "relative px-4 py-2 transition-all duration-300 rounded-lg",
+                      pathname === link.path
+                        ? "font-bold text-base text-title bg-white/10 backdrop-blur-sm"
+                        : "text-sm text-title hover:text-title hover:bg-white/5"
+                    )}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            )}
 
             {/* Desktop Actions */}
             <div className="flex items-center gap-3">
-              {isLogIn ? (
-                <>
+              {/* Global Donate Button */}
+              {isLogIn && <Link href="/donate">
+                <Button
+                  className="h-11 px-3 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <FaHeart className="mr-2" /> Donate
+                </Button>
+              </Link>}
 
-                  <NavProfile />
-                </>
+              {isLogIn ? (
+                <NavProfile />
               ) : (
                 <>
                   <Link href={"/auth/sign-in"}>
@@ -125,18 +129,25 @@ const Navbar = () => {
                 priority
               />
             </div>
-            <h1 className="font-bold hidden sm:block text-lg sm:text-xl  text-white">
+            <h1 className="font-bold hidden sm:block text-lg sm:text-xl text-white">
               Kahf Collective
             </h1>
           </Link>
 
           {/* Mobile Actions */}
-          <div className="flex items-center gap-3">
-            {isLogIn ? (
-              <>
+          <div className="flex items-center gap-2">
+            {/* Global Donate Button */}
+            <Link href="/donate">
+              <Button
+                size="sm"
+                className="px-3 bg-red-600 hover:bg-red-700 text-white"
+              >
+                <FaHeart className="mr-1" /> Donate
+              </Button>
+            </Link>
 
-                <NavProfile />
-              </>
+            {isLogIn ? (
+              <NavProfile />
             ) : (
               <>
                 <Link href={"/auth/sign-in"}>
@@ -159,58 +170,56 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Bottom Navbar */}
+      {userData?.isUserVerified && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t"
+          style={{
+            backgroundColor: "#304437",
+            borderTopColor: "#4a5c54",
+          }}
+        >
+          <Container className="py-2">
+            <div className="flex justify-center">
+              <div
+                className={`grid gap-1 w-full ${isLogIn ? "grid-cols-5" : "grid-cols-4"
+                  }`}
+              >
+                {navContent.map((link, idx) => {
+                  const Icon = link.icon;
+                  const isActive = pathname === link.path;
+                  const isHome = link.path === "/";
 
-      {userData?.isUserVerified && <div
-        className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t"
-        style={{
-          backgroundColor: "#304437",
-          borderTopColor: "#4a5c54",
-        }}
-      >
-        <Container className="py-2">
-          <div className="flex justify-center">
-            <div
-              className={`grid gap-1 w-full ${isLogIn ? "grid-cols-6" : "grid-cols-5"
-                }`}
-            >
-              {navContent.map((link, idx) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.path;
-                const isHome = link.path === "/";
-
-                return (
-                  <Link
-                    key={idx}
-                    href={link.path}
-                    className={cn(
-                      "flex flex-col items-center justify-center py-2 px-1 transition-all duration-300 rounded-lg relative",
-                      isHome ? "order-3" : "",
-                      isActive
-                        ? "bg-white/15 backdrop-blur-sm"
-                        : "hover:bg-white/5"
-                    )}
-                  >
-                    <div className="relative">
-                      <Icon
-                        className={cn(
-                          "w-5 h-5 mb-1 transition-all duration-300",
-                          isActive ? "text-white" : "text-gray-300"
-                        )}
-                      />
-                      {isActive && (
-                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                  return (
+                    <Link
+                      key={idx}
+                      href={link.path}
+                      className={cn(
+                        "flex flex-col items-center justify-center py-2 px-1 transition-all duration-300 rounded-lg relative",
+                        isHome ? "order-3" : "",
+                        isActive
+                          ? "bg-white/15 backdrop-blur-sm"
+                          : "hover:bg-white/5"
                       )}
-                    </div>
-                  </Link>
-                );
-              })}
-
-             
+                    >
+                      <div className="relative">
+                        <Icon
+                          className={cn(
+                            "w-5 h-5 mb-1 transition-all duration-300",
+                            isActive ? "text-white" : "text-gray-300"
+                          )}
+                        />
+                        {isActive && (
+                          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </Container>
-      </div>}
-
+          </Container>
+        </div>
+      )}
     </>
   );
 };

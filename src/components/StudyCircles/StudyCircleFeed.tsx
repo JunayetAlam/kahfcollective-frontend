@@ -2,10 +2,25 @@ import Container from "../Global/Container";
 import SCF_MembersList from "./SCF_MembersList";
 import SCFPost from "./SCFPost";
 import SCF_CreatePost from "./SCF_CreatePost";
-import { posts } from "@/data";
 import TopTitle from "../Global/TopTitle";
+import { useGetAllPostForSpecificForumQuery } from "@/redux/api/postApi";
+import { useParams, useSearchParams } from "next/navigation";
+import { TQueryParam } from "@/types";
+import { Pagination } from "../Global/Pagination";
 
 export default function StudyCircleFeed() {
+  const { slug: forumId } = useParams();
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page') || ''
+  const args: TQueryParam[] = [
+  ]
+  if (page) args.push({ name: 'page', value: page })
+  const { data, isLoading } = useGetAllPostForSpecificForumQuery({ forumId: forumId as string, args })
+  if (isLoading) {
+    return ''
+  }
+  console.log(data)
+  const posts = data?.data || []
   return (
     <Container className="py-20 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
       <div className="space-y-6">
@@ -19,6 +34,7 @@ export default function StudyCircleFeed() {
               post={post}
             />
           ))}
+          <Pagination totalPages={data?.meta?.totalPage || 0} />
         </div>
       </div>
       <SCF_MembersList />

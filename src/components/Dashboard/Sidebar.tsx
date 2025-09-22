@@ -25,13 +25,13 @@ import { ThemeToggle } from "../ui/theme-toggle";
 import Topbar from "./Topbar";
 
 const navigation = [
-  {
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    route: "/dashboard",
-    roles: ["SUPERADMIN", "INSTRUCTOR"],
-    title: "Dashboard",
-  },
+  // {
+  //   label: "Dashboard",
+  //   icon: LayoutDashboard,
+  //   route: "/dashboard",
+  //   roles: ["SUPERADMIN", "INSTRUCTOR"],
+  //   title: "Dashboard",
+  // },
   {
     label: "My Courses",
     icon: GraduationCap,
@@ -39,13 +39,7 @@ const navigation = [
     roles: ["INSTRUCTOR"],
     title: "Class Management",
   },
-  {
-    label: "My Students",
-    icon: Users,
-    route: "/dashboard/my-students",
-    roles: ["INSTRUCTOR"],
-    title: "Student Management",
-  },
+  
   {
     label: "User Management",
     icon: Users,
@@ -57,16 +51,16 @@ const navigation = [
     label: "Content Management",
     icon: FileText,
     route: "/dashboard/content",
-    roles: ["SUPERADMIN", "INSTRUCTOR"],
+    roles: ["SUPERADMIN"],
     title: "Content Management",
   },
-  {
-    label: "Quiz Performance",
-    icon: Brain,
-    route: "/dashboard/quiz",
-    roles: ["INSTRUCTOR"],
-    title: "Analyze Quiz",
-  },
+  // {
+  //   label: "Quiz Performance",
+  //   icon: Brain,
+  //   route: "/dashboard/quiz",
+  //   roles: ["INSTRUCTOR"],
+  //   title: "Analyze Quiz",
+  // },
 
   {
     label: "Discussion",

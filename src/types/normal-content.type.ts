@@ -9,6 +9,7 @@ export interface NormalContent {
   coverImage: string;
   createdAt: string;
   fileLink: string;
+  isFeatured: boolean;
   id: string;
   title: string;
   updatedAt: string;

@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import avatarImg from "@/assets/user.png";
-import { AppConfig } from "@/config";
 import { User } from "@/types";
 
 interface UserDetailsModalProps {
@@ -28,7 +27,7 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
                     {/* Profile Image */}
                     <div className="flex justify-center">
                         <Image
-                            src={user.profile ? `${AppConfig.backendUrl}${user.profile}` : avatarImg}
+                            src={user.profile ||  avatarImg}
                             alt={user.fullName}
                             width={100}
                             height={100}

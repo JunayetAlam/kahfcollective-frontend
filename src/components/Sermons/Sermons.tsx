@@ -5,13 +5,17 @@ import SermonCard from "./SermonCard";
 import { useGetAllContentsQuery } from "@/redux/api/contentApi";
 import { TQueryParam } from "@/types";
 import { Pagination } from "../Global/Pagination";
+import { useSearchParams } from "next/navigation";
 
 
 
 export default function Sermons() {
+    const searchParams = useSearchParams();
+    const page = searchParams.get('page') || ''
     const args: TQueryParam[] = [
         { name: "contentType", value: "SERMONS" }
-    ]
+    ];
+    if (page) args.push({ name: 'page', value: page })
 
     const { data, isLoading } = useGetAllContentsQuery(args);
     if (isLoading) {

@@ -13,12 +13,14 @@ import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
 import { useState } from "react";
 import { ContentTab } from "./ContentTab";
 import { CourseDetailsTab } from "./CourseDetailsTab";
-import { StudentsTab } from "./StudentsTab";
 
 export default function ManageCourse({ courseId }: { courseId: string }) {
   const [open, setOpen] = useState(false);
 
   const { data: courseData } = useGetCourseByIdQuery(courseId);
+  if(!courseData?.data){
+    return  ''
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -36,10 +38,9 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
         </DialogHeader>
 
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="students">Students</TabsTrigger>
           </TabsList>
 
           {/* Details Tab */}
@@ -56,11 +57,6 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
               courseData={courseData?.data}
               setOpen={(open) => setOpen(open)}
             />
-          </TabsContent>
-
-          {/* Students Tab */}
-          <TabsContent value="students" className="mt-6">
-            <StudentsTab courseId={courseData?.id} />
           </TabsContent>
         </Tabs>
       </DialogContent>

@@ -20,7 +20,8 @@ const nextConfig: NextConfig = {
       'i0.wp.com',
       'kharchoufa.com',
       'kashmirmonitor-s01.sgp1.cdn.digitaloceanspaces.com',
-      'www.imana.org'
+      'www.imana.org',
+      'nyc3.digitaloceanspaces.com',
     ],
   },
 };

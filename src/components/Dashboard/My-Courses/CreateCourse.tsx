@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,13 +26,12 @@ import {
 } from "@/components/ui/select";
 
 import { useCreateCourseMutation } from "@/redux/api/courseApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { Textarea } from "@/components/ui/textarea";
 
 // -------------------- Zod Schema --------------------
 const courseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  tierId: z.string().min(1, "Tier is required"),
   language: z.string().min(1, "Language is required"),
   status: z.enum(["DRAFT", "ACTIVE", "HIDDEN"], "Status is required"),
 });
@@ -43,15 +43,12 @@ export default function CreateCourse() {
   const [open, setOpen] = useState(false);
   const [createCourse] = useCreateCourseMutation();
 
-  const { data: tiersData } = useGetAllTiersQuery([]);
-  const tierOptions = tiersData?.data || [];
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       title: "",
       description: "",
-      tierId: "",
       language: "",
       status: "" as "ACTIVE",
     },
@@ -60,8 +57,6 @@ export default function CreateCourse() {
   const {
     handleSubmit,
     control,
-    watch,
-    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = form;
@@ -111,7 +106,7 @@ export default function CreateCourse() {
           {/* Description */}
           <div>
             <Label>Description</Label>
-            <Input
+            <Textarea
               {...form.register("description")}
               placeholder="Course description"
             />
@@ -122,33 +117,7 @@ export default function CreateCourse() {
             )}
           </div>
 
-          {/* Tier */}
-          <Controller
-            control={control}
-            name="tierId"
-            render={({ field }) => (
-              <div>
-                <Label>Tier</Label>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Tier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tierOptions.map((tier: any) => (
-                      <SelectItem key={tier.id} value={tier.id}>
-                        {tier.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.tierId && (
-                  <p className="text-sm text-red-500">
-                    {errors.tierId.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
+         
 
           {/* Language */}
           <div>

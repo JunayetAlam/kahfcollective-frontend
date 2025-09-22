@@ -1,24 +1,24 @@
-import { Post, React, TQueryParam, TResponseRedux, } from "@/types";
+import { Post, React, Reply, TQueryParam, TResponseRedux, } from "@/types";
 import { baseApi } from "./baseApi";
 
 const postApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         // Create a post in a forum
         createPost: builder.mutation({
-            query: ({ forumId, ...postData }: { forumId: string } & Partial<Post>) => ({
-                url: `/posts/${forumId}`,
+            query: ({ id, data }) => ({
+                url: `/posts/${id}`,
                 method: "POST",
-                body: postData,
+                body: data,
             }),
             invalidatesTags: ["Post", "Forum"],
         }),
 
         // Reply to a post
         replyToPost: builder.mutation({
-            query: ({ postId, ...replyData }: { postId: string } & Partial<Post>) => ({
-                url: `/posts/reply/${postId}`,
+            query: ({ id, data }) => ({
+                url: `/posts/reply/${id}`,
                 method: "POST",
-                body: replyData,
+                body: data,
             }),
             invalidatesTags: ["Post"],
         }),
@@ -35,10 +35,9 @@ const postApi = baseApi.injectEndpoints({
 
         // React to a post (toggle)
         giveReact: builder.mutation({
-            query: ({ postId, type }: { postId: string; type?: React }) => ({
+            query: (postId) => ({
                 url: `/posts/react/${postId}`,
                 method: "POST",
-                body: type ? { type } : undefined,
             }),
             invalidatesTags: ["Post", "User"],
         }),
@@ -61,15 +60,15 @@ const postApi = baseApi.injectEndpoints({
 
         // Get all posts for a forum (with optional query params)
         getAllPostForSpecificForum: builder.query({
-            query: (args?: { forumId: string; params?: TQueryParam[] }) => {
+            query: (data?: { forumId: string; args?: TQueryParam[] }) => {
                 const queryParams = new URLSearchParams();
-                args?.params?.forEach((item) => queryParams.append(item.name, item.value as string));
+                data?.args?.forEach((item) => queryParams.append(item.name, item.value as string));
                 return {
-                    url: `/posts/forum/${args?.forumId}?${queryParams.toString()}`,
+                    url: `/posts/forum/${data?.forumId}?${queryParams.toString()}`,
                     method: "GET",
                 };
             },
-            transformResponse: (response: TResponseRedux<Post[]>) => ({ data: response.data }),
+            transformResponse: (response: TResponseRedux<Post[]>) => ({ data: response.data, meta: response.meta }),
             providesTags: ["Post"],
         }),
 
@@ -77,6 +76,7 @@ const postApi = baseApi.injectEndpoints({
         getAllPost: builder.query({
             query: (args?: TQueryParam[]) => {
                 const params = new URLSearchParams();
+
                 if (args) {
                     args.forEach((item) => {
                         params.append(item.name, item.value as string);
@@ -90,11 +90,12 @@ const postApi = baseApi.injectEndpoints({
 
         // Get all replies for a post
         getAllReplyForSpecificPost: builder.query({
-            query: (postId: string) => {
-
-                return { url: `/posts/replies/${postId}`, method: "GET" }
+            query: (data?: { postId: string; args?: TQueryParam[] }) => {
+                const queryParams = new URLSearchParams();
+                data?.args?.forEach((item) => queryParams.append(item.name, item.value as string));
+                return { url: `/posts/replies/${data?.postId}?${queryParams.toString()}`, method: "GET" }
             },
-            transformResponse: (response: TResponseRedux<Post[]>) => ({ data: response.data }),
+            transformResponse: (response: TResponseRedux<Reply[]>) => ({ data: response.data, meta: response.meta }),
             providesTags: ["Post"],
         }),
 

@@ -73,7 +73,7 @@ export default function UserRow({ user }: { user: User }) {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
-              src={user.profile ? `${AppConfig.backendUrl}${user.profile}` : avatarImg}
+              src={user.profile ||  avatarImg}
               alt={user.fullName}
               width={32}
               height={32}

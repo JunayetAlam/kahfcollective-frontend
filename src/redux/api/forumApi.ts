@@ -57,7 +57,11 @@ const forumApi = baseApi.injectEndpoints({
 
         // Get all users joined to a forum
         getAllConnectedUserToForum: builder.query({
-            query: (forumId: string) => ({ url: `/forums/join/${forumId}`, method: "GET" }),
+            query: ({ forumId, args }: { forumId: string, args: TQueryParam[] }) => {
+                const params = new URLSearchParams();
+                args?.forEach((item) => params.append(item.name, item.value as string));
+                return { url: `/forums/join/${forumId}`, method: "GET", params }
+            },
             transformResponse: (response: TResponseRedux<{ user: User }[]>) => ({
                 data: response.data,
             }),

@@ -49,7 +49,7 @@ export default function ProfilePicture({
         <Avatar className="w-32 h-32 bg-muted relative">
           <AvatarImage
             className="object-cover"
-            src={profileImg ? `${AppConfig.backendUrl}${profileImg}` : defaultUser.src}
+            src={profileImg ? profileImg : defaultUser.src}
             alt="Profile"
           />
           <AvatarFallback>

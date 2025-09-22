@@ -1,4 +1,4 @@
-import { TFraternity } from '@/types';
+import { Forum, TFraternity } from '@/types';
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import Image from 'next/image';
@@ -8,53 +8,95 @@ import Link from 'next/link';
 import { PiUsersThreeThin } from "react-icons/pi";
 import { CiLocationOn } from "react-icons/ci";
 import { CalendarDays, Clock4 } from 'lucide-react';
-export default function FraternityCard({ fraternity }: { fraternity: TFraternity }) {
-    const gridData = [
-        { text: fraternity.eventName, Icon: PiUsersThreeThin },
-        { text: fraternity.location, Icon: CiLocationOn },
-        { text: fraternity.date, Icon: CalendarDays },
-        { text: fraternity.time, Icon: Clock4 },
-    ]
+
+export default function FraternityCard({ fraternity }: { fraternity: Forum }) {
+
+
     return (
-        <Card className="w-full rounded-xl overflow-hidden bg-white p-0 gap-y-0 shadow-none border border-gray-200 max-w-[450px] sm:max-w-full mx-auto">
-            <CardHeader className="p-0 ">
-                <Link href={`/study-circles/feed/${fraternity.id}`} >
-                    <div className="relative w-full aspect-video flex items-center justify-center">
-                        <Image
-                            src={fraternity.image}
-                            alt="Sermon Illustration"
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
-                </Link>
-            </CardHeader>
-            <CardContent className="gap-y-3 flex flex-col px-2 pt-2 pb-3">
-                <Link href={`/fraternity/feed/${fraternity.id}`} >
-                    <h1 className='text-lg md:text-xl font-semibold line-clamp-1'>
+        <Card className="w-full max-w-[450px] sm:max-w-full mx-auto rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 group">
+            <CardContent className="p-6 pb-4 space-y-4">
+                {/* Title */}
+                <Link href={`/feed/${fraternity.id}`} className="block group-hover:text-blue-600 transition-colors duration-200">
+                    <h1 className="text-xl font-semibold line-clamp-2 text-gray-900 leading-tight">
                         {fraternity.title}
                     </h1>
                 </Link>
-                <Link href={`/fraternity/feed/${fraternity.id}`} >
-                    <Subtitle className='line-clamp-3 '>{fraternity.description}</Subtitle>
+
+                {/* Description */}
+                <Link href={`/feed/${fraternity.id}`} className="block">
+                    <Subtitle className="line-clamp-3 text-gray-600 leading-relaxed">
+                        {fraternity.description}
+                    </Subtitle>
                 </Link>
 
-                <div className='grid grid-cols-2 gap-x-1.5 gap-y-1.5'>
-                    {
-                        gridData.map((item, idx) => <div key={idx} className='flex gap-1 text-xs'>
-                            <p>
-                                <item.Icon size={16} />
-                            </p>
-                            {item.text}
-                        </div>)
-                    }
-                </div>
+                {/* Events Grid */}
+                {fraternity.events && fraternity.events.length > 0 && (
+                    <div className="pt-2">
+                        <h3 className="text-sm font-medium text-gray-700 mb-3">Upcoming Events</h3>
+                        <div className="space-y-4">
+                            {fraternity.events.map((event, eventIndex) => (
+                                <div key={eventIndex} className="space-y-2">
+                                    <h4 className="text-sm font-semibold text-gray-800">
+                                        Event {eventIndex + 1}
+                                    </h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-3 border-l-2 border-gray-200">
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2.5 hover:bg-gray-100 transition-colors duration-150">
+                                            <div className="flex-shrink-0 text-gray-500">
+                                                <PiUsersThreeThin size={16} />
+                                            </div>
+                                            <span className="truncate font-medium">
+                                                {event.eventName}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2.5 hover:bg-gray-100 transition-colors duration-150">
+                                            <div className="flex-shrink-0 text-gray-500">
+                                                <CiLocationOn size={16} />
+                                            </div>
+                                            <span className="truncate font-medium">
+                                                {event.location}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2.5 hover:bg-gray-100 transition-colors duration-150">
+                                            <div className="flex-shrink-0 text-gray-500">
+                                                <CalendarDays size={16} />
+                                            </div>
+                                            <span className="truncate font-medium">
+                                                {new Date(event.date || '').toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2.5 hover:bg-gray-100 transition-colors duration-150">
+                                            <div className="flex-shrink-0 text-gray-500">
+                                                <Clock4 size={16} />
+                                            </div>
+                                            <span className="truncate font-medium">
+                                                {event.time}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-
+                {/* No Events State */}
+                {(!fraternity.events || fraternity.events.length === 0) && (
+                    <div className="pt-2">
+                        <div className="text-center py-4 text-gray-500">
+                            <CalendarDays size={32} className="mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm">No upcoming events</p>
+                        </div>
+                    </div>
+                )}
             </CardContent>
-            <CardFooter className="p-6 !pt-3 mt-auto  border-t border-gray-200">
-                <Link className='w-full' href={`/fraternity/feed/${fraternity.id}`} >
-                    <Button variant={'secondary'} size={'lg'} className='w-full' >
+
+            <CardFooter className="p-6 pt-0 bg-gray-50/50 border-t border-gray-100">
+                <Link href={`/feed/${fraternity.id}`} className="w-full">
+                    <Button 
+                        variant="default" 
+                        size="lg" 
+                        className="w-full font-medium transition-colors duration-200"
+                    >
                         Join Circle
                     </Button>
                 </Link>

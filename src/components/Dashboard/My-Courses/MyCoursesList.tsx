@@ -1,41 +1,24 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { TQueryParam } from "@/types";
 import { Search, Users } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import {  useState } from "react";
 import CreateCourse from "./CreateCourse";
 import ManageCourse from "./ManageCourse";
 
 export default function CourseManagementDashboard() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const tierId = searchParams?.get("tierId") || "";
 
-  const { data: tiers } = useGetAllTiersQuery([]);
-  const queryFilter: TQueryParam[] = tierId
-    ? [{ name: "tierId", value: tierId }]
-    : [];
+  const queryFilter: TQueryParam[] = [{ name: "searchTerm", value: searchTerm }]
+  
 
   const { data: courses, isLoading } = useGetAllCoursesQuery(queryFilter);
 
-  const handleSetUrl = useCallback(
-    (selectedTierId: string) => {
-      const params = new URLSearchParams(searchParams as any);
-      if (selectedTierId === "all") params.delete("tierId");
-      else params.set("tierId", selectedTierId);
-      router.replace(`?${params.toString()}`);
-    },
-    [searchParams, router],
-  );
 
   const filteredCourses = courses?.data ?? [];
 
@@ -58,28 +41,7 @@ export default function CourseManagementDashboard() {
         <CreateCourse />
       </div>
 
-      {/* Tier Buttons */}
-      <div className="bg-card flex w-fit flex-wrap items-center gap-1.5 rounded-md border p-2 py-1">
-        <Button
-          size="sm"
-          variant={!tierId ? "default" : "outline"}
-          onClick={() => handleSetUrl("all")}
-          className="h-8"
-        >
-          All
-        </Button>
-
-        {tiers?.data?.map((tier) => (
-          <Button
-            key={tier.id}
-            size="sm"
-            variant={tierId === tier.id ? "default" : "outline"}
-            onClick={() => handleSetUrl(tier.id)}
-          >
-            {tier.name}
-          </Button>
-        ))}
-      </div>
+    
 
       {/* Course Cards */}
       <div className="mt-6 space-y-3">
