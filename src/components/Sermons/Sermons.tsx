@@ -23,7 +23,7 @@ export default function Sermons() {
     }
     const sermons = data?.data || []
     return (
-        <Container className="pb-20">
+        <Container className="pb-20 pt-5">
             <div className='flex flex-col sm:flex-row justify-between items-end pb-4 sm:pb-8 space-y-8 sm:space-y-0'>
                 <div className='space-y-2 w-full'>
                     <TopTitle className='justify-center sm:justify-start'>All Sermons</TopTitle>
@@ -32,6 +32,9 @@ export default function Sermons() {
                     <Button size={'lg'} variant={'outline'} className='px-10 border-primary text-primary'>See All</Button>
                 </Link> */}
             </div>
+            {
+                sermons.length < 1 && <p className="text-center py-20">Sermon Not Found</p>
+            }
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {
                     sermons.map(item => <SermonCard key={item.id} sermon={item}></SermonCard>)

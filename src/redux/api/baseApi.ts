@@ -13,7 +13,6 @@ import { TResponse, User } from "@/types";
 import { toast } from "sonner";
 import { logout } from "../authSlice";
 import { RootState } from "../store";
-
 const baseQuery = fetchBaseQuery({
   baseUrl: `${AppConfig.backendUrl}/api/v1`,
   credentials: "include",

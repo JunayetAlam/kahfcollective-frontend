@@ -18,10 +18,9 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
   const [open, setOpen] = useState(false);
 
   const { data: courseData } = useGetCourseByIdQuery(courseId);
-  if(!courseData?.data){
-    return  ''
+  if (!courseData?.data) {
+    return ''
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

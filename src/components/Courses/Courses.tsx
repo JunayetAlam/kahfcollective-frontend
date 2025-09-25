@@ -29,7 +29,9 @@ export default function Courses() {
 
                 {/* Main Content */}
                 <div className="flex-1">
-
+                    {
+                        courses.length < 1 && <p className="text-center py-20">Course Not Found</p>
+                    }
 
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                         {
@@ -39,7 +41,7 @@ export default function Courses() {
                 </div>
 
             </div>
-            <Pagination totalPages={5} />
+            <Pagination totalPages={data?.meta?.totalPage || 0} />
         </Container>
     );
 }
