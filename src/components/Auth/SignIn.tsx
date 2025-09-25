@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { useLoginMutation } from '@/redux/api/userApi';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { AppConfig } from '@/config';
 
 export default function SignIn() {
     const [login, { isLoading }] = useLoginMutation();
