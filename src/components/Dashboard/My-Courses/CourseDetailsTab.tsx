@@ -62,7 +62,6 @@ export function CourseDetailsTab({
       language: courseData.language || "",
     },
   });
-console.log(courseData.tierId)
   const onSubmit = async (data: any) => {
     try {
       await updateCourse({ id: courseData.id, data }).unwrap(); // wrap fields in data
