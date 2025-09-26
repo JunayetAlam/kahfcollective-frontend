@@ -90,6 +90,18 @@ const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+    getAllTierUsers: builder.query({
+      query: ({ args, tierId }: { args: TQueryParam[], tierId: string }) => {
+        const params = new URLSearchParams();
+        if (args) args.forEach((item) => params.append(item.name, item.value as string));
+        return { url: `/users/tier-users/${tierId}`, method: "GET", params };
+      },
+      transformResponse: (response: TResponseRedux<User[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+      providesTags: ["User"],
+    }),
     getUserById: builder.query({
       query: (id: string) => ({ url: `/users/${id}`, method: "GET" }),
       transformResponse: (response: TResponseRedux<User>) => ({ data: response.data }),
@@ -119,10 +131,10 @@ const userApi = baseApi.injectEndpoints({
     updateUserRole: builder.mutation({
       query: ({ id, data }) => {
         return {
-        url: `/users/user-role/${id}`,
-        method: "PUT",
-        body: data,
-      }
+          url: `/users/user-role/${id}`,
+          method: "PUT",
+          body: data,
+        }
       },
       invalidatesTags: ["User"],
     }),
@@ -154,6 +166,7 @@ export const {
   useResetPasswordMutation,
   useChangePasswordMutation,
   useGetAllUsersQuery,
+  useGetAllTierUsersQuery,
   useGetUserByIdQuery,
   useGetMeQuery,
   useUpdateProfileMutation,

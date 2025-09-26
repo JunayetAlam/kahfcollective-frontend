@@ -1,6 +1,6 @@
 import { Payment } from "./payment.type";
 import { Post } from "./post.type";
-import { Course, CourseContents,  Quiz, QuizAnswers } from "./course.type";
+import { Course, CourseContents,  EnrollCourse,  Quiz, QuizAnswers } from "./course.type";
 import { NormalContent } from "./normal-content.type";
 
 import { UserTier } from "./tiers.type";
@@ -52,6 +52,7 @@ export interface User {
   coursesContents?: CourseContents[];
   quizzes?: Quiz[];
   userTiers: UserTier[]
+  enrollCourses: EnrollCourse[]
   createdAt: string;
   updatedAt: string;
 }

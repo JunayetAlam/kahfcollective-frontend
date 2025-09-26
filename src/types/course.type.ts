@@ -32,6 +32,7 @@ export interface Course {
   updatedAt: string;
   _count: {
     courseContents: number;
+    enrollCourses: number;
   };
   completeCourses: {
     id: string;
@@ -102,6 +103,16 @@ export interface QuizAnswers {
   isLocked: boolean;
   quiz: Quiz;
   user: User;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type EnrollCourse = {
+  id: string;
+  userId: string;
+  courseId: string;
+  user: User;
+  course: Course;
   createdAt: string;
   updatedAt: string;
 }

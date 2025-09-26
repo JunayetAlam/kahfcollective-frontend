@@ -13,7 +13,7 @@ const courseApi = baseApi.injectEndpoints({
       invalidatesTags: ["Courses"],
     }),
     toggleCompleteCourse: builder.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/courses/${id}/toggle-complete`,
         method: "PATCH",
       }),
@@ -25,6 +25,21 @@ const courseApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
       invalidatesTags: ["Courses"],
+    }),
+    toggleDeleteCourse: builder.mutation({
+      query: (id: string) => ({
+        url: `/courses/${id}/toggle-delete`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Courses"],
+    }),
+    toggleEnrollCourse: builder.mutation({
+      query: (body) => ({
+        url: `/courses/enroll`,
+        method: "POST",
+        body
+      }),
+      invalidatesTags: ["Courses", "User"],
     }),
     updateCourse: builder.mutation({
       query: ({ id, data }: { id: string; data: any }) => ({
@@ -53,7 +68,7 @@ const courseApi = baseApi.injectEndpoints({
     }),
     getEnrolledStudents: builder.query({
       query: (id: string) => ({
-        url: `/courses?courseId=${id}`,
+        url: `/courses/enrolled-students/${id}`,
         method: "GET",
       }),
       providesTags: ["Courses"],
@@ -84,5 +99,7 @@ export const {
   useGetAllCoursesQuery,
   useToggleStatusOfForumMutation,
   useGetEnrolledStudentsQuery,
-  useToggleCompleteCourseMutation
+  useToggleCompleteCourseMutation,
+  useToggleDeleteCourseMutation,
+  useToggleEnrollCourseMutation,
 } = courseApi;

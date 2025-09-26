@@ -6,16 +6,17 @@ import { Input } from "@/components/ui/input";
 import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
 import { TQueryParam } from "@/types";
 import { Search, Users } from "lucide-react";
-import {  useState } from "react";
+import { useState } from "react";
 import CreateCourse from "./CreateCourse";
 import ManageCourse from "./ManageCourse";
+import ManageStudents from "./ManageStudents";
 
 export default function CourseManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
 
 
   const queryFilter: TQueryParam[] = [{ name: "searchTerm", value: searchTerm }]
-  
+
 
   const { data: courses, isLoading } = useGetAllCoursesQuery(queryFilter);
 
@@ -41,7 +42,7 @@ export default function CourseManagementDashboard() {
         <CreateCourse />
       </div>
 
-    
+
 
       {/* Course Cards */}
       <div className="mt-6 space-y-3">
@@ -54,16 +55,22 @@ export default function CourseManagementDashboard() {
                 <CardTitle className="text-lg font-semibold">
                   {course.title}
                 </CardTitle>
-                <ManageCourse courseId={course.id} />
+                <div className="flex flex-wrap gap-3">
+                  <ManageCourse courseId={course.id} />
+                  <ManageStudents courseId={course.id} tierId={course.tierId} />
+                </div>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="text-muted-foreground mb-3 flex items-center gap-6 text-sm">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                    <span>{course._count?.courseContents || 0}</span>
+                    <span>{course._count?.enrollCourses || 0}</span>
                   </div>
                   <Badge variant="secondary" className="text-xs">
                     {course.status}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {course.tier.name}
                   </Badge>
                 </div>
                 <p>{course.description}</p>
