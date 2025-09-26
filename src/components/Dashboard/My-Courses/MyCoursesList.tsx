@@ -70,7 +70,7 @@ export default function CourseManagementDashboard() {
                     {course.status}
                   </Badge>
                   <Badge variant="secondary" className="text-xs">
-                    {course.tier.name}
+                    {course?.tier?.name}
                   </Badge>
                 </div>
                 <p>{course.description}</p>
