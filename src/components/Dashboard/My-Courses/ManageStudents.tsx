@@ -22,22 +22,23 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "@/components/Global/Pagination";
 import TableSkeleton from "@/components/Global/TableSkeleton";
-import { useGetAllTierUsersQuery } from "@/redux/api/userApi"; // Assuming this is the correct import path
+import { useGetAllTierUsersQuery } from "@/redux/api/userApi";
 import { useSearchParams } from "next/navigation";
 import { TQueryParam, User } from "@/types";
 import { Search, Users } from "lucide-react";
 import Image from "next/image";
 
-import defaultImg from '@/assets/user.png'
+import defaultImg from "@/assets/user.png";
 import { useToggleEnrollCourseMutation } from "@/redux/api/courseApi";
-// Search Component
+
+// ---------------- Search Component ----------------
 function SearchStudents() {
     const searchParams = useSearchParams();
     const [searchTerm, setSearchTerm] = useState(searchParams?.get("searchTerm") || "");
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        const params = new URLSearchParams(searchParams?.toString());
+        const params = new URLSearchParams(searchParams?.toString() || "");
         if (searchTerm) {
             params.set("searchTerm", searchTerm);
         } else {
@@ -65,67 +66,71 @@ function SearchStudents() {
     );
 }
 
-// Student Row Component
-function StudentRow({ student, courseId }: { student: User, courseId: string }) {
-  const isAssignedToTheCourse = student.enrollCourses
-    .map((item) => item.courseId)
-    .includes(courseId)
+// ---------------- Student Row Component ----------------
+function StudentRow({ student, courseId }: { student: User; courseId: string }) {
+    const isAssignedToTheCourse = student?.enrollCourses
+        ?.map((item) => item?.courseId)
+        ?.includes(courseId);
 
+    const [toggleEnrollCourse, { isLoading }] = useToggleEnrollCourseMutation();
 
-  // Mutation hook
-  const [toggleEnrollCourse, { isLoading }] = useToggleEnrollCourseMutation()
+    const handleToggleAssignment = async () => {
+        try {
+            await toggleEnrollCourse({
+                courseId,
+                userId: student?.id,
+            })?.unwrap();
+        } catch (error) {
+            console.error("Failed to toggle assignment:", error);
+        }
+    };
 
-  const handleToggleAssignment = async () => {
-    try {
-      await toggleEnrollCourse({
-        courseId,
-        userId: student.id,
-      }).unwrap()
-    } catch (error) {
-      console.error("Failed to toggle assignment:", error)
-    }
-  }
-
-  return (
-    <TableRow>
-      <TableCell>
-        <div className="flex items-center space-x-3">
-          <div className="w-14 aspect-square rounded-full border relative overflow-hidden">
-            <Image
-              src={student.profile || defaultImg}
-              alt="image"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <div className="font-medium">{student.fullName}</div>
-            <div className="text-sm text-muted-foreground">{student.email}</div>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Badge variant={isAssignedToTheCourse ? "default" : "secondary"}>
-              {isAssignedToTheCourse ? "Assigned" : "Not Assigned"}
-            </Badge>
-          </div>
-          <Switch
-            checked={isAssignedToTheCourse}
-            onCheckedChange={handleToggleAssignment}
-            disabled={isLoading}
-          />
-        </div>
-      </TableCell>
-    </TableRow>
-  )
+    return (
+        <TableRow>
+            <TableCell>
+                <div className="flex items-center space-x-3">
+                    <div className="w-14 aspect-square rounded-full border relative overflow-hidden">
+                        <Image
+                            src={student?.profile || defaultImg}
+                            alt="image"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <div>
+                        <div className="font-medium">{student?.fullName}</div>
+                        <div className="text-sm text-muted-foreground">
+                            {student?.email}
+                        </div>
+                    </div>
+                </div>
+            </TableCell>
+            <TableCell>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                        <Badge variant={isAssignedToTheCourse ? "default" : "secondary"}>
+                            {isAssignedToTheCourse ? "Assigned" : "Not Assigned"}
+                        </Badge>
+                    </div>
+                    <Switch
+                        checked={isAssignedToTheCourse || false}
+                        onCheckedChange={handleToggleAssignment}
+                        disabled={isLoading}
+                    />
+                </div>
+            </TableCell>
+        </TableRow>
+    );
 }
 
-
-
-// Main Component
-export default function ManageStudents({ tierId, courseId }: { tierId: string, courseId: string }) {
+// ---------------- Main Component ----------------
+export default function ManageStudents({
+    tierId,
+    courseId,
+}: {
+    tierId: string;
+    courseId: string;
+}) {
     const [open, setOpen] = useState(false);
     const searchParams = useSearchParams();
 
@@ -135,9 +140,13 @@ export default function ManageStudents({ tierId, courseId }: { tierId: string, c
     const queryFilter: TQueryParam[] = [
         { name: "page", value: page },
         { name: "searchTerm", value: searchTerm },
-    ].filter((item) => item.value);
-    const { data, isLoading, error } = useGetAllTierUsersQuery({ args: queryFilter, tierId });
+    ]?.filter((item) => item?.value);
+
+    const { data, isLoading, error } =
+        useGetAllTierUsersQuery({ args: queryFilter, tierId }) || {};
+
     const students = data?.data || [];
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -174,7 +183,7 @@ export default function ManageStudents({ tierId, courseId }: { tierId: string, c
                             <div className="text-center py-8">
                                 <p className="text-muted-foreground">Failed to load students</p>
                             </div>
-                        ) : students.length === 0 ? (
+                        ) : students?.length === 0 ? (
                             <div className="text-center py-8">
                                 <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
                                 <p className="mt-2 text-muted-foreground">No students found</p>
@@ -184,12 +193,18 @@ export default function ManageStudents({ tierId, courseId }: { tierId: string, c
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Student</TableHead>
-                                        <TableHead className="text-right">Assignment Status</TableHead>
+                                        <TableHead className="text-right">
+                                            Assignment Status
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {students.map((student: User) => (
-                                        <StudentRow key={student.id} student={student} courseId={courseId} />
+                                    {students?.map((student: User) => (
+                                        <StudentRow
+                                            key={student?.id}
+                                            student={student}
+                                            courseId={courseId}
+                                        />
                                     ))}
                                 </TableBody>
                             </Table>
@@ -197,7 +212,7 @@ export default function ManageStudents({ tierId, courseId }: { tierId: string, c
                     </div>
 
                     {/* Pagination */}
-                    {!isLoading && !error && students.length > 0 && (
+                    {!isLoading && !error && students?.length > 0 && (
                         <div className="border-t pt-4">
                             <Pagination totalPages={data?.meta?.totalPage || 1} />
                         </div>
