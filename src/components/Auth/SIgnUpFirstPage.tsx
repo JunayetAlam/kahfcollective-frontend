@@ -1,20 +1,29 @@
-import React, { useState } from "react"
-import { toast } from "sonner"
-import CustomTextarea from "../Forms/CustomTextarea"
-import { setData, useCurrentSignUpData } from "@/redux/signUpSlice"
-import { useAppDispatch, useAppSelector } from "@/redux/store"
-import CustomForm from "../Forms/CustomForm"
-import CustomInput from "../Forms/CustomInput"
-import CustomSelect from "../Forms/CustomSelect"
-import { FieldValues } from "react-hook-form"
-import { Eye, EyeClosed, LockKeyhole, Mail, User, MapPin, Phone, Pen } from "lucide-react"
-import { Button } from "../ui/button"
-import PageStep from "./PageStep"
+import { setData, useCurrentSignUpData } from "@/redux/signUpSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import {
+  Eye,
+  EyeClosed,
+  LockKeyhole,
+  Mail,
+  MapPin,
+  Pen,
+  Phone,
+  User,
+} from "lucide-react";
+import { useState } from "react";
+import { FieldValues } from "react-hook-form";
+import { toast } from "sonner";
+import CustomForm from "../Forms/CustomForm";
+import CustomInput from "../Forms/CustomInput";
+import CustomSelect from "../Forms/CustomSelect";
+import CustomTextarea from "../Forms/CustomTextarea";
+import { Button } from "../ui/button";
+import PageStep from "./PageStep";
 export default function SIgnUpFirstPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const dispatch = useAppDispatch()
-  const data = useAppSelector(useCurrentSignUpData).data
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const dispatch = useAppDispatch();
+  const data = useAppSelector(useCurrentSignUpData).data;
 
   const defaultValues = {
     fullName: data.fullName || "",
@@ -24,25 +33,29 @@ export default function SIgnUpFirstPage() {
     confirmPassword: data.confirmPassword || "",
     fullAddress: data.fullAddress || "",
     gender: data.gender || "",
-    shortIntroduction: data.shortIntroduction || ""
+    shortIntroduction: data.shortIntroduction || "",
   };
 
   const handleSubmit = async (data: FieldValues) => {
     if (data.password !== data.confirmPassword) {
-      toast.error('Password not matched')
-      return
+      toast.error("Password not matched");
+      return;
     }
 
-    dispatch(setData({ data: data, currentPage: 2 }))
-  }
+    dispatch(setData({ data: data, currentPage: 2 }));
+  };
   return (
-    <CustomForm onSubmit={handleSubmit} defaultValues={defaultValues} className="space-y-4">
+    <CustomForm
+      onSubmit={handleSubmit}
+      defaultValues={defaultValues}
+      className="space-y-4"
+    >
       {/* Full Name */}
       <CustomInput
         required
         name="fullName"
         type="text"
-        placeholder="Enter your full name"
+        placeholder="1. Enter your full name"
         Icon={<User size={16} />}
       />
 
@@ -51,7 +64,7 @@ export default function SIgnUpFirstPage() {
         required
         name="email"
         type="email"
-        placeholder="your.email@example.com"
+        placeholder="Email"
         Icon={<Mail size={16} />}
       />
 
@@ -60,7 +73,7 @@ export default function SIgnUpFirstPage() {
         required
         name="phoneNumber"
         type="text"
-        placeholder="Enter your phone number"
+        placeholder="Phone Number"
         Icon={<Phone size={16} />}
       />
 
@@ -76,7 +89,7 @@ export default function SIgnUpFirstPage() {
       {/* Short Introduction */}
       <CustomTextarea
         name="shortIntroduction"
-        placeholder="Write a short intro about yourself"
+        placeholder="Write a short introduction about yourself"
         Icon={<Pen size={16} />}
       />
 
@@ -85,7 +98,7 @@ export default function SIgnUpFirstPage() {
         required
         name="password"
         type={showPassword ? "text" : "password"}
-        placeholder="Create password"
+        placeholder="Password"
         Icon={<LockKeyhole size={16} />}
         RightIcon={showPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
         onRightIconClick={() => setShowPassword(!showPassword)}
@@ -98,7 +111,9 @@ export default function SIgnUpFirstPage() {
         type={showConfirmPassword ? "text" : "password"}
         placeholder="Confirm password"
         Icon={<LockKeyhole size={16} />}
-        RightIcon={showConfirmPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
+        RightIcon={
+          showConfirmPassword ? <Eye size={16} /> : <EyeClosed size={16} />
+        }
         onRightIconClick={() => setShowConfirmPassword(!showConfirmPassword)}
       />
 
@@ -106,21 +121,25 @@ export default function SIgnUpFirstPage() {
       <CustomSelect
         required
         name="gender"
-        placeholder="Select gender"
+        placeholder="Select Gender"
         options={[
           { value: "MALE", label: "Male" },
-          { value: "FEMALE", label: "Female" }
+          { value: "FEMALE", label: "Female" },
         ]}
       />
 
       <PageStep />
 
-      <Button type="submit" className="w-full mt-6" size="lg" variant="secondary">
+      <Button
+        type="submit"
+        className="mt-6 w-full"
+        size="lg"
+        variant="secondary"
+      >
         Next
       </Button>
 
       {/* Already have account */}
-
     </CustomForm>
   );
 }

@@ -1,19 +1,23 @@
-import GlobalHero from '@/components/Global/GlobalHero';
-import Subtitle from '@/components/Global/Subtitle';
-import Title from '@/components/Global/Title';
-import SC_StudyTutorial from '@/components/StudyCircles/SC_StudyTutorial';
-import StudyCircles from '@/components/StudyCircles/StudyCircles';
-import React from 'react';
+import GlobalHero from "@/components/Global/GlobalHero";
+import Subtitle from "@/components/Global/Subtitle";
+import Title from "@/components/Global/Title";
+import SC_StudyTutorial from "@/components/StudyCircles/SC_StudyTutorial";
+import StudyCircles from "@/components/StudyCircles/StudyCircles";
 
 export default function page() {
-    return (
-        <div>
-            <GlobalHero>
-                <Title className='text-center pb-6 max-w-3xl mx-auto'>Study Circles</Title>
-                <Subtitle className='text-center pb-6 max-w-lg mx-auto text-[#C4D0B9]'>Join small group learning sessions with qualified Islamic scholars. Engage in deep discussions, ask questions, and build lasting connections with fellow learners.</Subtitle>
-            </GlobalHero>
-            <StudyCircles />
-            <SC_StudyTutorial />
-        </div>
-    );
+  return (
+    <div>
+      <GlobalHero>
+        <Title className="mx-auto max-w-3xl pb-6 text-center">
+          Study Circles
+        </Title>
+        <Subtitle className="mx-auto max-w-lg pb-6 text-center text-[#C4D0B9]">
+          A space for collaborative discussions! Where students share, respond,
+          and learn together.
+        </Subtitle>
+      </GlobalHero>
+      <StudyCircles />
+      <SC_StudyTutorial />
+    </div>
+  );
 }

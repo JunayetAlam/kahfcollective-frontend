@@ -1,21 +1,21 @@
-import FR_Tutorial from '@/components/Fraternity/FR_StudyTutorial';
-import Fraternities from '@/components/Fraternity/Fraternities';
-import GlobalHero from '@/components/Global/GlobalHero';
-import Subtitle from '@/components/Global/Subtitle';
-import Title from '@/components/Global/Title';
-import React from 'react';
+import FR_Tutorial from "@/components/Fraternity/FR_StudyTutorial";
+import Fraternities from "@/components/Fraternity/Fraternities";
+import GlobalHero from "@/components/Global/GlobalHero";
+import Subtitle from "@/components/Global/Subtitle";
+import Title from "@/components/Global/Title";
 
 export default function page() {
-    return (
-        <div>
-            <GlobalHero>
-                <Title className='text-center pb-6 max-w-3xl mx-auto'>Fraternity</Title>
-                <Subtitle className='text-center pb-6 max-w-lg mx-auto text-[#C4D0B9]'>
-                    Build meaningful connections with fellow Muslims. Join our community events, mentorship programs, and networking opportunities to strengthen your faith and friendships.
-                </Subtitle>
-            </GlobalHero>
-            <Fraternities />
-            <FR_Tutorial />
-        </div>
-    );
+  return (
+    <div>
+      <GlobalHero>
+        <Title className="mx-auto max-w-3xl pb-6 text-center">Fraternity</Title>
+        <Subtitle className="mx-auto max-w-lg pb-6 text-center text-[#C4D0B9]">
+          A space to strengthen bonds of brotherhood and sisterhood through
+          shared gatherings
+        </Subtitle>
+      </GlobalHero>
+      <Fraternities />
+      <FR_Tutorial />
+    </div>
+  );
 }

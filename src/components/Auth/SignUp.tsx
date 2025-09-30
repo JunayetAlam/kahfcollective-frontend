@@ -1,49 +1,44 @@
-'use client'
+"use client";
 
-import React, { useState } from "react"
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
-import Link from "next/link"
-import SIgnUpFirstPage from "./SIgnUpFirstPage"
-import { useAppSelector } from "@/redux/store"
-import { useCurrentSignUpData } from "@/redux/signUpSlice"
-import Subtitle from "../Global/Subtitle"
-import SignUpSecondPage from "./SignUpSecondPage"
-import SignUpThirdPage from "./SignUpThirdPage"
-
-
+import { useCurrentSignUpData } from "@/redux/signUpSlice";
+import { useAppSelector } from "@/redux/store";
+import Link from "next/link";
+import Subtitle from "../Global/Subtitle";
+import SIgnUpFirstPage from "./SIgnUpFirstPage";
+import SignUpSecondPage from "./SignUpSecondPage";
+import SignUpThirdPage from "./SignUpThirdPage";
 
 export default function SignUp() {
-    const [isLoading] = useState(false)
-    const { currentPage } = useAppSelector(useCurrentSignUpData)
+  const [isLoading] = useState(false);
+  const { currentPage } = useAppSelector(useCurrentSignUpData);
 
+  return (
+    <div className="w-full max-w-md">
+      <Subtitle className="pt-3 pb-8 text-center font-medium">
+        Create your account
+      </Subtitle>
+      {currentPage === 1 && <SIgnUpFirstPage />}
+      {currentPage === 2 && <SignUpSecondPage />}
+      {currentPage === 3 && <SignUpThirdPage />}
 
-    return (
-        <div className="w-full max-w-md">
-            <Subtitle className="font-medium pt-3 pb-8 text-center">
-                Create your account
-            </Subtitle>
-            {
-                currentPage === 1 && <SIgnUpFirstPage />
-            }
-            {
-                currentPage === 2 && <SignUpSecondPage />
-            }
-            {
-                currentPage === 3 && <SignUpThirdPage />
-            }
-
-            <div className="text-center pt-4">
-                <p className="text-sm text-gray-600">
-                    Already have an account?{' '}
-                    <Link href="/auth/sign-in">
-                        <Button variant="link" className="px-0 text-sm text-primary" disabled={isLoading}>
-                            Sign in
-                        </Button>
-                    </Link>
-                </p>
-            </div>
-        </div>
-    )
+      <div className="pt-4 text-center">
+        <p className="text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link href="/auth/sign-in">
+            <Button
+              variant="link"
+              className="text-primary px-0 text-sm"
+              disabled={isLoading}
+            >
+              Sign in
+            </Button>
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }

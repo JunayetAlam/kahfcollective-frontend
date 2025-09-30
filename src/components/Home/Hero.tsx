@@ -1,6 +1,6 @@
-'use client'
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+"use client";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 // import image1 from '@/assets/heroIcon/schollar.png'
 // import image2 from '@/assets/heroIcon/quiz.png'
 // import image3 from '@/assets/heroIcon/student.png'
@@ -8,9 +8,9 @@ import { ArrowRight } from "lucide-react"
 // import Image from "next/image"
 // import bgElement1 from '@/assets/heroIcon/bg-element-1.svg'
 // import bgElement2 from '@/assets/heroIcon/bg-element-2.svg'
-import { useAppSelector } from "@/redux/store"
-import { useCurrentUser } from "@/redux/authSlice"
-import Link from "next/link"
+import { useCurrentUser } from "@/redux/authSlice";
+import { useAppSelector } from "@/redux/store";
+import Link from "next/link";
 // const features = [
 //     {
 //         label: 'Islamic Scholars',
@@ -35,15 +35,14 @@ import Link from "next/link"
 // ];
 
 export default function Hero() {
-    const user = useAppSelector(useCurrentUser);
-    return (
-        <section className="min-h-screen bg-[#FAFAFB] text-accent relative overflow-hidden">
-            {/* Background decorative elements */}
-            {/* <div className="absolute inset-0"> */}
+  const user = useAppSelector(useCurrentUser);
+  return (
+    <section className="text-accent relative min-h-screen overflow-hidden bg-[#FAFAFB]">
+      {/* Background decorative elements */}
+      {/* <div className="absolute inset-0"> */}
 
-
-                {/* bg text  */}
-                {/* <div className="absolute w-full h-full top-0    items-center hidden lg:flex">
+      {/* bg text  */}
+      {/* <div className="absolute w-full h-full top-0    items-center hidden lg:flex">
                     <div className="w-full container mx-auto flex justify-center items-center">
                         <div className="space-y-6 w-full max-w-[800px] ml-auto relative">
                             <div className="absolute -top-10 left-75 size-20">
@@ -93,11 +92,11 @@ export default function Hero() {
                         </div>
                     </div>
                 </div> */}
-            {/* </div> */}
+      {/* </div> */}
 
-            <div className="container mx-auto px-6 py-20 relative w-full  h-screen">
-                <div className="h-full flex items-center relative">
-                    {/* <div className="absolute top-10 left-60 size-20 block lg:hidden">
+      <div className="relative container mx-auto h-screen w-full px-6 py-20">
+        <div className="relative flex h-full items-center">
+          {/* <div className="absolute top-10 left-60 size-20 block lg:hidden">
                         <Image
                             src={bgElement2}
                             alt="decoration"
@@ -120,30 +119,28 @@ export default function Hero() {
                             fill
                         />
                     </div> */}
-                    {/* Left content */}
-                    <div className="relative z-10 flex flex-col gap-8 justify-center items-center">
-                        <h1 className="text-5xl lg:text-6xl font-bold leading-tight text-title lg:max-w-4xl text-center">
-                           Welcome Mr. {user?.name} !Deepen Your Islamic Knowledge Journey with Kahf .
-                        </h1>
+          {/* Left content */}
+          <div className="relative z-10 flex flex-col items-center justify-center gap-8">
+            <h1 className="text-title text-center text-5xl leading-tight font-bold lg:max-w-4xl lg:text-6xl">
+              Welcome to Kahf Collective, {user?.name} start Learning
+            </h1>
 
-                        <p className="text-lg leading-relaxed text-center text-secondary">
-                           Learn authentic Islamic sciences from qualified scholars. Join a global community of Muslims seeking knowledge through structured courses in Aqeedah, Fiqh, Tafsir, and more.
-                        </p>
-<Link href={'/courses'} className="w-full block">
-                        <Button
-                            size="lg"
-                            className="group w-full"
-                        >
-                            Start Learning
-                            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                        </Link>
-                    </div>
+            <p className="text-secondary text-center text-lg leading-relaxed">
+              Learn authentic Islamic sciences from qualified scholars. Join a
+              global community of Muslims seeking knowledge through structured
+              courses in Aqeedah, Fiqh, Tafsir, and more.
+            </p>
+            <Link href={"/courses"} className="block w-full">
+              <Button size="lg" className="group w-full">
+                Start Learning
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+          </div>
 
-                    {/* Right floating elements */}
-
-                </div>
-            </div>
-        </section>
-    )
+          {/* Right floating elements */}
+        </div>
+      </div>
+    </section>
+  );
 }
