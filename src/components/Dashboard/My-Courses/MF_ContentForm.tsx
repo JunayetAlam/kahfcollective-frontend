@@ -41,7 +41,7 @@ const contentSchema = z
     courseId: z.string().optional(),
     title: z.string().min(1, "Title must be at least 1 characters"),
     description: z.string().min(2, "Description must be at least 2 characters"),
-    type: z.enum(["VIDEO", "QUIZ"]),
+    type: z.enum(["VIDEO", "QUIZ", "QUESTION"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
     questions: z
@@ -107,8 +107,7 @@ export function MF_ContentForm({
 
   const [createQuizContent, { isLoading: isContentQuizLoading }] =
     useCreateQuizContentMutation();
-  const [createVideoCourse] =
-    useCreateVideoCourseContentMutation();
+  const [createVideoCourse] = useCreateVideoCourseContentMutation();
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
@@ -153,12 +152,17 @@ export function MF_ContentForm({
 
       try {
         await createQuizContent(payload as any).unwrap();
+        setOpen(false);
       } catch (err) {
         console.error("Error creating quiz content:", err);
       }
     }
 
-    setOpen(false);
+    if (data.type === "QUESTION") {
+      console.log("QUESTION type content submitted:", data.description);
+      // You can add your own API mutation here for QUESTION type
+      setOpen(false);
+    }
   };
 
   // ------------------ Question Handling ------------------
@@ -220,7 +224,11 @@ export function MF_ContentForm({
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="details">Details</TabsTrigger>
               <TabsTrigger value="content">
-                {watchedType === "VIDEO" ? "Video" : "Quiz"}
+                {watchedType === "VIDEO"
+                  ? "Video"
+                  : watchedType === "QUIZ"
+                    ? "Quiz"
+                    : "Question"}
               </TabsTrigger>
             </TabsList>
 
@@ -268,6 +276,7 @@ export function MF_ContentForm({
                           <SelectContent>
                             <SelectItem value="VIDEO">Video</SelectItem>
                             <SelectItem value="QUIZ">Quiz</SelectItem>
+                            <SelectItem value="QUESTION">Question</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
@@ -348,6 +357,40 @@ export function MF_ContentForm({
                         </div>
                       )}
                     />
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* question form */}
+              {watchedType === "QUESTION" && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <HelpCircle className="h-5 w-5" /> Write Question
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="questionText">Question</Label>
+                      <Controller
+                        name="description"
+                        control={control}
+                        render={({ field }) => (
+                          <Textarea
+                            id="questionText"
+                            placeholder="Write your question here..."
+                            rows={6}
+                            className="resize-none"
+                            {...field}
+                          />
+                        )}
+                      />
+                      {errors.description && (
+                        <p className="text-sm text-red-500">
+                          {errors.description.message}
+                        </p>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               )}
