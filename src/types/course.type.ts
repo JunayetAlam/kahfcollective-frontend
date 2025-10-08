@@ -3,7 +3,7 @@ import { Tier } from "./tiers.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
-export type CourseContentTypeEnum = "VIDEO" | "QUIZ";
+export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | "QUESTION";
 export type ContentStatusEnum = "PUBLISHED" | "DRAFT";
 export type RightAnswer = "A" | "B" | "C" | "D";
 
@@ -66,10 +66,19 @@ export interface CourseContents {
   index: number;
   courseId: string;
   instructorId: string;
+  courseQuestions?: CourseQuestion[];
   course: Course;
   instructor: User;
   createdAt: string;
   updatedAt: string;
+}
+
+
+export interface CourseQuestion {
+  id: string;
+  question: string;
+  courseContentId: string;
+  instructorId: string;
 }
 
 export interface Quiz {

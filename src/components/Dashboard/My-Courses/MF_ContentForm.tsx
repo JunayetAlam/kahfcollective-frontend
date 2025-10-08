@@ -34,6 +34,8 @@ import {
 } from "@/redux/api/courseContent";
 import { CourseContentData } from "@/types";
 import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
+import { useCreateQuestionMutation } from "@/redux/api/question";
+import { toast } from "sonner";
 
 // ------------------ Zod Schema ------------------
 const contentSchema = z
@@ -41,6 +43,7 @@ const contentSchema = z
     courseId: z.string().optional(),
     title: z.string().min(1, "Title must be at least 1 characters"),
     description: z.string().min(2, "Description must be at least 2 characters"),
+    questionText: z.string().optional(),
     type: z.enum(["VIDEO", "QUIZ", "QUESTION"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
@@ -99,6 +102,7 @@ export function MF_ContentForm({
       type: "VIDEO",
       status: "PUBLISHED",
       videoFile: null,
+      questionText: "",
       questions: [],
     },
   });
@@ -108,6 +112,7 @@ export function MF_ContentForm({
   const [createQuizContent, { isLoading: isContentQuizLoading }] =
     useCreateQuizContentMutation();
   const [createVideoCourse] = useCreateVideoCourseContentMutation();
+  const [createQuestion] = useCreateQuestionMutation();
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
@@ -159,9 +164,23 @@ export function MF_ContentForm({
     }
 
     if (data.type === "QUESTION") {
-      console.log("QUESTION type content submitted:", data.description);
-      // You can add your own API mutation here for QUESTION type
-      setOpen(false);
+      const payload = {
+        title: data.title,
+        courseId: data.courseId,
+        status: data.status,
+        question: data.questionText,
+        description: data.description,
+      };
+
+      console.log("this is the payload", payload);
+
+      try {
+        await createQuestion(payload).unwrap(); 
+        toast.success("Question created successfully!");
+        setOpen(false);
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Failed to create question");
+      }
     }
   };
 
@@ -373,7 +392,7 @@ export function MF_ContentForm({
                     <div className="space-y-2">
                       <Label htmlFor="questionText">Question</Label>
                       <Controller
-                        name="description"
+                        name="questionText"
                         control={control}
                         render={({ field }) => (
                           <Textarea
@@ -385,9 +404,9 @@ export function MF_ContentForm({
                           />
                         )}
                       />
-                      {errors.description && (
+                      {errors.questionText && (
                         <p className="text-sm text-red-500">
-                          {errors.description.message}
+                          {errors.questionText.message}
                         </p>
                       )}
                     </div>

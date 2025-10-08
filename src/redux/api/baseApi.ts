@@ -55,7 +55,8 @@ export const baseApi = createApi({
     "CourseContents",
     "Forum",
     "Post",
-    "QuizAnswer"
+    "QuizAnswer",
+    "Questions"
   ],
   endpoints: () => ({}),
 });

@@ -46,6 +46,7 @@ const matchRoute = (pathname: string, route: string) => {
   return pathname === route;
 };
 
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -91,6 +92,6 @@ export const config = {
     "/profile",
     "/checkout/:path*",
     "/study-circles/:path*",
-    "/course-details/:path*",
+    // "/course-details/:path*",
   ],
 };
