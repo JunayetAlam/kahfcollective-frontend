@@ -49,7 +49,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
   const courseData = course?.data;
   const isCourseComplete = (courseData?.completeCourses || [])?.length > 0;
 
-  const selectedContents = courseContents.find(
+  const selectedContents = courseContents?.find(
     (item) => item.index === Number(index),
   );
 

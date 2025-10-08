@@ -32,9 +32,9 @@ import {
   useCreateQuizContentMutation,
   useCreateVideoCourseContentMutation,
 } from "@/redux/api/courseContent";
+import { useCreateQuestionMutation } from "@/redux/api/question";
 import { CourseContentData } from "@/types";
 import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
-import { useCreateQuestionMutation } from "@/redux/api/question";
 import { toast } from "sonner";
 
 // ------------------ Zod Schema ------------------
@@ -111,8 +111,13 @@ export function MF_ContentForm({
 
   const [createQuizContent, { isLoading: isContentQuizLoading }] =
     useCreateQuizContentMutation();
-  const [createVideoCourse] = useCreateVideoCourseContentMutation();
-  const [createQuestion] = useCreateQuestionMutation();
+  const [createVideoCourse, { isLoading: isVideoContentLoading }] =
+    useCreateVideoCourseContentMutation();
+  const [createQuestion, { isLoading: isQuestionContentLoading }] =
+    useCreateQuestionMutation();
+
+  const isLoading =
+    isContentQuizLoading || isVideoContentLoading || isQuestionContentLoading;
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
@@ -175,7 +180,7 @@ export function MF_ContentForm({
       console.log("this is the payload", payload);
 
       try {
-        await createQuestion(payload).unwrap(); 
+        await createQuestion(payload).unwrap();
         toast.success("Question created successfully!");
         setOpen(false);
       } catch (error: any) {
@@ -559,7 +564,7 @@ export function MF_ContentForm({
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isContentQuizLoading}>
+            <Button type="submit" disabled={isLoading}>
               {isEdit ? "Save Changes" : "Create Content"}
             </Button>
           </div>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {  CourseContents, Quiz, TQueryParam, TResponseRedux } from "@/types";
+import { CourseContents, Quiz, TQueryParam, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 
 const courseContentApi = baseApi.injectEndpoints({
@@ -67,8 +67,7 @@ const courseContentApi = baseApi.injectEndpoints({
     }),
     getAllContentForSpecificCourse: builder.query({
       query: (id) => {
-
-        return { url: `/course-contents/course/${id}/user`, method: "GET", };
+        return { url: `/course-contents/course/${id}/user`, method: "GET" };
       },
       transformResponse: (response: TResponseRedux<CourseContents[]>) => ({
         data: response.data,
@@ -106,7 +105,7 @@ const courseContentApi = baseApi.injectEndpoints({
     }),
     addSingleQuiz: builder.mutation({
       query: (data) => ({
-        url: `/course-contents/quiz/single`,
+        url: `/course-contents/question/answers`,
         method: "POST",
         body: data,
       }),
@@ -114,6 +113,34 @@ const courseContentApi = baseApi.injectEndpoints({
         data: response.data,
         meta: response.meta,
       }),
+    }),
+    updateContentStatus: builder.mutation({
+      query: (data: { answerId: string; isCorrect: boolean }) => ({
+        url: `/course-contents/question/answers`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["CourseContents"],
+    }),
+    getQuestionsSubmitsForCurrentInstructor: builder.query({
+      query: (args: TQueryParam[]) => {
+        const params = new URLSearchParams();
+        if (args)
+          args.forEach((item) =>
+            params.append(item.name, item.value as string),
+          );
+        return {
+          url: `/course-contents/question/answers`,
+
+          method: "GET",
+          params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+      providesTags: ["CourseContents"],
     }),
   }),
 });
@@ -130,5 +157,7 @@ export const {
   useUpdateVideoMutationMutation,
   useUpdateSingleQuizMutation,
   useAddSingleQuizMutation,
-  useGetAllContentForSpecificCourseQuery
+  useGetAllContentForSpecificCourseQuery,
+  useGetQuestionsSubmitsForCurrentInstructorQuery,
+  useUpdateContentStatusMutation,
 } = courseContentApi;

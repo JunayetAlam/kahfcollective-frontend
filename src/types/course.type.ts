@@ -40,7 +40,7 @@ export interface Course {
     updatedAt: string;
     courseId: string;
     userId: string;
-  }[]
+  }[];
 }
 
 export interface CourseEnroll {
@@ -66,19 +66,25 @@ export interface CourseContents {
   index: number;
   courseId: string;
   instructorId: string;
-  courseQuestions?: CourseQuestion[];
+  courseQuestions?: CourseQuestion;
   course: Course;
   instructor: User;
   createdAt: string;
   updatedAt: string;
+  hasAnswered: boolean;
 }
 
-
 export interface CourseQuestion {
-  id: string;
-  question: string;
   courseContentId: string;
+  createdAt: string;
+  id: string;
   instructorId: string;
+  question: string;
+  updatedAt: string;
+  answer?: {
+    providedAnswer: string;
+    isCorrectAnswer: boolean | undefined;
+  };
 }
 
 export interface Quiz {
@@ -124,4 +130,4 @@ export type EnrollCourse = {
   course: Course;
   createdAt: string;
   updatedAt: string;
-}
+};

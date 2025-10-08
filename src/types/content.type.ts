@@ -1,10 +1,27 @@
+import { User } from "./user.type";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Question {
   id: number;
   question: string;
   options: string[];
   correctAnswer: number;
+  courseContentId: string;
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  user: User;
 }
+
+export type SubmittedQuestion = {
+  question: Question;
+  isCorrectAnswer: any;
+  createdAt: string;
+  id: string;
+  providedAnswer: string;
+  questionId: string;
+  user: User;
+};
 
 export interface CourseContentData {
   id: string;
