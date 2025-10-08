@@ -1,26 +1,26 @@
 "use client";
 
-import Link from "next/link";
-import Container from "../Global/Container";
-import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import VideoPlayer from "../Global/VideoPlayer";
-import { Button } from "../ui/button";
-import CourseModuleList from "./CourseModuleList";
-import TopTitle from "../Global/TopTitle";
-import Subtitle from "../Global/Subtitle";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useAppSelector } from "@/redux/store";
-import { useCurrentToken } from "@/redux/authSlice";
-import { useGetAllContentForSpecificCourseQuery } from "@/redux/api/courseContent";
-import Quiz from "./Quiz/Quiz";
+import { handleSetSearchParams } from "@/lib/utils";
 import {
   useGetCourseByIdQuery,
   useToggleCompleteCourseMutation,
 } from "@/redux/api/courseApi";
-import Title from "../Global/Title";
-import { handleSetSearchParams } from "@/lib/utils";
-import Spinner from "../Global/Spinner";
+import { useGetAllContentForSpecificCourseQuery } from "@/redux/api/courseContent";
+import { useCurrentToken } from "@/redux/authSlice";
+import { useAppSelector } from "@/redux/store";
+import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import Container from "../Global/Container";
 import Question from "../Global/Question";
+import Spinner from "../Global/Spinner";
+import Subtitle from "../Global/Subtitle";
+import Title from "../Global/Title";
+import TopTitle from "../Global/TopTitle";
+import VideoPlayer from "../Global/VideoPlayer";
+import { Button } from "../ui/button";
+import CourseModuleList from "./CourseModuleList";
+import Quiz from "./Quiz/Quiz";
 
 const CourseLesson = ({ slug }: { slug: string }) => {
   const token = useAppSelector(useCurrentToken);
@@ -50,8 +50,10 @@ const CourseLesson = ({ slug }: { slug: string }) => {
   const isCourseComplete = (courseData?.completeCourses || [])?.length > 0;
 
   const selectedContents = courseContents.find(
-    (item) => item.index === Number(index)
+    (item) => item.index === Number(index),
   );
+
+  console.log(courseData);
 
   const handleChangeModuleItem = (index: number) => {
     handleSetSearchParams({ module: `${index}` }, searchParams, router);
@@ -93,7 +95,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
                 disabled={Number(index) === courseContents[0].index}
                 onClick={() => {
                   const currentIndex = courseContents.findIndex(
-                    (obj) => obj.index === selectedContents.index
+                    (obj) => obj.index === selectedContents.index,
                   );
                   const previousContent = courseContents[currentIndex - 1];
                   if (previousContent)
@@ -111,11 +113,10 @@ const CourseLesson = ({ slug }: { slug: string }) => {
                 }
                 onClick={() => {
                   const currentIndex = courseContents.findIndex(
-                    (obj) => obj.index === selectedContents.index
+                    (obj) => obj.index === selectedContents.index,
                   );
                   const nextContent = courseContents[currentIndex + 1];
-                  if (nextContent)
-                    handleChangeModuleItem(nextContent.index);
+                  if (nextContent) handleChangeModuleItem(nextContent.index);
                 }}
               >
                 Next
@@ -135,7 +136,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
             disabled={isCourseComplete || completeCourseLoading}
             variant="secondary"
             size="lg"
-            className="w-full flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2"
           >
             {completeCourseLoading ? (
               <>
