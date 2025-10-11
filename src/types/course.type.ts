@@ -3,7 +3,7 @@ import { Tier } from "./tiers.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
-export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | "QUESTION";
+export type CourseContentTypeEnum = "VIDEO" | "QUIZ";
 export type ContentStatusEnum = "PUBLISHED" | "DRAFT";
 export type RightAnswer = "A" | "B" | "C" | "D";
 
@@ -88,6 +88,7 @@ export interface CourseQuestion {
 }
 
 export interface Quiz {
+  type: 'MULTIPLE_CHOICE' | 'WRITE_ANSWER',
   options: QuizOptions;
   id: string;
   courseContentId: string;

@@ -12,7 +12,6 @@ import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Container from "../Global/Container";
-import Question from "../Global/Question";
 import Spinner from "../Global/Spinner";
 import Subtitle from "../Global/Subtitle";
 import Title from "../Global/Title";
@@ -83,11 +82,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
             {/* ✅ Conditional Rendering */}
             {selectedContents?.type === "QUIZ" ? (
               <Quiz contents={selectedContents} />
-            ) : selectedContents?.type === "QUESTION" ? (
-              <Question contents={selectedContents} />
-            ) : (
-              <VideoPlayer contents={selectedContents} />
-            )}
+            ) : <VideoPlayer contents={selectedContents} />}
 
             {/* Navigation Buttons */}
             <div className="flex w-full justify-between gap-4">

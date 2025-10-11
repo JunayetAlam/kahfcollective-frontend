@@ -24,11 +24,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 
 import {
   useAddSingleQuizMutation,
   useDeleteSingleQuizMutation,
-  useGetAllQuizzesForCourseQuery,
+  useGetAllQuizzesForCourseAdminQuery,
   useUpdateCourseContentMutation,
   useUpdateSingleQuizMutation,
   useUpdateVideoMutationMutation,
@@ -56,18 +58,24 @@ export default function EditContentForm({
   const [deleteQuiz, { isLoading: isDeletingQuiz }] =
     useDeleteSingleQuizMutation();
   const [addQuiz, { isLoading: isAddingQuiz }] = useAddSingleQuizMutation();
-  const { data: quizzesData, refetch } = useGetAllQuizzesForCourseQuery(
+  const { data: quizzesData, refetch } = useGetAllQuizzesForCourseAdminQuery(
     item?.id,
   );
-
+console.log(quizzesData)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [quizToDelete, setQuizToDelete] = useState<any>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
 
-  const [newQuiz, setNewQuiz] = useState({
+  const [newQuiz, setNewQuiz] = useState<{
+    question: string;
+    options: { A: string; B: string; C: string; D: string } | null;
+    rightAnswer: string;
+    type: "MULTIPLE_CHOICE" | "WRITE_ANSWER";
+  }>({
     question: "",
     options: { A: "", B: "", C: "", D: "" },
     rightAnswer: "A",
+    type: "MULTIPLE_CHOICE",
   });
 
   const [editingQuiz, setEditingQuiz] = useState<any>({});
@@ -117,8 +125,9 @@ export default function EditContentForm({
     try {
       const payload = {
         question: quiz.question,
-        options: quiz.options,
+        ...(quiz.type === "MULTIPLE_CHOICE" && { options: quiz.options }),
         rightAnswer: quiz.rightAnswer,
+        type: quiz.type,
       };
       await updateQuiz({ id: quiz.id, data: payload }).unwrap();
       toast.success("Quiz updated");
@@ -146,12 +155,24 @@ export default function EditContentForm({
       return;
     }
     try {
-      await addQuiz({ courseContentId: item.id, ...newQuiz }).unwrap();
+      const payload: any = {
+        courseContentId: item.id,
+        question: newQuiz.question,
+        rightAnswer: newQuiz.rightAnswer,
+        type: newQuiz.type,
+      };
+      
+      if (newQuiz.type === "MULTIPLE_CHOICE" && newQuiz.options) {
+        payload.options = newQuiz.options;
+      }
+
+      await addQuiz(payload).unwrap();
       toast.success("Quiz added");
       setNewQuiz({
         question: "",
         options: { A: "", B: "", C: "", D: "" },
         rightAnswer: "A",
+        type: "MULTIPLE_CHOICE",
       });
       setShowAddDialog(false);
       refetch();
@@ -237,58 +258,107 @@ export default function EditContentForm({
               const current = editingQuiz[quiz.id] || quiz;
               return (
                 <div key={quiz.id} className="space-y-3 rounded border p-4">
-                  <Input
-                    value={current.question}
-                    onChange={(e) =>
-                      setEditingQuiz({
-                        ...editingQuiz,
-                        [quiz.id]: { ...current, question: e.target.value },
-                      })
-                    }
-                    disabled={isUpdatingQuiz}
-                  />
-                  {Object.entries(current.options).map(([key, value]: any) => (
-                    <div key={key} className="flex items-center gap-2">
-                      <span className="w-5 font-medium">{key}</span>
+                  <div className="space-y-2">
+                    <Label>Quiz Type:</Label>
+                    <Select
+                      value={current.type || "MULTIPLE_CHOICE"}
+                      onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
+                        setEditingQuiz({
+                          ...editingQuiz,
+                          [quiz.id]: { ...current, type: value },
+                        })
+                      }
+                      disabled={isUpdatingQuiz}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Question Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MULTIPLE_CHOICE">Multiple Choice</SelectItem>
+                        <SelectItem value="WRITE_ANSWER">Write Answer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Question:</Label>
+                    <Input
+                      value={current.question}
+                      onChange={(e) =>
+                        setEditingQuiz({
+                          ...editingQuiz,
+                          [quiz.id]: { ...current, question: e.target.value },
+                        })
+                      }
+                      disabled={isUpdatingQuiz}
+                    />
+                  </div>
+
+                  {current.type === "MULTIPLE_CHOICE" && current.options && (
+                    <>
+                      {Object.entries(current.options).map(([key, value]: any) => (
+                        <div key={key} className="flex items-center gap-2">
+                          <Badge variant="outline">{key}</Badge>
+                          <Input
+                            value={value}
+                            onChange={(e) =>
+                              setEditingQuiz({
+                                ...editingQuiz,
+                                [quiz.id]: {
+                                  ...current,
+                                  options: {
+                                    ...current.options,
+                                    [key]: e.target.value,
+                                  },
+                                },
+                              })
+                            }
+                            disabled={isUpdatingQuiz}
+                          />
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label>Correct Answer:</Label>
+                    {current.type === "WRITE_ANSWER" ? (
                       <Input
-                        value={value}
+                        placeholder="Enter correct answer"
+                        value={current.rightAnswer}
                         onChange={(e) =>
                           setEditingQuiz({
                             ...editingQuiz,
-                            [quiz.id]: {
-                              ...current,
-                              options: {
-                                ...current.options,
-                                [key]: e.target.value,
-                              },
-                            },
+                            [quiz.id]: { ...current, rightAnswer: e.target.value },
                           })
                         }
                         disabled={isUpdatingQuiz}
                       />
-                    </div>
-                  ))}
-                  <Select
-                    value={current.rightAnswer}
-                    onValueChange={(val) =>
-                      setEditingQuiz({
-                        ...editingQuiz,
-                        [quiz.id]: { ...current, rightAnswer: val },
-                      })
-                    }
-                    disabled={isUpdatingQuiz}
-                  >
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["A", "B", "C", "D"].map((opt) => (
-                        <SelectItem key={opt} value={opt}>
-                          {opt}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    ) : (
+                      <Select
+                        value={current.rightAnswer}
+                        onValueChange={(val) =>
+                          setEditingQuiz({
+                            ...editingQuiz,
+                            [quiz.id]: { ...current, rightAnswer: val },
+                          })
+                        }
+                        disabled={isUpdatingQuiz}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["A", "B", "C", "D"].map((opt) => (
+                            <SelectItem key={opt} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+
                   <div className="flex gap-3">
                     <Button
                       size="sm"
@@ -372,46 +442,90 @@ export default function EditContentForm({
             <DialogTitle>Add New Quiz</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <Input
-              placeholder="Question"
-              value={newQuiz.question}
-              onChange={(e) =>
-                setNewQuiz({ ...newQuiz, question: e.target.value })
-              }
-              disabled={isAddingQuiz}
-            />
-            {Object.entries(newQuiz.options).map(([key, value]) => (
+            <div className="space-y-2">
+              <Label>Quiz Type:</Label>
+              <Select
+                value={newQuiz.type}
+                onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
+                  setNewQuiz({ ...newQuiz, type: value })
+                }
+                disabled={isAddingQuiz}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Question Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MULTIPLE_CHOICE">Multiple Choice</SelectItem>
+                  <SelectItem value="WRITE_ANSWER">Write Answer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Question:</Label>
               <Input
-                key={key}
-                placeholder={`Option ${key}`}
-                value={value}
+                placeholder="Question"
+                value={newQuiz.question}
                 onChange={(e) =>
-                  setNewQuiz({
-                    ...newQuiz,
-                    options: { ...newQuiz.options, [key]: e.target.value },
-                  })
+                  setNewQuiz({ ...newQuiz, question: e.target.value })
                 }
                 disabled={isAddingQuiz}
               />
-            ))}
-            <Select
-              value={newQuiz.rightAnswer}
-              onValueChange={(val) =>
-                setNewQuiz({ ...newQuiz, rightAnswer: val })
-              }
-              disabled={isAddingQuiz}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Correct Answer" />
-              </SelectTrigger>
-              <SelectContent>
-                {["A", "B", "C", "D"].map((opt) => (
-                  <SelectItem key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
+            </div>
+
+            {newQuiz.type === "MULTIPLE_CHOICE" && newQuiz.options && (
+              <>
+                {Object.entries(newQuiz.options).map(([key, value]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <Badge variant="outline">{key}</Badge>
+                    <Input
+                      placeholder={`Option ${key}`}
+                      value={value}
+                      onChange={(e) =>
+                        setNewQuiz({
+                          ...newQuiz,
+                          options: { ...newQuiz.options!, [key]: e.target.value },
+                        })
+                      }
+                      disabled={isAddingQuiz}
+                    />
+                  </div>
                 ))}
-              </SelectContent>
-            </Select>
+              </>
+            )}
+
+            <div className="space-y-2">
+              <Label>Correct Answer:</Label>
+              {newQuiz.type === "WRITE_ANSWER" ? (
+                <Input
+                  placeholder="Enter correct answer"
+                  value={newQuiz.rightAnswer}
+                  onChange={(e) =>
+                    setNewQuiz({ ...newQuiz, rightAnswer: e.target.value })
+                  }
+                  disabled={isAddingQuiz}
+                />
+              ) : (
+                <Select
+                  value={newQuiz.rightAnswer}
+                  onValueChange={(val) =>
+                    setNewQuiz({ ...newQuiz, rightAnswer: val })
+                  }
+                  disabled={isAddingQuiz}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Correct Answer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["A", "B", "C", "D"].map((opt) => (
+                      <SelectItem key={opt} value={opt}>
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
           </div>
           <DialogFooter className="mt-4 flex justify-end gap-3">
             <Button

@@ -11,7 +11,7 @@ import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
 
 export default function Courses() {
     const searchParams = useSearchParams();
-    const searchTerm = searchParams.get("searchTerm");
+    const searchTerm = searchParams.get("searchTerm") || '';
     const args: TQueryParam[] = []
     if (searchTerm) args.push({ name: "searchTerm", value: searchTerm })
     const { data, isLoading } = useGetAllCoursesQuery(args);
@@ -35,7 +35,7 @@ export default function Courses() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                         {
-                            courses.slice(0, 3).map((item, idx) => <CourseCard key={idx} course={item} />)
+                            courses.map((item, idx) => <CourseCard key={idx} course={item} />)
                         }
                     </div>
                 </div>

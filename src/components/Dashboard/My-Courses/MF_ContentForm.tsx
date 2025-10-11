@@ -4,10 +4,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -32,10 +30,9 @@ import {
   useCreateQuizContentMutation,
   useCreateVideoCourseContentMutation,
 } from "@/redux/api/courseContent";
-import { useCreateQuestionMutation } from "@/redux/api/question";
 import { CourseContentData } from "@/types";
-import { HelpCircle, Plus, Trash2, Upload, Video } from "lucide-react";
-import { toast } from "sonner";
+import {  Plus, Upload, Video } from "lucide-react";
+import MF_ManageQuiz from "./MF_ManageQuiz";
 
 // ------------------ Zod Schema ------------------
 const contentSchema = z
@@ -44,21 +41,18 @@ const contentSchema = z
     title: z.string().min(1, "Title must be at least 1 characters"),
     description: z.string().min(2, "Description must be at least 2 characters"),
     questionText: z.string().optional(),
-    type: z.enum(["VIDEO", "QUIZ", "QUESTION"]),
+    type: z.enum(["VIDEO", "QUIZ"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
     questions: z
       .array(
         z.object({
           id: z.string(),
+          type: z.enum(['MULTIPLE_CHOICE', 'WRITE_ANSWER']),
           question: z.string().min(1, "Question is required"),
           options: z
-            .array(z.string().min(1, "Option cannot be empty"))
-            .length(4, "Exactly 4 options are required"),
-          correctAnswer: z
-            .number()
-            .min(0, "Correct answer is required")
-            .max(3, "Correct answer must be between 0 and 3"),
+            .array(z.string()),
+          correctAnswer: z.string(),
         }),
       )
       .optional(),
@@ -113,14 +107,13 @@ export function MF_ContentForm({
     useCreateQuizContentMutation();
   const [createVideoCourse, { isLoading: isVideoContentLoading }] =
     useCreateVideoCourseContentMutation();
-  const [createQuestion, { isLoading: isQuestionContentLoading }] =
-    useCreateQuestionMutation();
 
   const isLoading =
-    isContentQuizLoading || isVideoContentLoading || isQuestionContentLoading;
+    isContentQuizLoading || isVideoContentLoading;
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
+    console.log(data)
     if (data.type === "VIDEO") {
       if (!data.videoFile) return;
 
@@ -143,13 +136,16 @@ export function MF_ContentForm({
 
       const formattedQuizzes = data.questions.map((q) => ({
         question: q.question,
-        options: {
-          A: q.options[0],
-          B: q.options[1],
-          C: q.options[2],
-          D: q.options[3],
-        },
-        rightAnswer: String.fromCharCode(65 + q.correctAnswer),
+        ...(q.options && {
+          options: {
+            A: q.options[0],
+            B: q.options[1],
+            C: q.options[2],
+            D: q.options[3],
+          },
+        }),
+        rightAnswer: q.correctAnswer,
+        type: q.type,
       }));
 
       const payload = {
@@ -167,54 +163,9 @@ export function MF_ContentForm({
         console.error("Error creating quiz content:", err);
       }
     }
-
-    if (data.type === "QUESTION") {
-      const payload = {
-        title: data.title,
-        courseId: data.courseId,
-        status: data.status,
-        question: data.questionText,
-        description: data.description,
-      };
-
-      console.log("this is the payload", payload);
-
-      try {
-        await createQuestion(payload).unwrap();
-        toast.success("Question created successfully!");
-        setOpen(false);
-      } catch (error: any) {
-        toast.error(error?.data?.message || "Failed to create question");
-      }
-    }
   };
 
-  // ------------------ Question Handling ------------------
-  const addQuestion = () => {
-    const questions = watch("questions") || [];
-    setValue(
-      "questions",
-      [
-        ...questions,
-        {
-          id: uuidv4(),
-          question: "",
-          options: ["", "", "", ""],
-          correctAnswer: 0,
-        },
-      ],
-      { shouldValidate: true },
-    );
-  };
 
-  const removeQuestion = (index: number) => {
-    const questions = watch("questions") || [];
-    setValue(
-      "questions",
-      questions.filter((_, i) => i !== index),
-      { shouldValidate: true },
-    );
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter") e.preventDefault();
@@ -300,7 +251,6 @@ export function MF_ContentForm({
                           <SelectContent>
                             <SelectItem value="VIDEO">Video</SelectItem>
                             <SelectItem value="QUIZ">Quiz</SelectItem>
-                            <SelectItem value="QUESTION">Question</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
@@ -385,177 +335,10 @@ export function MF_ContentForm({
                 </Card>
               )}
 
-              {/* question form */}
-              {watchedType === "QUESTION" && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <HelpCircle className="h-5 w-5" /> Write Question
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="questionText">Question</Label>
-                      <Controller
-                        name="questionText"
-                        control={control}
-                        render={({ field }) => (
-                          <Textarea
-                            id="questionText"
-                            placeholder="Write your question here..."
-                            rows={6}
-                            className="resize-none"
-                            {...field}
-                          />
-                        )}
-                      />
-                      {errors.questionText && (
-                        <p className="text-sm text-red-500">
-                          {errors.questionText.message}
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+             
 
               {watchedType === "QUIZ" && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <HelpCircle className="h-5 w-5" /> Quiz Questions
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600">
-                        Create multiple choice questions
-                      </p>
-                      <Button size="sm" onClick={addQuestion}>
-                        <Plus className="mr-2 h-4 w-4" /> Add Question
-                      </Button>
-                    </div>
-
-                    {(watch("questions") || []).map((question, qIndex) => (
-                      <Card
-                        key={question.id}
-                        className="border-l-4 border-l-blue-500"
-                      >
-                        <CardHeader className="flex items-start justify-between pb-3">
-                          <h4>Question {qIndex + 1}</h4>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeQuestion(qIndex)}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          <Input
-                            placeholder="Enter question"
-                            value={question.question}
-                            onChange={(e) => {
-                              const updated = [...(watch("questions") || [])];
-                              updated[qIndex].question = e.target.value;
-                              setValue("questions", updated, {
-                                shouldValidate: true,
-                              });
-                            }}
-                          />
-                          {errors.questions?.[qIndex]?.question && (
-                            <p className="text-sm text-red-500">
-                              {errors.questions[qIndex]?.question?.message}
-                            </p>
-                          )}
-
-                          {question.options.map((opt, oIndex) => (
-                            <div
-                              key={oIndex}
-                              className="flex items-center gap-2"
-                            >
-                              <Badge variant="outline">
-                                {String.fromCharCode(65 + oIndex)}
-                              </Badge>
-                              <Input
-                                className="flex-1"
-                                placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
-                                value={opt}
-                                onChange={(e) => {
-                                  const updated = [
-                                    ...(watch("questions") || []),
-                                  ];
-                                  updated[qIndex].options[oIndex] =
-                                    e.target.value;
-                                  setValue("questions", updated, {
-                                    shouldValidate: true,
-                                  });
-                                }}
-                              />
-                              {errors.questions?.[qIndex]?.options?.[
-                                oIndex
-                              ] && (
-                                <p className="text-sm text-red-500">
-                                  {
-                                    errors.questions[qIndex]?.options?.[oIndex]
-                                      ?.message
-                                  }
-                                </p>
-                              )}
-                            </div>
-                          ))}
-
-                          {/* Correct Answer Selector */}
-                          <div className="mt-2 flex items-center gap-2">
-                            <Label className="whitespace-nowrap">
-                              Correct Answer:
-                            </Label>
-                            <Controller
-                              name={
-                                `questions.${qIndex}.correctAnswer` as const
-                              }
-                              control={control}
-                              render={({ field }) => (
-                                <Select
-                                  value={field.value?.toString()}
-                                  onValueChange={(val) =>
-                                    field.onChange(Number(val))
-                                  }
-                                >
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue placeholder="Select" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="0">A</SelectItem>
-                                    <SelectItem value="1">B</SelectItem>
-                                    <SelectItem value="2">C</SelectItem>
-                                    <SelectItem value="3">D</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            {errors.questions?.[qIndex]?.correctAnswer && (
-                              <p className="text-sm text-red-500">
-                                {
-                                  errors.questions[qIndex]?.correctAnswer
-                                    ?.message
-                                }
-                              </p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-
-                    {errors.questions &&
-                      typeof errors.questions?.message === "string" && (
-                        <p className="mt-2 text-sm text-red-500">
-                          {errors.questions.message}
-                        </p>
-                      )}
-                  </CardContent>
-                </Card>
+                <MF_ManageQuiz control={control} errors={errors} setValue={setValue} watch={watch} />
               )}
             </TabsContent>
           </Tabs>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
+  Brain,
   FileText,
   GraduationCap,
   Home,
@@ -34,6 +35,13 @@ const navigation = [
     label: "My Courses",
     icon: GraduationCap,
     route: "/dashboard/my-courses",
+    roles: ["INSTRUCTOR"],
+    title: "Class Management",
+  },
+  {
+    label: "Quiz Performance",
+    icon: Brain,
+    route: "/dashboard/quiz",
     roles: ["INSTRUCTOR"],
     title: "Class Management",
   },
@@ -195,24 +203,7 @@ export function Sidebar() {
                 </Link>
               );
             })}
-            <Button
-              variant="ghost"
-              onClick={handleLogOut}
-              className={cn(
-                "text-muted-foreground hover:text-foreground hover:bg-accent group relative w-full justify-start",
-                !isOpen && "justify-center",
-              )}
-            >
-              <LogOut className="h-5 w-5 flex-shrink-0" />
-              {isOpen && <span className="ml-3">Log Out</span>}
 
-              {/* Tooltip for collapsed state */}
-              {!isOpen && (
-                <div className="bg-popover text-popover-foreground pointer-events-none absolute left-full z-50 ml-2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-                  Log Out
-                </div>
-              )}
-            </Button>
           </ul>
         </nav>
 
@@ -234,7 +225,25 @@ export function Sidebar() {
               <span className="absolute left-10 block w-max">Home</span>
             </Button>
           </Link>
-          <Link href={"/about-us"} className="block">
+          <Button
+            onClick={handleLogOut}
+            className={cn(
+              "!text-foreground hover:bg-primary/10 border-primary relative justify-center overflow-hidden border-0 shadow-none transition-all duration-300 hover:border-r-3",
+              isOpen && "w-full justify-start",
+            )}
+            variant={"outline"}
+          >
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            {isOpen && <span className="ml-3">Log Out</span>}
+
+            {/* Tooltip for collapsed state */}
+            {!isOpen && (
+              <div className="bg-popover text-popover-foreground pointer-events-none absolute left-full z-50 ml-2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                Log Out
+              </div>
+            )}
+          </Button>
+          {/* <Link href={"/about-us"} className="block">
             <Button
               size={isOpen ? "default" : "icon"}
               className={cn(
@@ -246,7 +255,7 @@ export function Sidebar() {
               <Home className="h-5 w-5" />
               <span className="absolute left-10 block w-max">About Us</span>
             </Button>
-          </Link>
+          </Link> */}
 
           {isOpen && userData && (
             <div className="bg-muted/50 mb-4 rounded-lg px-3 py-2">

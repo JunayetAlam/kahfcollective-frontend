@@ -81,7 +81,8 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
                     setQuizState={setQuizState}
                     refetchQuizResult={refetchQuizResult}
                     isAllAnswered={quizResult?.isAllAnswered || false}
-                      result={{ correct: quizResult?.total, total: quizResult?.correct }}
+                    isAllMarked={quizResult?.isAllMarked || false}
+                    result={{ correct: quizResult?.total, total: quizResult?.correct }}
                 />
             ) : !quizState.started ? (
                 <QuizIntro
@@ -97,6 +98,7 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
                     setQuizState={setQuizState}
                     refetchQuizResult={refetchQuizResult}
                     isAllAnswered={quizResult?.isAllAnswered || false}
+                    isAllMarked={quizResult?.isAllMarked || false}
                     result={{ correct: quizResult?.correct, total: quizResult?.total }}
                 />
             )}

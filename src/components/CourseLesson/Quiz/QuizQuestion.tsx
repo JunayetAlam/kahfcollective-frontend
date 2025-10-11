@@ -22,13 +22,14 @@ interface QuizQuestionProps {
     setQuizState: React.Dispatch<React.SetStateAction<QuizState>>
     refetchQuizResult: () => void
     isAllAnswered: boolean
+    isAllMarked: boolean
     result?: {
         total?: number
         correct?: number
     }
 }
 
-export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refetchQuizResult, isAllAnswered, result }: QuizQuestionProps) {
+export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refetchQuizResult, isAllAnswered, isAllMarked, result }: QuizQuestionProps) {
     const totalQuestions = allQuizzes.length
     const currentQuestion = allQuizzes[quizState.currentQuestionIndex]
     const [answerQuiz, { isLoading: answerQuizLoading }] = useAnswerQuizMutation()
@@ -45,20 +46,10 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
         const question = allQuizzes[questionIndex]
         if (!question) return false
 
-        // Find the option key (A, B, C, D) for the selected answer text
-        const optionKey = Object.keys(question.options).find(
-            key => question.options[key as 'A' | 'B' | 'C' | 'D'] === selectedAnswerText
-        )
-
-        if (!optionKey) {
-            toast.error("Invalid answer selection")
-            return false
-        }
-
         try {
             await answerQuiz({
                 quizId: question.id,
-                answer: optionKey // Send A, B, C, or D
+                answer: selectedAnswerText // Send A, B, C, or D
             }).unwrap()
 
             setQuizState(prev => ({
@@ -128,14 +119,15 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
     }
     return (
         <div className="w-full space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quiz</h2>
-                <div className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                    {
-                        isAllAnswered ? `${result?.total || 'N'}/${result?.correct || 'A'} Result` : `${answeredQuestionsCount}/${totalQuestions} answered`
-                    }
+            <div className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                {
+                    isAllAnswered
+                        ? isAllMarked
+                            ? `${result?.correct || 0}/${result?.total || totalQuestions} Correct`
+                            : `${totalQuestions}/${totalQuestions} Submitted`
+                        : `${answeredQuestionsCount}/${totalQuestions} answered`
+                }
 
-                </div>
             </div>
             <div className="text-gray-600 dark:text-gray-400">Question {quizState.currentQuestionIndex + 1} of {totalQuestions}</div>
             <Progress

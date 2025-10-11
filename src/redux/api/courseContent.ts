@@ -92,6 +92,15 @@ const courseContentApi = baseApi.injectEndpoints({
         meta: response.meta,
       }),
     }),
+    getAllQuizzesForCourseAdmin: builder.query({
+      query: (id: string) => ({
+        url: `/course-contents/${id}/quizzes`,
+      }),
+      transformResponse: (response: TResponseRedux<Quiz[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+    }),
     updateSingleQuiz: builder.mutation({
       query: ({ id, data }) => ({
         url: `/course-contents/quiz/${id}`,
@@ -160,4 +169,5 @@ export const {
   useGetAllContentForSpecificCourseQuery,
   useGetQuestionsSubmitsForCurrentInstructorQuery,
   useUpdateContentStatusMutation,
+  useGetAllQuizzesForCourseAdminQuery
 } = courseContentApi;
