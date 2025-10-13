@@ -19,7 +19,7 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
 
   const { data: courseData } = useGetCourseByIdQuery(courseId);
   if (!courseData?.data) {
-    return ''
+    return ' '
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>

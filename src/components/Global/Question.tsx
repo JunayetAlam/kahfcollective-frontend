@@ -14,7 +14,6 @@ export default function Question({ contents }: QuestionProps) {
   const [createAnswer, { isLoading }] = useCreateQuestionAnswerMutation();
   const [answerText, setAnswerText] = useState<string>("");
 
-  console.log({ a: contents });
 
   const handleSubmit = async () => {
     if (!answerText.trim()) {

@@ -70,7 +70,7 @@ export default function ForumTable() {
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody colSpan={4}>
                         {forumData.map((forum) => (
                             <ForumTableRow key={forum.id} forum={forum} />
                         ))}

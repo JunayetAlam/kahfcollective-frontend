@@ -2,7 +2,7 @@
 
 import { cn, handleSetSearchParams } from '@/lib/utils';
 import { CourseContents } from '@/types';
-import { FileText, PlayCircle, HelpCircle } from 'lucide-react'; // Assuming HelpCircle for quiz
+import { FileText, PlayCircle, HelpCircle } from 'lucide-react'; // Assuming HelpCircle for Assessment
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
@@ -20,7 +20,7 @@ export default function ModuleItem({
     case 'VIDEO':
       Icon = PlayCircle;
       break;
-   
+
     case 'QUIZ':
       Icon = HelpCircle;
       break;
@@ -30,14 +30,14 @@ export default function ModuleItem({
 
   const handleChangeModuleItem = () => {
     handleSetSearchParams(
-      { module: moduleItem.index.toString() },
+      { module: moduleItem.id },
       searchParams,
       router
     );
   };
 
   const searchedModule = searchParams.get('module') || '';
-  const isSelected = Number(searchedModule) === moduleItem.index
+  const isSelected = searchedModule === moduleItem.id
 
   return (
     <div

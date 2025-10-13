@@ -61,7 +61,6 @@ export default function EditContentForm({
   const { data: quizzesData, refetch } = useGetAllQuizzesForCourseAdminQuery(
     item?.id,
   );
-console.log(quizzesData)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [quizToDelete, setQuizToDelete] = useState<any>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -130,10 +129,10 @@ console.log(quizzesData)
         type: quiz.type,
       };
       await updateQuiz({ id: quiz.id, data: payload }).unwrap();
-      toast.success("Quiz updated");
+      toast.success("Assessment updated");
       refetch();
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update quiz");
+      toast.error(error?.data?.message || "Failed to update Assessment");
     }
   };
 
@@ -141,11 +140,11 @@ console.log(quizzesData)
     if (!quizToDelete) return;
     try {
       await deleteQuiz(quizToDelete.id).unwrap();
-      toast.success("Quiz deleted");
+      toast.success("Assessment deleted");
       refetch();
       setQuizToDelete(null);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete quiz");
+      toast.error(error?.data?.message || "Failed to delete Assessment");
     }
   };
 
@@ -167,7 +166,7 @@ console.log(quizzesData)
       }
 
       await addQuiz(payload).unwrap();
-      toast.success("Quiz added");
+      toast.success("Assessment added");
       setNewQuiz({
         question: "",
         options: { A: "", B: "", C: "", D: "" },
@@ -177,7 +176,7 @@ console.log(quizzesData)
       setShowAddDialog(false);
       refetch();
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to add quiz");
+      toast.error(error?.data?.message || "Failed to add Assessment");
     }
   };
 
@@ -249,7 +248,7 @@ console.log(quizzesData)
           <div className="flex items-center justify-between">
             <h3 className="font-medium">Edit Quizzes</h3>
             <Button size="sm" onClick={() => setShowAddDialog(true)}>
-              Add Quiz
+              Add Assessment
             </Button>
           </div>
 
@@ -259,7 +258,7 @@ console.log(quizzesData)
               return (
                 <div key={quiz.id} className="space-y-3 rounded border p-4">
                   <div className="space-y-2">
-                    <Label>Quiz Type:</Label>
+                    <Label>Assessment Type:</Label>
                     <Select
                       value={current.type || "MULTIPLE_CHOICE"}
                       onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
@@ -282,7 +281,7 @@ console.log(quizzesData)
 
                   <div className="space-y-2">
                     <Label>Question:</Label>
-                    <Input
+                    <Textarea
                       value={current.question}
                       onChange={(e) =>
                         setEditingQuiz({
@@ -295,7 +294,7 @@ console.log(quizzesData)
                   </div>
 
                   {current.type === "MULTIPLE_CHOICE" && current.options && (
-                    <>
+                    <div className="grid grid-cols-2 gap-3">
                       {Object.entries(current.options).map(([key, value]: any) => (
                         <div key={key} className="flex items-center gap-2">
                           <Badge variant="outline">{key}</Badge>
@@ -317,13 +316,13 @@ console.log(quizzesData)
                           />
                         </div>
                       ))}
-                    </>
+                    </div>
                   )}
 
                   <div className="space-y-2">
                     <Label>Correct Answer:</Label>
                     {current.type === "WRITE_ANSWER" ? (
-                      <Input
+                      <Textarea
                         placeholder="Enter correct answer"
                         value={current.rightAnswer}
                         onChange={(e) =>
@@ -365,7 +364,7 @@ console.log(quizzesData)
                       onClick={() => handleQuizUpdate(current)}
                       disabled={isUpdatingQuiz}
                     >
-                      {isUpdatingQuiz ? "Updating..." : "Update Quiz"}
+                      {isUpdatingQuiz ? "Updating..." : "Update Assessment"}
                     </Button>
                     <Button
                       variant="destructive"
@@ -373,7 +372,7 @@ console.log(quizzesData)
                       onClick={() => setQuizToDelete(quiz)}
                       disabled={isDeletingQuiz}
                     >
-                      {isDeletingQuiz ? "Deleting..." : "Delete Quiz"}
+                      {isDeletingQuiz ? "Deleting..." : "Delete Assessment"}
                     </Button>
                   </div>
                 </div>
@@ -414,7 +413,7 @@ console.log(quizzesData)
           <DialogHeader>
             <DialogTitle>Confirm Delete</DialogTitle>
           </DialogHeader>
-          <p className="text-sm">Are you sure you want to delete this quiz?</p>
+          <p className="text-sm">Are you sure you want to delete this Assessment?</p>
           <DialogFooter className="mt-4 flex justify-end gap-3">
             <Button
               type="button"
@@ -435,15 +434,15 @@ console.log(quizzesData)
         </DialogContent>
       </Dialog>
 
-      {/* Add Quiz Dialog */}
+      {/* Add Assessment Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Quiz</DialogTitle>
+            <DialogTitle>Add New Assessment</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label>Quiz Type:</Label>
+              <Label>Assessment Type:</Label>
               <Select
                 value={newQuiz.type}
                 onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
@@ -463,7 +462,7 @@ console.log(quizzesData)
 
             <div className="space-y-2">
               <Label>Question:</Label>
-              <Input
+              <Textarea
                 placeholder="Question"
                 value={newQuiz.question}
                 onChange={(e) =>
@@ -497,7 +496,7 @@ console.log(quizzesData)
             <div className="space-y-2">
               <Label>Correct Answer:</Label>
               {newQuiz.type === "WRITE_ANSWER" ? (
-                <Input
+                <Textarea
                   placeholder="Enter correct answer"
                   value={newQuiz.rightAnswer}
                   onChange={(e) =>
@@ -537,7 +536,7 @@ console.log(quizzesData)
               Cancel
             </Button>
             <Button onClick={handleAddQuiz} disabled={isAddingQuiz}>
-              {isAddingQuiz ? "Adding..." : "Add Quiz"}
+              {isAddingQuiz ? "Adding..." : "Add Assessment"}
             </Button>
           </DialogFooter>
         </DialogContent>

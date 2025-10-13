@@ -5,6 +5,7 @@ import { TQueryParam } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useGetAllForumsQuery } from "@/redux/api/forumApi";
 import { Pagination } from "../Global/Pagination";
+import Loading from "../Global/Loading";
 
 export default function Fraternities() {
     const args: TQueryParam[] = [{ name: 'forumType', value: 'LOCATION_BASED' }];
@@ -13,7 +14,7 @@ export default function Fraternities() {
     if (page) args.push({ name: 'page', value: page })
     const { data, isLoading } = useGetAllForumsQuery(args);
     if (isLoading) {
-        return ''
+        return <Loading/>
     };
     const forums = data?.data || []
     return (

@@ -240,7 +240,7 @@ export default function TierManagement() {
                                 <TableHead className="text-right">Action</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody colSpan={3}>
                             {tiers.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">

@@ -72,7 +72,7 @@ export default function UserTable() {
                                             <TableHead>Action</TableHead>
                                         </TableRow>
                                     </TableHeader>
-                                    <TableBody>
+                                    <TableBody colSpan={8}>
                                         {users.map((user) => (
                                             <UserRow key={user.id} user={user} />
                                         ))}
@@ -81,7 +81,7 @@ export default function UserTable() {
                             )}
                         </div>
 
-                        <Pagination totalPages={data?.meta?.totalPage || 1} />
+                        <Pagination totalPages={data?.meta?.totalPage || 0} />
                     </div>
                 </TabsContent>
                 

@@ -1,10 +1,8 @@
-
-import { QuizAnswers, TResponseRedux } from "@/types";
+import { QuizAnswerGroup, QuizAnswers, QuizAnswersData, TQueryParam, TResponseRedux } from "@/types";
 import { baseApi } from "./baseApi";
 
 export const quizAnswerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Answer a quiz
     answerQuiz: builder.mutation({
       query: (data: { quizId: string; answer: string }) => ({
         url: `/answer-quizzes`,
@@ -14,7 +12,36 @@ export const quizAnswerApi = baseApi.injectEndpoints({
       invalidatesTags: ["QuizAnswer"],
     }),
 
-    // Lock all quizzes for a content
+    markQuizAnswer: builder.mutation({
+      query: (data: { quizAnswerId: string; isRight: boolean }) => ({
+        url: `/answer-quizzes/mark`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["QuizAnswer"],
+    }),
+
+    getAllQuizAnswers: builder.query({
+      query: (args: TQueryParam[]) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+        return {
+          url: `/answer-quizzes/quiz-answers`,
+          method: "GET",
+          params: params
+        }
+      },
+      transformResponse: (response: TResponseRedux<QuizAnswerGroup[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+      providesTags: ["QuizAnswer"],
+    }),
+
     lockQuiz: builder.mutation({
       query: (contentId: string) => ({
         url: `/answer-quizzes/lock/${contentId}`,
@@ -23,21 +50,38 @@ export const quizAnswerApi = baseApi.injectEndpoints({
       invalidatesTags: ["QuizAnswer"],
     }),
 
-    // Get quiz result for a content
     getQuizResult: builder.query({
-      query: (contentId) => ({
+      query: (contentId: string) => ({
         url: `/answer-quizzes/result/${contentId}`,
-        method: "GET"
+        method: "GET",
       }),
-      
       providesTags: ["QuizAnswer"],
     }),
 
-    // Get a single quiz with user's answer
+    getInstructorResults: builder.query({
+      query: (args: [{ name: 'contentId', value: string }, { name: 'userId', value: string }]) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+        return {
+          url: `/answer-quizzes/result-instructor`,
+          method: "GET",
+          params: params,
+        }
+      },
+      transformResponse: (response: TResponseRedux<QuizAnswersData>) => ({
+        data: response.data,
+      }),
+      providesTags: ["QuizAnswer"],
+    }),
+
     getSingleQuizAnswer: builder.query({
-      query: (quizId) =>({
-        url:  `/answer-quizzes/${quizId}`,
-        method: "GET"
+      query: (quizId: string) => ({
+        url: `/answer-quizzes/${quizId}`,
+        method: "GET",
       }),
       transformResponse: (response: TResponseRedux<QuizAnswers>) => ({
         data: response.data,
@@ -50,7 +94,10 @@ export const quizAnswerApi = baseApi.injectEndpoints({
 
 export const {
   useAnswerQuizMutation,
+  useMarkQuizAnswerMutation,
+  useGetAllQuizAnswersQuery,
   useLockQuizMutation,
   useGetQuizResultQuery,
+  useGetInstructorResultsQuery,
   useGetSingleQuizAnswerQuery,
 } = quizAnswerApi;

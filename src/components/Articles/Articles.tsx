@@ -7,6 +7,7 @@ import { TQueryParam } from "@/types";
 import { useGetAllContentsQuery } from "@/redux/api/contentApi";
 import { useSearchParams } from "next/navigation";
 import { Pagination } from "../Global/Pagination";
+import Loading from "../Global/Loading";
 
 export default function Articles() {
   const searchParams = useSearchParams();
@@ -17,7 +18,7 @@ export default function Articles() {
   if (page) args.push({ name: 'page', value: page })
   const { data, isLoading } = useGetAllContentsQuery(args);
   if (isLoading) {
-    return ''
+    return <Loading/>
   }
   const articles = data?.data || []
   return (

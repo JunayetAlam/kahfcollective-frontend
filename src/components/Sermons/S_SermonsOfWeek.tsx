@@ -11,6 +11,7 @@ import { Calendar, PlayCircle } from 'lucide-react';
 import { TQueryParam } from '@/types';
 import { useGetAllContentsQuery } from '@/redux/api/contentApi';
 import MediaPlayer from './MediaPlayer';
+import Loading from '../Global/Loading';
 export default function S_SermonsOfWeek() {
   const args: TQueryParam[] = [
     { name: "contentType", value: "SERMONS" },
@@ -19,10 +20,10 @@ export default function S_SermonsOfWeek() {
 
   const { data, isLoading } = useGetAllContentsQuery(args);
   if (isLoading) {
-    return ''
+    return <Loading/>
   }
   if (!data?.data[0]) {
-    return ''
+    return ' '
   }
   const sermon = data?.data[0]
   return (

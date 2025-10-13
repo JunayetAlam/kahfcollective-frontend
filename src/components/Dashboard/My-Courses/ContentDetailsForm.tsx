@@ -54,7 +54,7 @@ export function ContentDetailsForm({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="video">Video</SelectItem>
-              <SelectItem value="quiz">Quiz</SelectItem>
+              <SelectItem value="quiz">Assessment</SelectItem>
             </SelectContent>
           </Select>
         </div>

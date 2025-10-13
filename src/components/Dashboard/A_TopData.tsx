@@ -67,7 +67,7 @@ export default function A_TopData() {
     <>
 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((item, idx) => (
           <div
             key={idx}
@@ -84,7 +84,7 @@ export default function A_TopData() {
 
           </div>
         ))}
-      </div>
+      </div> */}
     </>
   );
 }

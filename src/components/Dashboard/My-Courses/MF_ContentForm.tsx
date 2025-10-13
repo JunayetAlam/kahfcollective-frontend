@@ -113,7 +113,6 @@ export function MF_ContentForm({
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
-    console.log(data)
     if (data.type === "VIDEO") {
       if (!data.videoFile) return;
 
@@ -160,7 +159,7 @@ export function MF_ContentForm({
         await createQuizContent(payload as any).unwrap();
         setOpen(false);
       } catch (err) {
-        console.error("Error creating quiz content:", err);
+        console.error("Error creating Assessment content:", err);
       }
     }
   };
@@ -182,7 +181,7 @@ export function MF_ContentForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="overflow-auto sm:max-w-[900px]">
+      <DialogContent className="overflow-auto !container">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "Edit Content" : "Add New Content"}
@@ -190,7 +189,7 @@ export function MF_ContentForm({
           <p className="text-muted-foreground text-sm">
             {isEdit
               ? "Update content details"
-              : "Create new video or quiz content"}
+              : "Create new video or Assessment content"}
           </p>
         </DialogHeader>
 
@@ -202,7 +201,7 @@ export function MF_ContentForm({
                 {watchedType === "VIDEO"
                   ? "Video"
                   : watchedType === "QUIZ"
-                    ? "Quiz"
+                    ? "Assessment"
                     : "Question"}
               </TabsTrigger>
             </TabsList>
@@ -250,7 +249,7 @@ export function MF_ContentForm({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="VIDEO">Video</SelectItem>
-                            <SelectItem value="QUIZ">Quiz</SelectItem>
+                            <SelectItem value="QUIZ">Assessment</SelectItem>
                           </SelectContent>
                         </Select>
                       )}

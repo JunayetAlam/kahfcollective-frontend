@@ -6,15 +6,16 @@ import { useGetAllForumsQuery } from "@/redux/api/forumApi";
 import { Pagination } from "../Global/Pagination";
 import { TQueryParam } from "@/types";
 import { useSearchParams } from "next/navigation";
+import Loading from "../Global/Loading";
 
 export default function StudyCircles() {
-    const args: TQueryParam[] = [{name: 'forumType', value: 'STUDY_CIRCLES'}];
+    const args: TQueryParam[] = [{ name: 'forumType', value: 'STUDY_CIRCLES' }];
     const searchParams = useSearchParams();
     const page = searchParams.get('page');
     if (page) args.push({ name: 'page', value: page })
     const { data, isLoading } = useGetAllForumsQuery(args);
     if (isLoading) {
-        return ''
+        return <Loading />
     };
     const forums = data?.data || []
     return (

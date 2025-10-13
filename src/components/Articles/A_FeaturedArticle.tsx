@@ -9,6 +9,7 @@ import { Calendar } from 'lucide-react';
 import { TQueryParam } from '@/types';
 import { useGetAllContentsQuery } from '@/redux/api/contentApi';
 import ViewArticle from './ViewArticles';
+import Loading from '../Global/Loading';
 export default function A_FeaturedArticle() {
     const args: TQueryParam[] = [
         { name: "contentType", value: "ARTICLE" },
@@ -17,10 +18,10 @@ export default function A_FeaturedArticle() {
 
     const { data, isLoading } = useGetAllContentsQuery(args);
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
     if (!data?.data[0]) {
-        return ''
+        return ' '
     }
     const article = data?.data[0];
     return (

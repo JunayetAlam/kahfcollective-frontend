@@ -139,15 +139,15 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
     const lockQuizQuestions = async () => {
         try {
             await lockQuiz(contents.id).unwrap()
-            toast.success("Quiz submitted successfully!")
+            toast.success("Assessment submitted successfully!")
             
-            // Refetch quiz results to get the updated data with correct answers
+            // Refetch Assessment results to get the updated data with correct answers
             await refetchQuizResult()
             
             setQuizState(prev => ({ ...prev, started: false, quizCompleted: true }))
         } catch (error: any) {
-            console.error('Error locking quiz:', error)
-            const errorMessage = error?.data?.message || error?.message || "Failed to submit quiz. Please try again."
+            console.error('Error locking Assessment:', error)
+            const errorMessage = error?.data?.message || error?.message || "Failed to submit Assessment. Please try again."
             toast.error(errorMessage)
             throw error
         }
@@ -166,7 +166,7 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
         if (quizState.currentQuestionIndex < totalQuestions - 1) {
             setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 }))
         } else {
-            // This is the last question, lock the quiz
+            // This is the last question, lock the Assessment
             try {
                 await lockQuizQuestions()
             } catch  {
@@ -181,12 +181,12 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
         }
     }
 
-    // Loading state for quiz results
+    // Loading state for Assessment results
     if (getQuizResultLoading) {
         return (
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <span className="ml-2">Loading quiz results...</span>
+                <span className="ml-2">Loading Assessment results...</span>
             </div>
         )
     }
@@ -196,8 +196,8 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
             {quizState.quizCompleted ? (
                 <Card className="w-full text-center max-w-2xl shadow-lg dark:bg-gray-800">
                     <CardHeader>
-                        <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Quiz Results</CardTitle>
-                        <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the quiz!</CardDescription>
+                        <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Assessment Results</CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the Assessment!</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {quizResult ? (
@@ -248,7 +248,7 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
                             </>
                         ) : (
                             <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                                Quiz completed but results are loading...
+                                Assessment completed but results are loading...
                             </div>
                         )}
                         
@@ -257,14 +257,14 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
                             onClick={handleRestartQuiz} 
                             className="mt-6 w-full bg-gray-700 text-white hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700"
                         >
-                            Take Quiz Again
+                            Take Assessment Again
                         </Button>
                     </CardContent>
                 </Card>
             ) : !quizState.started ? (
                 <Card className="w-full max-w-2xl py-20 text-center shadow-lg dark:bg-gray-800">
                     <CardHeader>
-                        <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Quiz</CardTitle>
+                        <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Assessment</CardTitle>
                         <CardDescription className="text-gray-600 dark:text-gray-400">{contents.title}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -277,14 +277,14 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
                                 variant="outline" 
                                 className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 bg-transparent"
                             >
-                                Skip Quiz
+                                Skip Assessment
                             </Button>
                             <Button 
                                 size="lg" 
                                 onClick={handleStartQuiz} 
                                 className="w-full bg-gray-700 text-white hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700"
                             >
-                                Start Quiz
+                                Start Assessment
                             </Button>
                         </div>
                     </CardContent>
@@ -292,7 +292,7 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
             ) : (
                 <div className="w-full space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quiz</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Assessment</h2>
                         <div className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                             {answeredQuestionsCount}/{totalQuestions} answered
                         </div>
@@ -366,7 +366,7 @@ export default function QuizPage({ contents }: { contents: CourseContents }) {
                                     variant="secondary"
                                 >
                                     {(isSubmittingAnswer || lockQuizLoading) && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {quizState.currentQuestionIndex === totalQuestions - 1 ? "Submit Quiz" : "Next"} 
+                                    {quizState.currentQuestionIndex === totalQuestions - 1 ? "Submit Assessment" : "Next"} 
                                     <ArrowRight className="h-4 w-4" />
                                 </Button>
                             </div>

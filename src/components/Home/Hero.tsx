@@ -11,28 +11,7 @@ import { ArrowRight } from "lucide-react";
 import { useCurrentUser } from "@/redux/authSlice";
 import { useAppSelector } from "@/redux/store";
 import Link from "next/link";
-// const features = [
-//     {
-//         label: 'Islamic Scholars',
-//         icon: image1,
-//         ownClass: 'justify-end ml-0',
-//     },
-//     {
-//         label: 'Quiz & Assignments',
-//         icon: image2,
-//         ownClass: 'justify-center mr-16',
-//     },
-//     {
-//         label: '1000+ Students',
-//         icon: image3,
-//         ownClass: 'justify-end mr-8',
-//     },
-//     {
-//         label: 'Video Lessons',
-//         icon: image4,
-//         ownClass: 'justify-center ml-8',
-//     },
-// ];
+
 
 export default function Hero() {
   const user = useAppSelector(useCurrentUser);

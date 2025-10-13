@@ -12,6 +12,7 @@ export * from './content.type'
 export * from './user.type'
 export * from './payment.type'
 export * from './forum.type'
+export * from './quiz.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };

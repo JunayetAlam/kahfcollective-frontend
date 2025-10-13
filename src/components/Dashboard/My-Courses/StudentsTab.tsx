@@ -28,7 +28,7 @@ export function StudentsTab({ courseId }: { courseId: string }) {
             <TableHead>Last Access</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody colSpan={3}>
           {students?.length ? (
             students?.map((student: CourseEnroll) => (
               <TableRow key={student.id}>

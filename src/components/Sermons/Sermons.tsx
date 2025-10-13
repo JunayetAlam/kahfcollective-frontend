@@ -6,6 +6,7 @@ import { useGetAllContentsQuery } from "@/redux/api/contentApi";
 import { TQueryParam } from "@/types";
 import { Pagination } from "../Global/Pagination";
 import { useSearchParams } from "next/navigation";
+import Loading from "../Global/Loading";
 
 
 
@@ -19,7 +20,7 @@ export default function Sermons() {
 
     const { data, isLoading } = useGetAllContentsQuery(args);
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
     const sermons = data?.data || []
     return (

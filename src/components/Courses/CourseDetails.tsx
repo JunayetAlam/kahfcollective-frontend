@@ -15,13 +15,14 @@ import TopTitle from '../Global/TopTitle';
 import Link from 'next/link';
 import { useGetCourseByIdQuery } from '@/redux/api/courseApi';
 import courseImg from "@/assets/articles.jpg"
+import Loading from '../Global/Loading';
 
 
 export default function CourseDetails({ slug }: { slug: string }) {
      const [activeTab, setActiveTab] = useState("overview")
     const { data, isLoading } = useGetCourseByIdQuery(slug)
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
     const courseDetails = data?.data
     return (

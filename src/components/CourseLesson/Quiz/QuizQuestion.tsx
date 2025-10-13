@@ -7,6 +7,7 @@ import { useAnswerQuizMutation, useGetSingleQuizAnswerQuery, useLockQuizMutation
 import { toast } from "sonner"
 import SingleQuiz from "./SingleQuiz"
 import { Quiz } from "@/types"
+import Loading from "@/components/Global/Loading"
 interface QuizState {
     started: boolean
     currentQuestionIndex: number
@@ -37,7 +38,7 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
 
     const { data, isLoading } = useGetSingleQuizAnswerQuery(currentQuestion.id)
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
 
     const answeredQuestionsCount = Object.keys(quizState.selectedAnswers).length
@@ -45,11 +46,10 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
     const submitAnswer = async (questionIndex: number, selectedAnswerText: string) => {
         const question = allQuizzes[questionIndex]
         if (!question) return false
-
         try {
             await answerQuiz({
                 quizId: question.id,
-                answer: selectedAnswerText // Send A, B, C, or D
+                answer: selectedAnswerText
             }).unwrap()
 
             setQuizState(prev => ({
@@ -71,16 +71,16 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
         try {
             if (!isAllAnswered) {
                 await lockQuiz(allQuizzes[0]?.courseContentId || "").unwrap()
-                toast.success("Quiz submitted successfully!")
+                toast.success("Assessment submitted successfully!")
 
-                // Refetch quiz results to get the updated data with correct answers
+                // Refetch Assessment results to get the updated data with correct answers
                 refetchQuizResult()
             }
 
             setQuizState(prev => ({ ...prev, started: false, quizCompleted: true }))
         } catch (error: any) {
-            console.error('Error locking quiz:', error)
-            const errorMessage = error?.data?.message || error?.message || "Failed to submit quiz. Please try again."
+            console.error('Error locking Assessment:', error)
+            const errorMessage = error?.data?.message || error?.message || "Failed to submit Assessment. Please try again."
             toast.error(errorMessage)
             throw error
         }
@@ -143,6 +143,7 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
                         isSubmitted={quizState.submittedAnswers[quizState.currentQuestionIndex]}
                         isSubmitting={answerQuizLoading}
                         quizAns={quizAns}
+                        isAllMarked={isAllMarked}
                     />
 
                     <div className="mt-8 flex w-full gap-4 max-w-max ml-auto">
@@ -166,7 +167,7 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
                             variant="secondary"
                         >
                             {(answerQuizLoading || lockQuizLoading) && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                            {quizState.currentQuestionIndex === totalQuestions - 1 ? isAllAnswered ? 'Done' : 'Submit Quiz' : "Next"}
+                            {quizState.currentQuestionIndex === totalQuestions - 1 ? isAllAnswered ? 'Done' : 'Submit Assessment' : "Next"}
                             <ArrowRight className="h-4 w-4" />
                         </Button>
                     </div>

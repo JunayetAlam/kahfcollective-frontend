@@ -7,6 +7,7 @@ import { useGetAllPostForSpecificForumQuery } from "@/redux/api/postApi";
 import { useParams, useSearchParams } from "next/navigation";
 import { TQueryParam } from "@/types";
 import { Pagination } from "../Global/Pagination";
+import Loading from "../Global/Loading";
 
 export default function StudyCircleFeed() {
   const { slug: forumId } = useParams();
@@ -17,7 +18,7 @@ export default function StudyCircleFeed() {
   if (page) args.push({ name: 'page', value: page })
   const { data, isLoading } = useGetAllPostForSpecificForumQuery({ forumId: forumId as string, args })
   if (isLoading) {
-    return ''
+    return <Loading/>
   }
   const posts = data?.data || []
   return (

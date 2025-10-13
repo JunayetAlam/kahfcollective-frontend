@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useGetAllQuizzesForCourseQuery } from "@/redux/api/courseContent"
 import { CourseContents } from "@/types"
@@ -29,12 +30,27 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
         submittedAnswers: {},
     })
 
+    useEffect(() => {
+        if (!data) return;
+
+        const selectedAnswers: Record<number, string> = (data?.data || []).reduce((acc, item, index) => {
+            const answer = item.quizAnswers[0]?.answer;
+            if (answer !== undefined) {
+                acc[index] = answer;
+            }
+            return acc;
+        }, {} as Record<number, string>);
+        setQuizState({
+            ...quizState,
+            selectedAnswers
+        })
+    }, [data]);
+
     if (isLoading) return (
         <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin" />
         </div>
     )
-
     const allQuizzes = data?.data || []
     const totalQuestions = allQuizzes.length
     const quizResult = getQuizResult?.data
@@ -60,12 +76,11 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
             submittedAnswers: {}
         })
     }
-
     if (getQuizResultLoading) {
         return (
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <span className="ml-2">Loading quiz results...</span>
+                <span className="ml-2">Loading Assessment results...</span>
             </div>
         )
     }

@@ -20,14 +20,14 @@ import VideoPlayer from "../Global/VideoPlayer";
 import { Button } from "../ui/button";
 import CourseModuleList from "./CourseModuleList";
 import Quiz from "./Quiz/Quiz";
+import Loading from "../Global/Loading";
 
 const CourseLesson = ({ slug }: { slug: string }) => {
   const token = useAppSelector(useCurrentToken);
   const searchParams = useSearchParams();
-  const index = searchParams.get("module");
+  const moduleId = searchParams.get("module");
   const router = useRouter();
 
-  // ✅ Redirect to login if no token
   if (!token) {
     router.push("/auth/sign-in");
   }
@@ -41,7 +41,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetAllContentForSpecificCourseQuery(slug);
 
   if (isLoading || courseLoading) {
-    return <Spinner />; // ✅ show loading spinner instead of empty return
+    return <Loading/>; 
   }
 
   const courseContents = data?.data || [];
@@ -49,13 +49,12 @@ const CourseLesson = ({ slug }: { slug: string }) => {
   const isCourseComplete = (courseData?.completeCourses || [])?.length > 0;
 
   const selectedContents = courseContents?.find(
-    (item) => item.index === Number(index),
+    (item) => item.id === moduleId,
   );
 
-  console.log(courseData);
 
-  const handleChangeModuleItem = (index: number) => {
-    handleSetSearchParams({ module: `${index}` }, searchParams, router);
+  const handleChangeModuleItem = (id: string) => {
+    handleSetSearchParams({ module: `${id}` }, searchParams, router);
   };
 
   return (
@@ -87,14 +86,14 @@ const CourseLesson = ({ slug }: { slug: string }) => {
             {/* Navigation Buttons */}
             <div className="flex w-full justify-between gap-4">
               <Button
-                disabled={Number(index) === courseContents[0].index}
+                disabled={moduleId === courseContents[0].id}
                 onClick={() => {
                   const currentIndex = courseContents.findIndex(
-                    (obj) => obj.index === selectedContents.index,
+                    (obj) => obj.id === selectedContents.id,
                   );
                   const previousContent = courseContents[currentIndex - 1];
                   if (previousContent)
-                    handleChangeModuleItem(previousContent.index);
+                    handleChangeModuleItem(previousContent.id);
                 }}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -103,15 +102,15 @@ const CourseLesson = ({ slug }: { slug: string }) => {
 
               <Button
                 disabled={
-                  Number(index) ===
-                  courseContents[courseContents.length - 1].index
+                  moduleId ===
+                  courseContents[courseContents.length - 1].id
                 }
                 onClick={() => {
-                  const currentIndex = courseContents.findIndex(
-                    (obj) => obj.index === selectedContents.index,
+                  const currentId = courseContents.findIndex(
+                    (obj) => obj.id === selectedContents.id,
                   );
-                  const nextContent = courseContents[currentIndex + 1];
-                  if (nextContent) handleChangeModuleItem(nextContent.index);
+                  const nextContent = courseContents[currentId + 1];
+                  if (nextContent) handleChangeModuleItem(nextContent.id);
                 }}
               >
                 Next

@@ -79,7 +79,7 @@ export function ContentTab({
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody colSpan={4}>
           {courseData.courseContents?.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{item.title}</TableCell>
@@ -97,7 +97,7 @@ export function ContentTab({
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
-                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
                   <DialogTrigger asChild>
                     <Button
                       size="icon"
@@ -109,7 +109,7 @@ export function ContentTab({
                       <Pen />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-lg">
+                  <DialogContent className="!container">
                     <DialogHeader>
                       <DialogTitle>Edit Content</DialogTitle>
                     </DialogHeader>

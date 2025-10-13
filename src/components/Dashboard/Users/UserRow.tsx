@@ -20,6 +20,7 @@ import { useUpdateUserRoleMutation, useToggleIsUserVerifiedMutation } from '@/re
 import { Switch } from "@/components/ui/switch";
 import { UserDetailsModal } from '../Users/UserDetailsModal';
 import { useGetAllTiersQuery, useToggleAssignTierMutation } from '@/redux/api/tierApi';
+import Loading from '@/components/Global/Loading';
 
 const roleDisplay: Record<string, string> = {
   SUPERADMIN: 'SUPERADMIN',
@@ -61,7 +62,7 @@ export default function UserRow({ user }: { user: User }) {
   }
 
   if (tierIsLoading) {
-    return ''
+    return <Loading/>
   }
   const tierData = data?.data || []
   const userTier = user?.userTiers.map(item => item?.tier?.id)

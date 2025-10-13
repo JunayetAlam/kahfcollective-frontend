@@ -30,9 +30,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${quantico.variable}`}>
         <Providers>
-          <Navbar />
-          {children}
-          <Footer />
+          <div className="flex min-h-screen flex-col justify-between">
+            <Navbar />
+            {children}
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

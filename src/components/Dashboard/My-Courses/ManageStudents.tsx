@@ -198,7 +198,7 @@ export default function ManageStudents({
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
-                                <TableBody>
+                                <TableBody colSpan={2}>
                                     {students?.map((student: User) => (
                                         <StudentRow
                                             key={student?.id}

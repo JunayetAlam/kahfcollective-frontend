@@ -39,9 +39,9 @@ const navigation = [
     title: "Class Management",
   },
   {
-    label: "Quiz Performance",
+    label: "Assessment Performance",
     icon: Brain,
-    route: "/dashboard/quiz",
+    route: "/dashboard/assessment",
     roles: ["INSTRUCTOR"],
     title: "Class Management",
   },
@@ -60,13 +60,7 @@ const navigation = [
     roles: ["SUPERADMIN"],
     title: "Content Management",
   },
-  // {
-  //   label: "Quiz Performance",
-  //   icon: Brain,
-  //   route: "/dashboard/quiz",
-  //   roles: ["INSTRUCTOR"],
-  //   title: "Analyze Quiz",
-  // },
+
 
   {
     label: "Discussion",

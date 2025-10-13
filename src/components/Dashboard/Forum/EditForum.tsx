@@ -18,6 +18,7 @@ import {
     useGetSingleForumQuery,
     useUpdateCircleForumMutation,
 } from "@/redux/api/forumApi";
+import Loading from "@/components/Global/Loading";
 
 type EditForumProps = {
     forumId: string;
@@ -31,7 +32,7 @@ export default function EditForum({ forumId }: EditForumProps) {
     const [updateForum, { isLoading: updating }] = useUpdateCircleForumMutation();
 
     if (fetching) {
-        return ''
+        return <Loading/>
     }
 
     const handleSubmit = async (data: FieldValues) => {

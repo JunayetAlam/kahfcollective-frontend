@@ -7,11 +7,12 @@ import { Button } from '../ui/button';
 import CourseCard from '../Global/CourseCard';
 import Title from '../Global/Title';
 import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
+import Loading from '../Global/Loading';
 
 export default function C_SuggestedCourses() {
      const { data, isLoading } = useGetAllCoursesQuery([{name: "limit", value: 3}]);
         if (isLoading) {
-            return ''
+            return <Loading/>
         }
         const courses = data?.data || [];
     return (

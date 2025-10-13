@@ -19,6 +19,7 @@ import {
 } from "@/redux/api/forumApi";
 import { FraternityGroupForm } from "./FruternityForm";
 import { Event } from "@/types";
+import Loading from "@/components/Global/Loading";
 
 
 
@@ -42,7 +43,7 @@ export default function EditFruternityGroup({ forumId }: EditFruternityGroupProp
     }, [data]);
 
     if (fetching) {
-        return '';
+        return <Loading/>;
     }
 
     const handleSubmit = async (data: FieldValues) => {

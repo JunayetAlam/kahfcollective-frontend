@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { HelpCircle, Plus, Trash2 } from 'lucide-react';
 import React from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
@@ -61,20 +62,22 @@ export default function MF_ManageQuiz({ watch, setValue, errors, control }: payl
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5" /> Quiz Questions
+                    <HelpCircle className="h-5 w-5" /> Assessment Questions
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 relative">
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-gray-600">
                         Create multiple choice questions
                     </p>
-                    <Button size="sm" onClick={addQuestion}>
+
+                </div>
+                <div className='sticky top-0 w-full text-end -mt-12'>
+                    <Button size="sm" onClick={addQuestion} >
                         <Plus className="mr-2 h-4 w-4" /> Add Question
                     </Button>
                 </div>
-
                 {(watch("questions") || []).map((question, qIndex) => (
                     <Card
                         key={question.id}
@@ -93,7 +96,7 @@ export default function MF_ManageQuiz({ watch, setValue, errors, control }: payl
                         <CardContent className="space-y-2">
                             <div className="mt-2 flex flex-col gap-2">
                                 <Label className="whitespace-nowrap">
-                                    Quiz Type:
+                                    Assessment Type:
                                 </Label>
                                 <Select
                                     value={question.type}
@@ -118,7 +121,7 @@ export default function MF_ManageQuiz({ watch, setValue, errors, control }: payl
                                 <Label className="whitespace-nowrap">
                                     Question:
                                 </Label>
-                                <Input
+                                <Textarea
                                     placeholder="Enter question"
                                     value={question.question}
                                     onChange={(e) => {
@@ -179,7 +182,7 @@ export default function MF_ManageQuiz({ watch, setValue, errors, control }: payl
                                     Correct Answer:
                                 </Label>
                                 {
-                                    question.type === 'WRITE_ANSWER' ? <Input
+                                    question.type === 'WRITE_ANSWER' ? <Textarea
                                         placeholder="Enter question"
                                         value={question.correctAnswer}
                                         onChange={(e) => {

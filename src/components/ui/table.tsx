@@ -29,13 +29,29 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   )
 }
 
-function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+function TableBody({ className, children, emptyMessage = "No data found.", colSpan, ...props }: React.ComponentProps<"tbody"> & { emptyMessage?: string, colSpan: number }) {
+  const newProps = { children, ...props }
+  const hasChildren = React.Children.count(children) > 0;
   return (
     <tbody
       data-slot="table-body"
       className={cn("[&_tr:last-child]:border-0", className)}
-      {...props}
-    />
+      {...newProps}
+    >
+      {hasChildren ? (
+        children
+      ) : (
+        <tr data-slot="table-row" className="border-b">
+          <td
+            data-slot="table-cell"
+            className="p-2 align-middle text-center h-24 text-muted-foreground"
+            colSpan={colSpan}
+          >
+            {emptyMessage}
+          </td>
+        </tr>
+      )}
+    </tbody>
   )
 }
 

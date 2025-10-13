@@ -5,6 +5,7 @@ import Subtitle from '../Global/Subtitle';
 import { useGetAllConnectedUserToForumQuery } from '@/redux/api/forumApi';
 import { useParams, useSearchParams } from 'next/navigation';
 import { TQueryParam } from '@/types';
+import Loading from '../Global/Loading';
 
 
 export default function SCF_MembersList() {
@@ -16,7 +17,7 @@ export default function SCF_MembersList() {
 
     const { data, isLoading } = useGetAllConnectedUserToForumQuery({ forumId: forumId as string, args });
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
     const users = data?.data || [];
     return (

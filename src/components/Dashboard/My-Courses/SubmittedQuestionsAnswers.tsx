@@ -71,7 +71,7 @@ function SubmittedQuestionsAnswers() {
                 <TableHead className="pr-5">Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody colSpan={6}>
               {questions?.map((question) => (
                 <SingleQuestion question={question} key={question.id} />
               ))}
@@ -98,10 +98,9 @@ const SingleQuestion = ({ question }: { question: SubmittedQuestion }) => {
         isCorrect: status,
       }).unwrap();
 
-      console.log(res);
 
       toast.success(res.message);
-    } catch (error) {
+    } catch {
       toast.error("Error updating status");
     }
   };

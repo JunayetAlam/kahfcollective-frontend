@@ -56,7 +56,7 @@ export function Pagination({
     return pageNumbers;
   };
   if (totalPages < 2) {
-    return ''
+    return ' '
   }
 
   return (

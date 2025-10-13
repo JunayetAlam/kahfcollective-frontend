@@ -97,6 +97,7 @@ export interface Quiz {
   rightAnswer: string;
   isDeleted: boolean;
   index: number;
+  quizAnswers: QuizAnswers[],
   createdAt: string;
   updatedAt: string;
 }

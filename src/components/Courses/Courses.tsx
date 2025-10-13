@@ -8,6 +8,7 @@ import { Pagination } from "../Global/Pagination";
 import { useSearchParams } from "next/navigation";
 import { TQueryParam } from "@/types";
 import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
+import Loading from "../Global/Loading";
 
 export default function Courses() {
     const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ export default function Courses() {
     if (searchTerm) args.push({ name: "searchTerm", value: searchTerm })
     const { data, isLoading } = useGetAllCoursesQuery(args);
     if (isLoading) {
-        return ''
+        return <Loading/>
     }
     const courses = data?.data || [];
     return (

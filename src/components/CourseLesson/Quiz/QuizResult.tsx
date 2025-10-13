@@ -27,11 +27,10 @@ interface QuizResultsProps {
 }
 
 export default function QuizResults({ quizResult, viewQuiz }: QuizResultsProps) {
-    console.log(JSON.stringify(quizResult))
     return (
         <Card className="w-full text-center max-w-2xl shadow-lg dark:bg-gray-800">
             <CardHeader>
-                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Quiz Results</CardTitle>
+                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Assessment Results</CardTitle>
                 <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the quiz!</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -114,7 +113,7 @@ export default function QuizResults({ quizResult, viewQuiz }: QuizResultsProps) 
                     </>
                 ) : (
                     <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                        Quiz completed but results are loading...
+                        Assessment completed but results are loading...
                     </div>
                 )}
             </CardContent>
@@ -124,7 +123,7 @@ export default function QuizResults({ quizResult, viewQuiz }: QuizResultsProps) 
                     onClick={viewQuiz}
                     className="mt-6 w-full bg-gray-700 text-white hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700"
                 >
-                    View All Quiz
+                    View All Assessment
                 </Button>
             </div>
         </Card>

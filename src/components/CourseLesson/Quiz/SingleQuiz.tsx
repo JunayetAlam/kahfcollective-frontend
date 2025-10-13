@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Circle } from "lucide-react"
 import { Quiz, QuizAnswers } from "@/types"
 import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
 
 interface SingleQuizProps {
     currentQuestion: Quiz
@@ -25,14 +26,13 @@ export default function SingleQuiz({
     isAllMarked
 }: SingleQuizProps) {
     const isWriteAnswer = currentQuestion.type === "WRITE_ANSWER"
-    
-    const optionsArray = !isWriteAnswer && currentQuestion.options 
+
+    const optionsArray = !isWriteAnswer && currentQuestion.options
         ? Object.entries(currentQuestion.options).map(([key, value]) => ({
             name: key,
             value
         }))
         : []
-
     if (quizAns?.isLocked) {
         // If locked but not marked, show only submitted answer
         if (!isAllMarked) {
@@ -53,7 +53,7 @@ export default function SingleQuiz({
                     {isWriteAnswer ? (
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">Your Submitted Answer:</Label>
-                            <Input
+                            <Textarea
                                 value={quizAns.answer}
                                 disabled
                                 className="border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
@@ -67,7 +67,6 @@ export default function SingleQuiz({
                         >
                             {optionsArray.map((option, index) => {
                                 const isSelected = quizAns?.answer === option.name
-
                                 return (
                                     <div
                                         key={index}
@@ -138,20 +137,19 @@ export default function SingleQuiz({
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">Your Answer:</Label>
-                            <Input
+                            <Textarea
                                 value={quizAns.answer}
                                 disabled
-                                className={`${
-                                    quizAns.isRight 
-                                        ? "border-green-500 bg-green-50 dark:bg-green-900/20" 
+                                className={`${quizAns.isRight
+                                        ? "border-green-500 bg-green-50 dark:bg-green-900/20"
                                         : "border-red-500 bg-red-50 dark:bg-red-900/20"
-                                }`}
+                                    }`}
                             />
                         </div>
                         {!quizAns.isRight && (
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">Correct Answer:</Label>
-                                <Input
+                                <Textarea
                                     value={quizAns.rightAnswer || ''}
                                     disabled
                                     className="border-green-500 bg-green-50 dark:bg-green-900/20"
@@ -218,7 +216,7 @@ export default function SingleQuiz({
                     <Label htmlFor="write-answer" className="text-sm font-medium">
                         Your Answer:
                     </Label>
-                    <Input
+                    <Textarea
                         id="write-answer"
                         value={selectedAnswer}
                         onChange={(e) => onAnswerChange(e.target.value)}
@@ -230,39 +228,35 @@ export default function SingleQuiz({
             ) : (
                 <RadioGroup
                     value={selectedAnswer}
-                    onValueChange={onAnswerChange}
+                    // onValueChange={onAnswerChange}
                     className="grid gap-4"
                     disabled={isSubmitting}
                 >
                     {optionsArray.map((option, index) => (
                         <div
                             key={index}
-                            onClick={() => !isSubmitting && onAnswerChange(option.value)}
-                            className={`flex items-center space-x-3 rounded-md border p-4 transition-colors duration-200 ${
-                                isSubmitting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                            } ${
-                                selectedAnswer === option.value
+                            onClick={() => !isSubmitting && onAnswerChange(option.name)}
+                            className={`flex items-center space-x-3 rounded-md border p-4 transition-colors duration-200 ${isSubmitting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                                } ${selectedAnswer === option.name
                                     ? "border-primary bg-primary/20 dark:border-primary dark:bg-primary/30"
                                     : "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
-                            }`}
+                                }`}
                         >
-                            <RadioGroupItem 
-                                value={option.value} 
-                                id={`option-${index}`} 
-                                className="sr-only" 
+                            <RadioGroupItem
+                                value={option.name}
+                                id={`option-${index}`}
+                                className="sr-only"
                             />
                             <Label
                                 htmlFor={`option-${index}`}
-                                className={`flex-1 text-base font-medium text-gray-800 dark:text-gray-200 ${
-                                    isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer'
-                                }`}
+                                className={`flex-1 text-base font-medium text-gray-800 dark:text-gray-200 ${isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer'
+                                    }`}
                             >
                                 {option.value}
                             </Label>
-                            <Circle 
-                                className={`h-5 w-5 text-gray-400 dark:text-gray-500 ${
-                                    selectedAnswer === option.value && "fill-primary"
-                                }`} 
+                            <Circle
+                                className={`h-5 w-5 text-gray-400 dark:text-gray-500 ${selectedAnswer === option.name && "fill-primary"
+                                    }`}
                             />
                         </div>
                     ))}

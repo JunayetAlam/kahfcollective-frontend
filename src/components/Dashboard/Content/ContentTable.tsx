@@ -61,7 +61,7 @@ export default function ContentTable() {
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody colSpan={5}>
             {isLoading ? (
               Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={idx}>
