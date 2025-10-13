@@ -2,10 +2,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as z from "zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,30 +17,45 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Option, SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Textarea } from "@/components/ui/textarea";
+import { Option, SearchableSelect } from "@/components/ui/SearchableSelect";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Upload } from "lucide-react";
+import Image from "next/image";
+
 import {
   useGetContentByIdQuery,
   useUpdateContentMutation,
 } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
-import { Upload } from "lucide-react";
-import Image from "next/image";
 
-// -------- Zod Schema --------
+// ----------------- Zod Schema -----------------
 const updateSchema = z.object({
+  contentType: z.enum(["ARTICLE", "SERMONS"], {
+    message: "Content type is required",
+  }),
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Content/Description is required"),
-  tierId: z.string().min(1, "Tier is required"),
+  type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
-  file: z.any().optional(),
+  description: z.string().min(1, "Description is required"),
+  tierId: z.string().min(1, "Tier is required"),
+  content: z.any().optional(),
+  thumbnail: z.any().optional(),
 });
+
 type UpdateFormValues = z.infer<typeof updateSchema>;
 
+// ----------------- Main Component -----------------
 export default function EditContent({ contentId }: { contentId: string }) {
   const [open, setOpen] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [updateContent, { isLoading }] = useUpdateContentMutation();
 
   const { data: contentData, isFetching } = useGetContentByIdQuery(contentId);
   const { data: usersData } = useGetAllUsersQuery([]);
@@ -54,82 +69,89 @@ export default function EditContent({ contentId }: { contentId: string }) {
   const form = useForm<UpdateFormValues>({
     resolver: zodResolver(updateSchema),
     defaultValues: {
+      contentType: "" as "ARTICLE",
       title: "",
+      type: "",
+      authorId: "",
       description: "",
       tierId: "",
-      authorId: "",
-      file: null,
+      content: null,
+      thumbnail: null,
     },
   });
 
-  const { register, handleSubmit, watch, setValue, reset, formState } = form;
-  const { errors } = formState;
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = form;
 
-  const selectedFile = watch("file");
+  const selectedContentType = watch("contentType");
 
-  // Prefill form when contentData is fetched
+  // Prefill data
   useEffect(() => {
     if (contentData?.data) {
-      const content = contentData.data;
+      const c = contentData.data;
       reset({
-        title: content.title || "",
-        description: content.description || "",
-        tierId: content.tierId || "",
-        authorId: content.authorId || "",
-        file: null,
+        contentType: c.contentType || "ARTICLE",
+        title: c.title || "",
+        type: c.type || "",
+        authorId: c.authorId || "",
+        tierId: c.tierId || "",
+        description: c.description || "",
+        content: null,
+        thumbnail: null,
       });
-      if (content.thumbnail) setPreview(content.thumbnail);
     }
   }, [contentData, reset]);
 
-  // Update preview when file changes
-  useEffect(() => {
-    if (
-      selectedFile instanceof File &&
-      selectedFile.type.startsWith("image/")
-    ) {
-      const url = URL.createObjectURL(selectedFile);
-      setPreview(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [selectedFile]);
+  // File change handlers
+  const handleFileChange = (field: "content" | "thumbnail") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files?.[0]) setValue(field, e.target.files[0]);
+    };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setValue("file", e.target.files[0]);
-  };
+  // Submit handler
+  const onSubmit = async (data: UpdateFormValues) => {
 
-  const [, { isLoading }] = useUpdateContentMutation();
+    const formData = new FormData();
+    formData.append("contentType", data.contentType);
+    formData.append("title", data.title);
+    formData.append("authorId", data.authorId);
+    formData.append("description", data.description);
+    formData.append("tierId", data.tierId);
+    if (data.type) formData.append("type", data.type);
+    if (selectedContentType === "SERMONS" && data.content)
+      formData.append("content", data.content);
+    if (selectedContentType === "ARTICLE" && data.thumbnail)
+      formData.append("thumbnail", data.thumbnail);
 
-  const onSubmit = async (values: UpdateFormValues) => {
     try {
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("description", values.description);
-      formData.append("tierId", values.tierId);
-      formData.append("authorId", values.authorId);
-      if (values.file) formData.append("content", values.file);
-
-      // const data = await updateContent({
-      //   id: contentId,
-      //   data: formData,
-      // }).unwrap();
-
+      await updateContent({ id: contentId, data: formData }).unwrap();
       toast.success("✅ Content updated successfully!");
+      setOpen(false);
       reset();
-      setPreview(null);
-      setOpen(false); // close dialog after success
     } catch (err: any) {
       console.error(err);
       toast.error(err?.data?.message || "❌ Failed to update content");
     }
   };
-
+  const coverImg = contentData?.data?.coverImage || ''
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) reset();
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="outline">Edit</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Content</DialogTitle>
         </DialogHeader>
@@ -137,15 +159,73 @@ export default function EditContent({ contentId }: { contentId: string }) {
         {isFetching ? (
           <p className="py-6 text-center">Loading content...</p>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
+            {/* Content Type */}
+            <Controller
+              control={control}
+              name="contentType"
+              render={({ field }) => (
+                <div>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select content type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ARTICLE">Article</SelectItem>
+                      <SelectItem value="SERMONS">Sermons</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.contentType && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.contentType.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Article type only for ARTICLE */}
+            {selectedContentType === "ARTICLE" && (
+              <Controller
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <div>
+                    <Label>Article Type</Label>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select article type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="article">Article</SelectItem>
+                        <SelectItem value="blog">Blog</SelectItem>
+                        <SelectItem value="dua">Dua</SelectItem>
+                        <SelectItem value="hadith">Hadith</SelectItem>
+                        <SelectItem value="tafsir">Tafsir</SelectItem>
+                        <SelectItem value="story">Story</SelectItem>
+                        <SelectItem value="islamic_history">
+                          Islamic History
+                        </SelectItem>
+                        <SelectItem value="question_answer">
+                          Question & Answer
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              />
+            )}
+
+            {/* Title */}
             <div>
               <Label>Title</Label>
-              <Input {...register("title")} placeholder="Enter title" />
+              <Input {...form.register("title")} placeholder="Enter title" />
               {errors.title && (
                 <p className="text-sm text-red-500">{errors.title.message}</p>
               )}
             </div>
 
+            {/* Author */}
             <SearchableSelect
               label="Author / Speaker"
               options={userOptions}
@@ -157,6 +237,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.authorId.message}</p>
             )}
 
+            {/* Tier */}
             <SearchableSelect
               label="Tier"
               options={tierOptions}
@@ -168,11 +249,12 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.tierId.message}</p>
             )}
 
+            {/* Description */}
             <div>
-              <Label>Content / Description</Label>
+              <Label>Description / Content</Label>
               <Textarea
-                {...register("description")}
-                placeholder="Enter content or description"
+                {...form.register("description")}
+                placeholder="Enter description"
               />
               {errors.description && (
                 <p className="text-sm text-red-500">
@@ -181,41 +263,27 @@ export default function EditContent({ contentId }: { contentId: string }) {
               )}
             </div>
 
-            <div>
-              <Label>Upload File (Optional)</Label>
-              <div className="rounded-lg border-2 border-dashed border-gray-200 p-4 text-center hover:border-gray-300">
-                <input
-                  type="file"
-                  id="file-upload"
-                  className="hidden"
-                  onChange={onFileChange}
-                  accept="image/*,audio/*,video/*"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="flex cursor-pointer flex-col items-center space-y-2"
-                >
-                  {!preview ? (
-                    <>
-                      <Upload className="h-8 w-8 text-gray-400" />
-                      <span className="text-sm font-medium text-gray-600">
-                        Click to upload file
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        Images, Audio, or Video
-                      </span>
-                    </>
-                  ) : (
-                    <Image
-                      src={preview}
-                      alt="preview"
-                      className="max-h-48 rounded-md object-contain"
-                    />
-                  )}
-                </label>
-              </div>
-            </div>
+            {/* File Upload */}
+            {selectedContentType === "SERMONS" ? (
+              <FileUpload
+                label="Upload Video / Audio"
+                value={watch("content")}
+                onChange={handleFileChange("content")}
+                accept="video/*,audio/*"
+                contentType={watch("contentType")}
+              />
+            ) : (
+              <FileUpload
+                label="Upload Thumbnail"
+                value={watch("thumbnail")}
+                onChange={handleFileChange("thumbnail")}
+                coverImg={coverImg}
+                accept="image/*"
+                contentType={watch("contentType")}
+              />
+            )}
 
+            {/* Actions */}
             <div className="flex justify-end space-x-3 border-t pt-4">
               <Button
                 type="button"
@@ -234,3 +302,87 @@ export default function EditContent({ contentId }: { contentId: string }) {
     </Dialog>
   );
 }
+
+// ---------------- Reusable File Upload ----------------
+type FileUploadProps = {
+  label: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: File | null;
+  accept?: string;
+  coverImg?: string
+  contentType: string
+};
+
+const FileUpload: React.FC<FileUploadProps> = ({
+  label,
+  onChange,
+  value,
+  accept,
+  coverImg,
+  contentType
+}) => {
+  const [preview, setPreview] = useState<string | null>(coverImg || null);
+  const inputId = `file-upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
+
+  useEffect(() => {
+    if (!value) return setPreview(coverImg || null);
+
+    if (value instanceof File && value.type.startsWith("image/")) {
+      const url = URL.createObjectURL(value);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    }
+
+    if (
+      value instanceof File &&
+      (value.type.startsWith("audio/") || value.type.startsWith("video/"))
+    ) {
+      setPreview(value.name);
+    }
+  }, [value, coverImg]);
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="rounded-lg border-2 border-dashed border-gray-200 p-4 text-center hover:border-gray-300">
+        <input
+          type="file"
+          id={inputId}
+          className="hidden"
+          onChange={onChange}
+          accept={accept}
+        />
+        <label
+          htmlFor={inputId}
+          className="flex cursor-pointer flex-col items-center space-y-2"
+        >
+          {!preview ? (
+            <>
+              <Upload className="h-8 w-8 text-gray-400" />
+              <span className="text-sm font-medium text-gray-600">
+                Click to upload file
+              </span>
+              <span className="text-xs text-gray-400">
+                {label.toLowerCase().includes("thumbnail")
+                  ? "PNG, JPG, GIF up to 10MB"
+                  : "Video/Audio up to 500MB"}
+              </span>
+            </>
+          ) : contentType === 'ARTICLE' ? (
+            <div className="w-full aspect-video relative">
+              <Image
+                src={preview}
+                alt="preview"
+                fill
+                className="object-cover rounded-md"
+              />
+            </div>
+          ) : (
+            <div className="text-sm font-medium text-gray-600">
+              {preview} ✅
+            </div>
+          )}
+        </label>
+      </div>
+    </div>
+  );
+};

@@ -63,7 +63,7 @@ export default function EditForum({ forumId }: EditForumProps) {
             <DialogTrigger asChild>
                 <Button variant="outline">Edit Forum</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Edit Study Circles Forum</DialogTitle>
                     <p className="text-sm text-gray-600">

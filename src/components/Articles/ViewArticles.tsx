@@ -30,7 +30,7 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
                 )}
             </DialogTrigger>
 
-            <DialogContent className="max-w-4xl w-[95vw] p-6 bg-white border-0 shadow-2xl">
+            <DialogContent className="p-6 bg-white border-0 shadow-2xl">
                 <DialogHeader className="pb-4 border-b border-gray-100">
                     <DialogTitle className="text-xl font-bold text-gray-900">{article.title}</DialogTitle>
                     <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">

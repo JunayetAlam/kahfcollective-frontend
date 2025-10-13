@@ -25,7 +25,7 @@ export default function Mark({ quizAnswer }: { quizAnswer: QuizAnswerGroup }) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="!max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogContent className=" max-h-[80vh] overflow-y-auto">
                 {isLoading ? (
                     <Spinner />
                 ) : (

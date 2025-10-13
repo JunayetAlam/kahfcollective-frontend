@@ -28,9 +28,9 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
           Manage
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-hidden sm:max-w-[900px]">
+      <DialogContent className="max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>Manage Course: Principles of Adab</DialogTitle>
+          <DialogTitle>Manage Course: {courseData?.data?.title}</DialogTitle>
           <p className="text-muted-foreground text-sm">
             Edit course details, manage content, and track student progress.
           </p>

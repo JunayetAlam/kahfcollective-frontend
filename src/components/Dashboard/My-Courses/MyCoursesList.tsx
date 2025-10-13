@@ -10,6 +10,7 @@ import { useState } from "react";
 import CreateCourse from "./CreateCourse";
 import ManageCourse from "./ManageCourse";
 import ManageStudents from "./ManageStudents";
+import Loading from "@/components/Global/Loading";
 
 export default function CourseManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,7 +48,7 @@ export default function CourseManagementDashboard() {
       {/* Course Cards */}
       <div className="mt-6 space-y-3">
         {isLoading ? (
-          <p>Loading courses...</p>
+          <Loading/>
         ) : filteredCourses.length ? (
           filteredCourses.map((course) => (
             <Card key={course.id} className="w-full">

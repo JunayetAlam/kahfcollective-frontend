@@ -181,7 +181,7 @@ export function MF_ContentForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="overflow-auto !container">
+      <DialogContent className="overflow-auto ">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "Edit Content" : "Add New Content"}

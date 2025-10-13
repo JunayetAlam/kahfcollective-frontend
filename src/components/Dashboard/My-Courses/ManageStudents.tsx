@@ -155,7 +155,7 @@ export default function ManageStudents({
                     Manage Students
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-hidden sm:max-w-[1000px]">
+            <DialogContent className="max-h-[90vh] overflow-hidden">
                 <DialogHeader>
                     <DialogTitle>Manage Students</DialogTitle>
                     <p className="text-muted-foreground text-sm">

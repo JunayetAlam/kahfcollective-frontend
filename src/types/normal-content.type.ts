@@ -11,6 +11,7 @@ export interface NormalContent {
   fileLink: string;
   isFeatured: boolean;
   id: string;
+  type: string;
   title: string;
   updatedAt: string;
 }

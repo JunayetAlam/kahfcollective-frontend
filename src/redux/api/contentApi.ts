@@ -14,7 +14,7 @@ const contentApi = baseApi.injectEndpoints({
     }),
     updateContent: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/course-contents/${id}`,
+        url: `/contents/${id}`,
         method: "PATCH",
         body: data,
       }),

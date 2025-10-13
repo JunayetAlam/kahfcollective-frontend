@@ -61,7 +61,7 @@ export default function CreateFraternityGroup() {
             <DialogTrigger asChild>
                 <Button>Create Fraternity Group</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Create Fraternity Group</DialogTitle>
                     <p className="text-sm text-gray-600">

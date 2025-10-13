@@ -31,6 +31,7 @@ import { useCreateNewContentMutation } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 // ------------------------- Zod Schema -------------------------
 const contentSchema = z.object({
@@ -38,6 +39,7 @@ const contentSchema = z.object({
     message: "Content type is required",
   }),
   title: z.string().min(1, "Title is required"),
+  type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
   contentOrDescriptor: z.string().min(1, "Content/Description is required"),
   tierId: z.string().min(1, "Tier is required"),
@@ -59,6 +61,7 @@ export default function CreateContent() {
     defaultValues: {
       contentType: "" as "ARTICLE",
       title: "",
+      type: '',
       authorId: "",
       tierId: "",
       contentOrDescriptor: "",
@@ -112,6 +115,9 @@ export default function CreateContent() {
     formData.append("authorId", data.authorId);
     formData.append("description", data.contentOrDescriptor);
     formData.append("tierId", data.tierId);
+    if (data.type) {
+      formData.append("type", data.type);
+    }
 
     if (selectedContentType === "SERMONS") {
       formData.append("content", data.content!);
@@ -143,7 +149,7 @@ export default function CreateContent() {
       <DialogTrigger asChild>
         <Button disabled={isSubmitting}>Create Content</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Content</DialogTitle>
         </DialogHeader>
@@ -172,6 +178,37 @@ export default function CreateContent() {
               </div>
             )}
           />
+          {selectedContentType === "ARTICLE" && (
+            <Controller
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <div>
+                  <Label>Article Type</Label>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select article type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="article">Article</SelectItem>
+                      <SelectItem value="blog">Blog</SelectItem>
+                      <SelectItem value="dua">Dua</SelectItem>
+                      <SelectItem value="hadith">Hadith</SelectItem>
+                      <SelectItem value="tafsir">Tafsir</SelectItem>
+                      <SelectItem value="story">Story</SelectItem>
+                      <SelectItem value="islamic_history">Islamic History</SelectItem>
+                      <SelectItem value="question_answer">Question & Answer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.type && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.type.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          )}
 
           {/* Title */}
           <div>
@@ -209,7 +246,7 @@ export default function CreateContent() {
           {/* Content/Description */}
           <div>
             <Label>Content / Description</Label>
-            <Input
+            <Textarea
               {...form.register("contentOrDescriptor")}
               placeholder="Enter description or content"
             />

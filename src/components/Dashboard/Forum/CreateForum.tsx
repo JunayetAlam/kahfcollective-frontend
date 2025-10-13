@@ -49,7 +49,7 @@ export default function CreateForum() {
             <DialogTrigger asChild>
                 <Button>Create Forum</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Study Circles Forum</DialogTitle>
                     <p className="text-sm text-gray-600">

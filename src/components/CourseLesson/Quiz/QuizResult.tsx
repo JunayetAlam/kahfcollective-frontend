@@ -31,7 +31,7 @@ export default function QuizResults({ quizResult, viewQuiz }: QuizResultsProps) 
         <Card className="w-full text-center max-w-2xl shadow-lg dark:bg-gray-800">
             <CardHeader>
                 <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Assessment Results</CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the quiz!</CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the assessment!</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 {quizResult ? (

@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 // import image1 from '@/assets/heroIcon/schollar.png'
@@ -8,13 +7,10 @@ import { ArrowRight } from "lucide-react";
 // import Image from "next/image"
 // import bgElement1 from '@/assets/heroIcon/bg-element-1.svg'
 // import bgElement2 from '@/assets/heroIcon/bg-element-2.svg'
-import { useCurrentUser } from "@/redux/authSlice";
-import { useAppSelector } from "@/redux/store";
 import Link from "next/link";
 
 
 export default function Hero() {
-  const user = useAppSelector(useCurrentUser);
   return (
     <section className="text-accent relative min-h-screen overflow-hidden bg-[#FAFAFB]">
       {/* Background decorative elements */}
@@ -99,18 +95,16 @@ export default function Hero() {
                         />
                     </div> */}
           {/* Left content */}
-          <div className="relative z-10 flex flex-col items-center justify-center gap-8">
-            <h1 className="text-title text-center text-5xl leading-tight font-bold lg:max-w-4xl lg:text-6xl">
-              Welcome to Kahf Collective, {user?.name} start Learning
+          <div className="relative z-10 flex flex-col items-center justify-center gap-8  w-full">
+            <h1 className="text-[#014D36] text-center text-5xl leading-tight font-bold lg:max-w-4xl lg:text-6xl">
+              Welcome to Kahf Collective
             </h1>
 
             <p className="text-secondary text-center text-lg leading-relaxed">
-              Learn authentic Islamic sciences from qualified scholars. Join a
-              global community of Muslims seeking knowledge through structured
-              courses in Aqeedah, Fiqh, Tafsir, and more.
+              وَقُل رَّبِّ أَدْخِلْنِى مُدْخَلَ صِدْقٍۢ وَأَخْرِجْنِى مُخْرَجَ صِدْقٍۢ وَٱجْعَل لِّى مِن لَّدُنكَ سُلْطَـٰنًۭا نَّصِيرًۭا
             </p>
-            <Link href={"/courses"} className="block w-full">
-              <Button size="lg" className="group w-full">
+            <Link href={"/courses"} className="block w-full text-center">
+              <Button size="lg" className="group w-full max-w-4xl">
                 Start Learning
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>

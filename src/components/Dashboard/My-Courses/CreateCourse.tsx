@@ -88,7 +88,7 @@ export default function CreateCourse() {
       <DialogTrigger asChild>
         <Button>Create new Course</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto ">
         <DialogHeader>
           <DialogTitle>Create New Course</DialogTitle>
           <p className="text-sm text-gray-600">

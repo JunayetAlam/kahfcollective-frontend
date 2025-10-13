@@ -23,6 +23,7 @@ import {
   useDeleteContentByIdMutation,
   useToggleIsFeaturedMutation,
 } from "@/redux/api/contentApi";
+import EditContent from './EditContent';
 
 interface ContentItemProps {
   content: any; // You can replace 'any' with your Content type
@@ -77,6 +78,7 @@ export default function ContentRow({ content }: ContentItemProps) {
             <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin border-2 border-gray-300 rounded-full border-t-gray-500" />
           )}
         </div>
+        <EditContent contentId={content.id} />
 
         {/* Delete Dialog */}
         <Dialog open={openConfirm} onOpenChange={setOpenConfirm}>

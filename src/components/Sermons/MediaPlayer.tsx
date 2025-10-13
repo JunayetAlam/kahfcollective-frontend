@@ -29,7 +29,7 @@ export default function MediaPlayer({ sermon, trigger }: { sermon: NormalContent
 
             </DialogTrigger>
 
-            <DialogContent className="max-w-4xl w-[95vw] p-0 bg-white border-0 shadow-2xl">
+            <DialogContent className="w-[95vw] p-0 bg-white border-0 shadow-2xl">
                 <DialogHeader className="p-6 pb-4 border-b border-gray-100">
                     <DialogTitle className="text-xl font-bold text-gray-900 text-left">
                         {sermon.title}

@@ -18,7 +18,7 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
                     Details
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg w-full">
+            <DialogContent className="w-full">
                 <DialogHeader>
                     <DialogTitle>{user.fullName} Details</DialogTitle>
                 </DialogHeader>
