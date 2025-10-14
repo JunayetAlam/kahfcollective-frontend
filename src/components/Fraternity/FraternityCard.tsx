@@ -12,7 +12,7 @@ export default function FraternityCard({ fraternity }: { fraternity: Forum }) {
 
 
     return (
-        <Card className="w-full max-w-[450px] sm:max-w-full mx-auto rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 group">
+        <Card className="w-full max-w-[450px] sm:max-w-full mx-auto rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 group py-0 gap-0">
             <CardContent className="p-6 pb-4 space-y-4">
                 {/* Title */}
                 <Link href={`/feed/${fraternity.id}`} className="block group-hover:text-blue-600 transition-colors duration-200">
@@ -89,7 +89,7 @@ export default function FraternityCard({ fraternity }: { fraternity: Forum }) {
                 )}
             </CardContent>
 
-            <CardFooter className="p-6 pt-0 bg-gray-50/50 border-t border-gray-100">
+            <CardFooter className="p-6 !pt-0 bg-gray-50/50  mt-auto">
                 <Link href={`/feed/${fraternity.id}`} className="w-full">
                     <Button 
                         variant="default" 

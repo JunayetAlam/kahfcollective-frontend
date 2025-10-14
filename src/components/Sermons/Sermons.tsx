@@ -24,7 +24,7 @@ export default function Sermons() {
     }
     const sermons = data?.data || []
     return (
-        <Container className="pb-20 pt-5">
+        <Container className="py-20">
             <div className='flex flex-col sm:flex-row justify-between items-end pb-4 sm:pb-8 space-y-8 sm:space-y-0'>
                 <div className='space-y-2 w-full'>
                     <TopTitle className='justify-center sm:justify-start'>All Sermons</TopTitle>

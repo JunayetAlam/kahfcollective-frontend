@@ -11,13 +11,13 @@ import Link from "next/link";
 
 
 export default function Hero() {
-  return (
-    <section className="text-accent relative min-h-screen overflow-hidden bg-[#FAFAFB]">
-      {/* Background decorative elements */}
-      {/* <div className="absolute inset-0"> */}
+    return (
+        <section className="text-accent relative overflow-hidden ">
+            {/* Background decorative elements */}
+            {/* <div className="absolute inset-0"> */}
 
-      {/* bg text  */}
-      {/* <div className="absolute w-full h-full top-0    items-center hidden lg:flex">
+            {/* bg text  */}
+            {/* <div className="absolute w-full h-full top-0    items-center hidden lg:flex">
                     <div className="w-full container mx-auto flex justify-center items-center">
                         <div className="space-y-6 w-full max-w-[800px] ml-auto relative">
                             <div className="absolute -top-10 left-75 size-20">
@@ -67,11 +67,11 @@ export default function Hero() {
                         </div>
                     </div>
                 </div> */}
-      {/* </div> */}
+            {/* </div> */}
 
-      <div className="relative container mx-auto h-screen w-full px-6 py-20">
-        <div className="relative flex h-full items-center">
-          {/* <div className="absolute top-10 left-60 size-20 block lg:hidden">
+            <div className="relative container mx-auto w-full px-6 py-20">
+                <div className="relative flex h-full items-center">
+                    {/* <div className="absolute top-10 left-60 size-20 block lg:hidden">
                         <Image
                             src={bgElement2}
                             alt="decoration"
@@ -94,26 +94,30 @@ export default function Hero() {
                             fill
                         />
                     </div> */}
-          {/* Left content */}
-          <div className="relative z-10 flex flex-col items-center justify-center gap-8  w-full">
-            <h1 className="text-[#014D36] text-center text-5xl leading-tight font-bold lg:max-w-4xl lg:text-6xl">
-              Welcome to Kahf Collective
-            </h1>
+                    {/* Left content */}
+                    <div className="relative z-10 flex flex-col items-center justify-center gap-8  w-full">
+                        <h1 className="text-[#014D36] text-center text-5xl leading-tight font-bold lg:max-w-4xl lg:text-6xl">
+                            Welcome to Kahf Collective
+                        </h1>
+                        <div className="max-w-3xl">
+                            <p className="text-secondary text-center text-lg leading-relaxed">
+                                وَقُل رَّبِّ أَدْخِلْنِى مُدْخَلَ صِدْقٍۢ وَأَخْرِجْنِى مُخْرَجَ صِدْقٍۢ وَٱجْعَل لِّى مِن لَّدُنكَ سُلْطَـٰنًۭا نَّصِيرًۭا
+                            </p>
+                            <p className="text-center text-base text-muted-foreground mt-2 italic">
+                                “And say, ‘My Lord! Grant me an honorable entrance and an honorable exit and give me a supporting authority from Yourself.’”
+                            </p>
+                        </div>
+                        <Link href={"/courses"} className="block w-full text-center">
+                            <Button size="lg" className="group w-full max-w-4xl">
+                                Start Learning
+                                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            </Button>
+                        </Link>
+                    </div>
 
-            <p className="text-secondary text-center text-lg leading-relaxed">
-              وَقُل رَّبِّ أَدْخِلْنِى مُدْخَلَ صِدْقٍۢ وَأَخْرِجْنِى مُخْرَجَ صِدْقٍۢ وَٱجْعَل لِّى مِن لَّدُنكَ سُلْطَـٰنًۭا نَّصِيرًۭا
-            </p>
-            <Link href={"/courses"} className="block w-full text-center">
-              <Button size="lg" className="group w-full max-w-4xl">
-                Start Learning
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </div>
-
-          {/* Right floating elements */}
-        </div>
-      </div>
-    </section>
-  );
+                    {/* Right floating elements */}
+                </div>
+            </div>
+        </section>
+    );
 }

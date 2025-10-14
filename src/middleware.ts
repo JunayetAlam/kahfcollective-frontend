@@ -24,6 +24,8 @@ const roleBasedRoutes = {
     "/dashboard",
     "/dashboard/content",
     "/dashboard/discussion",
+    "/dashboard/my-courses",
+    "/dashboard/assessment",
     "/dashboard/profile",
     "/dashboard/users",
     "/",

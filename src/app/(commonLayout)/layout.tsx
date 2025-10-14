@@ -32,7 +32,11 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-screen flex-col justify-between">
             <Navbar />
-            {children}
+            <div className="flex-1 min-h-full  bg-[#FAFAFB] flex items-center">
+              <div className="w-full">
+                {children}
+              </div>
+            </div>
             <Footer />
           </div>
         </Providers>

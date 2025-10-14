@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 
 import { useGetMeQuery } from "@/redux/api/userApi";
-import { logout } from "@/redux/authSlice";
-import { useAppDispatch } from "@/redux/store";
+import { logout, useCurrentUser } from "@/redux/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -23,55 +23,9 @@ import { Skeleton } from "../ui/skeleton";
 import { ThemeToggle } from "../ui/theme-toggle";
 import Topbar from "./Topbar";
 
-const navigation = [
-  // {
-  //   label: "Dashboard",
-  //   icon: LayoutDashboard,
-  //   route: "/dashboard",
-  //   roles: ["SUPERADMIN", "INSTRUCTOR"],
-  //   title: "Dashboard",
-  // },
-  {
-    label: "My Courses",
-    icon: GraduationCap,
-    route: "/dashboard/my-courses",
-    roles: ["INSTRUCTOR"],
-    title: "Class Management",
-  },
-  {
-    label: "Assessment Performance",
-    icon: Brain,
-    route: "/dashboard/assessment",
-    roles: ["INSTRUCTOR"],
-    title: "Class Management",
-  },
-
-  {
-    label: "User Management",
-    icon: Users,
-    route: "/dashboard/users",
-    roles: ["SUPERADMIN"],
-    title: "User Management",
-  },
-  {
-    label: "Content Management",
-    icon: FileText,
-    route: "/dashboard/content",
-    roles: ["SUPERADMIN"],
-    title: "Content Management",
-  },
-
-
-  {
-    label: "Discussion",
-    icon: MessageCircleMore,
-    route: "/dashboard/discussion",
-    roles: ["SUPERADMIN", "INSTRUCTOR"],
-    title: "Forum Moderation",
-  },
-];
 
 const SidebarSkeleton = ({ isOpen }: { isOpen: boolean }) => (
+
   <div
     className={cn(
       "bg-background border-border relative z-40 flex h-screen flex-col border-r pt-16 transition-all duration-500",
@@ -135,6 +89,56 @@ export function Sidebar() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const path = usePathname();
+  const role = useAppSelector(useCurrentUser)?.role
+  const navigation = [
+    // {
+    //   label: "Dashboard",
+    //   icon: LayoutDashboard,
+    //   route: "/dashboard",
+    //   roles: ["SUPERADMIN", "INSTRUCTOR"],
+    //   title: "Dashboard",
+    // },
+
+
+    {
+      label: "User Management",
+      icon: Users,
+      route: "/dashboard/users",
+      roles: ["SUPERADMIN"],
+      title: "User Management",
+    },
+    {
+      label: role === 'INSTRUCTOR' ? 'My Courses' : 'Courses',
+      icon: GraduationCap,
+      route: "/dashboard/my-courses",
+      roles: ["INSTRUCTOR", 'SUPERADMIN'],
+      title: "Course Management",
+    },
+    {
+      label: "Assessment Performance",
+      icon: Brain,
+      route: "/dashboard/assessment",
+      roles: ["INSTRUCTOR", 'SUPERADMIN'],
+      title: "Assessment Performance",
+    },
+    {
+      label: "Content Management",
+      icon: FileText,
+      route: "/dashboard/content",
+      roles: ["SUPERADMIN"],
+      title: "Content Management",
+    },
+
+
+    {
+      label: "Discussion",
+      icon: MessageCircleMore,
+      route: "/dashboard/discussion",
+      roles: ["SUPERADMIN", "INSTRUCTOR"],
+      title: "Forum Moderation",
+    },
+  ];
+
   const activeRouteTitle =
     navigation.find((item) => item.route === path)?.title || "";
   if (isLoading) {

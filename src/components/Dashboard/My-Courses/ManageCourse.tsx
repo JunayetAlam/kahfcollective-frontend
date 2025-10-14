@@ -13,18 +13,19 @@ import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
 import { useState } from "react";
 import { ContentTab } from "./ContentTab";
 import { CourseDetailsTab } from "./CourseDetailsTab";
+import Loading from "@/components/Global/Loading";
+import NoDataFound from "@/components/Global/NoDataFound";
 
 export default function ManageCourse({ courseId }: { courseId: string }) {
+  const [fetchData, setFetchData] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { data: courseData } = useGetCourseByIdQuery(courseId);
-  if (!courseData?.data) {
-    return ' '
-  }
+  const { data: courseData, isLoading } = useGetCourseByIdQuery(courseId, { skip: !fetchData });
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button onClick={() => setFetchData(true)} variant="outline" size="sm">
           Manage
         </Button>
       </DialogTrigger>
@@ -43,20 +44,26 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
           </TabsList>
 
           {/* Details Tab */}
-          <TabsContent value="details" className="mt-6">
-            <CourseDetailsTab
-              courseData={courseData?.data}
-              setOpen={(open) => setOpen(open)}
-            />
-          </TabsContent>
+          {
+            isLoading ? <Loading /> : <>
+              {!courseData?.data ? <NoDataFound /> : <>
+                <TabsContent value="details" className="mt-6">
+                  <CourseDetailsTab
+                    courseData={courseData?.data}
+                    setOpen={(open) => setOpen(open)}
+                  />
+                </TabsContent>
 
-          {/* Content Tab */}
-          <TabsContent value="content" className="mt-6">
-            <ContentTab
-              courseData={courseData?.data}
-              setOpen={(open) => setOpen(open)}
-            />
-          </TabsContent>
+                {/* Content Tab */}
+                <TabsContent value="content" className="mt-6">
+                  <ContentTab
+                    courseData={courseData?.data}
+                    setOpen={(open) => setOpen(open)}
+                  />
+                </TabsContent>
+              </>}
+            </>
+          }
         </Tabs>
       </DialogContent>
     </Dialog>

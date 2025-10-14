@@ -1,8 +1,12 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import avatarImg from "@/assets/user.png";
 import { User } from "@/types";
+import { PiGenderNeuterBold } from "react-icons/pi";
+import { Mail, Phone, MapPin, BookOpen, UserCircle, Shield} from "lucide-react";
 
 interface UserDetailsModalProps {
     user: User | null;
@@ -13,72 +17,124 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
 
     return (
         <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                     Details
                 </Button>
             </DialogTrigger>
-            <DialogContent className="w-full">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>{user.fullName} Details</DialogTitle>
+                    <DialogTitle className="text-2xl font-semibold">User Details</DialogTitle>
                 </DialogHeader>
 
-                <DialogDescription className="mt-4 space-y-4">
-                    {/* Profile Image */}
-                    <div className="flex justify-center">
-                        <Image
-                            src={user.profile ||  avatarImg}
-                            alt={user.fullName}
-                            width={100}
-                            height={100}
-                            className="rounded-full"
-                        />
-                    </div>
-
-                    {/* Personal Info */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Personal Info</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            <div><span className="font-medium">Full Name:</span> {user.fullName}</div>
-                            <div><span className="font-medium">Email:</span> {user.email}</div>
-                            <div><span className="font-medium">Phone:</span> {user.phoneNumber}</div>
-                            <div><span className="font-medium">Gender:</span> {user.gender}</div>
-                            <div className="col-span-2"><span className="font-medium">Address:</span> {user.address}</div>
-                            {user.bio && <div className="col-span-2"><span className="font-medium">Bio:</span> {user.bio}</div>}
+                <div className="space-y-6 mt-2">
+                    {/* Profile Section */}
+                    <div className="flex flex-col items-center space-y-3 pb-6">
+                        <div className="relative">
+                            <Image
+                                src={user.profile || avatarImg}
+                                alt={user.fullName}
+                                width={120}
+                                height={120}
+                                className="rounded-full border-4 border-border object-cover"
+                            />
                         </div>
-                    </div>
-
-                    {/* Course Info */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Course Info</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            <div><span className="font-medium">Major/Profession:</span> {user.majorOrProfession}</div>
-
-                            <div><span className="font-medium">Courses Taken Before:</span> {user.haveTakenCoursesBefore ? "Yes" : "No"}</div>
-                            
-                            {user.coursesName && <div className="col-span-2"><span className="font-medium">Course Name:</span> {user.coursesName}</div>}
-                            {user.howLongInCourse && <div className="col-span-2"><span className="font-medium">Duration:</span> {user.howLongInCourse}</div>}
-                            {user.introduction && <div className="col-span-2"><span className="font-medium">Introduction:</span> {user.introduction}</div>}
-                        </div>
-                    </div>
-
-                    {/* Role & Status */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Role & Status</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            <div><span className="font-medium">Role:</span> {user.role}</div>
-                            <div><span className="font-medium">Status:</span> {user.status}</div>
-                            <div className="col-span-2">
-                                <span className="font-medium">Referred By:</span> {user.isReferredBySheikhSalmam ? "Sheikh Salman" : user.referredBy || "—"}
+                        <div className="text-center space-y-1">
+                            <h2 className="text-xl font-semibold">{user.fullName}</h2>
+                            <div className="flex items-center gap-2 justify-center">
+                                <Badge variant="secondary">{user.role}</Badge>
+                                <Badge variant={user.status === "ACTIVE" ? "default" : "outline"}>
+                                    {user.status}
+                                </Badge>
                             </div>
                         </div>
                     </div>
 
-                  
-                </DialogDescription>
+                    <Separator />
 
-               
+                    {/* Personal Information */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                            <UserCircle className="w-5 h-5" />
+                            Personal Information
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-3 pl-7">
+                            <InfoRow icon={<Mail className="w-4 h-4" />} label="Email" value={user.email} />
+                            <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={user.phoneNumber} />
+                            <InfoRow icon={<MapPin className="w-4 h-4" />} label="Address" value={user.address} />
+                            <InfoRow icon={<PiGenderNeuterBold className="w-4 h-4" />} label="Gender" value={user.gender} />
+                            {user.bio && <InfoRow label="Bio" value={user.bio} fullWidth className="md:col-span-2" />}
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Course Information */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                            <BookOpen className="w-5 h-5" />
+                            Course Information
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-3 pl-7">
+                            <InfoRow label="Major/Profession" value={user.majorOrProfession} />
+                            <InfoRow 
+                                label="Previous Courses" 
+                                value={user.haveTakenCoursesBefore ? "Yes" : "No"}
+                            />
+                            {user.coursesName && (
+                                <InfoRow label="Course Name" value={user.coursesName}  className="md:col-span-2"   />
+                            )}
+                            {user.howLongInCourse && (
+                                <InfoRow label="Duration" value={user.howLongInCourse} />
+                            )}
+                            {user.introduction && (
+                                <InfoRow label="Introduction" value={user.introduction} fullWidth className="md:col-span-2" />
+                            )}
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Additional Information */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                            <Shield className="w-5 h-5" />
+                            Additional Information
+                        </h3>
+                        <div className="grid gap-3 pl-7">
+                            <InfoRow 
+                                label="Referred By" 
+                                value={user.isReferredBySheikhSalmam ? "Sheikh Salman" : user.referredBy || "—"} 
+                            />
+                        </div>
+                    </div>
+                </div>
             </DialogContent>
         </Dialog>
+    );
+}
+
+// Helper component for consistent info rows
+function InfoRow({ 
+    icon, 
+    label, 
+    value, 
+    fullWidth = false,
+    className = ""
+}: { 
+    icon?: React.ReactNode; 
+    label: string; 
+    value: string; 
+    fullWidth?: boolean;
+    className?: string;
+}) {
+    return (
+        <div className={`flex ${fullWidth ? 'flex-col' : 'items-start'} gap-2 ${className}`}>
+            <div className="flex items-center gap-2 min-w-[140px]">
+                {icon && <span className="text-muted-foreground">{icon}</span>}
+                <span className="text-sm font-medium text-muted-foreground">{label}:</span>
+            </div>
+            <span className="text-sm">{value}</span>
+        </div>
     );
 }
