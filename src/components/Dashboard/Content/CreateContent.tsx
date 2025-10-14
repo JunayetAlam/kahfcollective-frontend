@@ -190,14 +190,14 @@ export default function CreateContent() {
                       <SelectValue placeholder="Select article type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="article">Article</SelectItem>
-                      <SelectItem value="blog">Blog</SelectItem>
-                      <SelectItem value="dua">Dua</SelectItem>
+                      <SelectItem value="philosophy">Philosophy</SelectItem>
+                      <SelectItem value="theology">Theology</SelectItem>
+                      <SelectItem value="fiqh">Fiqh</SelectItem>
+                      <SelectItem value="usool">Usool</SelectItem>
                       <SelectItem value="hadith">Hadith</SelectItem>
-                      <SelectItem value="tafsir">Tafsir</SelectItem>
-                      <SelectItem value="story">Story</SelectItem>
-                      <SelectItem value="islamic_history">Islamic History</SelectItem>
-                      <SelectItem value="question_answer">Question & Answer</SelectItem>
+                      <SelectItem value="quran">Quran</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                      <SelectItem value="politics">Politics</SelectItem>
                     </SelectContent>
                   </Select>
                   {errors.type && (
