@@ -1,6 +1,5 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Circle } from "lucide-react"
 import { Quiz, QuizAnswers, UserRoleEnum } from "@/types"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +38,6 @@ export default function SingleQuiz({
 
 
     if (role !== 'USER') {
-        console.log({ role, correctAnswer })
         return <>
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">

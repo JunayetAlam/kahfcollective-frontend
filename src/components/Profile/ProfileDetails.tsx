@@ -27,9 +27,8 @@ export default function ProfileDetails({ userData }: { userData: DefaultValues }
 
   const handleSave = async (data: FieldValues) => {
     try {
-      const { email, ...rest } = data
-      console.log(email)
-      await editProfile(rest).unwrap()
+      delete data.email;
+      await editProfile(data).unwrap()
       setIsEditing(false)
     } catch (error) {
       console.error(error)
