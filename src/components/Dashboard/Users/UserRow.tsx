@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,8 @@ import { Switch } from "@/components/ui/switch";
 import { UserDetailsModal } from '../Users/UserDetailsModal';
 import { useGetAllTiersQuery, useToggleAssignTierMutation } from '@/redux/api/tierApi';
 import Loading from '@/components/Global/Loading';
+import DeleteUser from './DeleteUser';
+import { toast } from 'sonner';
 
 const roleDisplay: Record<string, string> = {
   SUPERADMIN: 'SUPERADMIN',
@@ -44,8 +47,9 @@ export default function UserRow({ user }: { user: User }) {
   const handleRoleChange = async (newRole: string) => {
     try {
       await updateUserRole({ id: user.id, data: { role: newRole } }).unwrap();
-    } catch (err) {
-      console.error(err);
+      toast.success("Role Changed Successfully")
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Something went wrong")
     }
   };
 
@@ -62,7 +66,7 @@ export default function UserRow({ user }: { user: User }) {
   }
 
   if (tierIsLoading) {
-    return <Loading/>
+    return <Loading />
   }
   const tierData = data?.data || []
   const userTier = user?.userTiers.map(item => item?.tier?.id)
@@ -73,7 +77,7 @@ export default function UserRow({ user }: { user: User }) {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
-              src={user.profile ||  avatarImg}
+              src={user.profile || avatarImg}
               alt={user.fullName}
               width={32}
               height={32}
@@ -130,7 +134,6 @@ export default function UserRow({ user }: { user: User }) {
             ))}
           </SelectContent>
         </Select>
-        {isLoading && <Loader2 className="w-4 h-4 ml-2 inline animate-spin" />}
       </TableCell>
 
       {/* Referrals */}
@@ -150,9 +153,11 @@ export default function UserRow({ user }: { user: User }) {
       </TableCell>
 
       {/* Action */}
-      <TableCell className="flex gap-2">
-        <UserDetailsModal user={user} />
-
+      <TableCell >
+        <div className="flex gap-2">
+          <UserDetailsModal user={user} />
+          <DeleteUser userId={user.id} />
+        </div>
       </TableCell>
     </TableRow>
   );

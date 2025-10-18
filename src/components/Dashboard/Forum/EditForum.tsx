@@ -19,6 +19,7 @@ import {
     useUpdateCircleForumMutation,
 } from "@/redux/api/forumApi";
 import Loading from "@/components/Global/Loading";
+import { Edit } from "lucide-react";
 
 type EditForumProps = {
     forumId: string;
@@ -61,7 +62,7 @@ export default function EditForum({ forumId }: EditForumProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Edit Forum</Button>
+                 <Button variant="outline" size={"icon"}><Edit/></Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>

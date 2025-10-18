@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react"
 import { useAnswerQuizMutation, useGetSingleQuizAnswerQuery, useLockQuizMutation } from "@/redux/api/ansQuizApi"
 import { toast } from "sonner"
 import SingleQuiz from "./SingleQuiz"
-import { Quiz } from "@/types"
+import { Quiz, UserRoleEnum } from "@/types"
 import Loading from "@/components/Global/Loading"
 interface QuizState {
     started: boolean
@@ -28,17 +28,20 @@ interface QuizQuestionProps {
         total?: number
         correct?: number
     }
+    role: UserRoleEnum | undefined
 }
 
-export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refetchQuizResult, isAllAnswered, isAllMarked, result }: QuizQuestionProps) {
+export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refetchQuizResult, isAllAnswered, isAllMarked, result, role }: QuizQuestionProps) {
     const totalQuestions = allQuizzes.length
     const currentQuestion = allQuizzes[quizState.currentQuestionIndex]
     const [answerQuiz, { isLoading: answerQuizLoading }] = useAnswerQuizMutation()
     const [lockQuiz, { isLoading: lockQuizLoading }] = useLockQuizMutation()
 
-    const { data, isLoading } = useGetSingleQuizAnswerQuery(currentQuestion.id)
+    const { data, isLoading } = useGetSingleQuizAnswerQuery(currentQuestion?.id, {
+        skip: role !== 'USER'
+    })
     if (isLoading) {
-        return <Loading/>
+        return <Loading />
     }
 
     const answeredQuestionsCount = Object.keys(quizState.selectedAnswers).length
@@ -69,7 +72,7 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
 
     const lockQuizQuestions = async () => {
         try {
-            if (!isAllAnswered) {
+            if (!isAllAnswered && role === 'USER') {
                 await lockQuiz(allQuizzes[0]?.courseContentId || "").unwrap()
                 toast.success("Assessment submitted successfully!")
 
@@ -97,7 +100,7 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
         const currentAnswer = quizState.selectedAnswers[quizState.currentQuestionIndex]
 
         // Submit answer if not already submitted
-        if (!quizAns?.isLocked) {
+        if (!quizAns?.isLocked && role === 'USER') {
             if (currentAnswer) {
                 const success = await submitAnswer(quizState.currentQuestionIndex, currentAnswer)
                 if (!success) return // Don't proceed if submission failed
@@ -144,13 +147,14 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
                         isSubmitting={answerQuizLoading}
                         quizAns={quizAns}
                         isAllMarked={isAllMarked}
+                        role={role}
                     />
 
                     <div className="mt-8 flex w-full gap-4 max-w-max ml-auto">
                         <Button
                             size="lg"
                             onClick={handlePrevious}
-                            disabled={quizState.currentQuestionIndex === 0 || answerQuizLoading || lockQuizLoading}
+                            disabled={role !== 'USER' ? false : quizState.currentQuestionIndex === 0 || answerQuizLoading || lockQuizLoading}
                             variant="outline"
                         >
                             <ArrowLeft className="h-4 w-4" />
@@ -160,14 +164,15 @@ export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refe
                             size="lg"
                             onClick={handleNext}
                             disabled={
-                                quizAns?.isLocked ? false : (!quizState.selectedAnswers[quizState.currentQuestionIndex] ||
-                                    answerQuizLoading ||
-                                    lockQuizLoading)
+                                role !== 'USER' ? false :
+                                    quizAns?.isLocked ? false : (!quizState.selectedAnswers[quizState.currentQuestionIndex] ||
+                                        answerQuizLoading ||
+                                        lockQuizLoading)
                             }
                             variant="secondary"
                         >
                             {(answerQuizLoading || lockQuizLoading) && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                            {quizState.currentQuestionIndex === totalQuestions - 1 ? isAllAnswered ? 'Done' : 'Submit Assessment' : "Next"}
+                            {quizState.currentQuestionIndex === totalQuestions - 1 ? isAllAnswered || role !== 'USER' ? 'Done' : 'Submit Assessment' : "Next"}
                             <ArrowRight className="h-4 w-4" />
                         </Button>
                     </div>

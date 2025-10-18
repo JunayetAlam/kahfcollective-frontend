@@ -8,6 +8,7 @@ import { Forum, ForumTypeEnum } from "@/types";
 import TableSkeleton from "@/components/Global/TableSkeleton";
 import EditForum from "./EditForum";
 import EditFruternityGroup from "./EditFruternityGroup";
+import DeleteForum from "./DeleteForum";
 
 export default function ForumTable() {
     const [activeTab, setActiveTab] = useState<ForumTypeEnum>("STUDY_CIRCLES");
@@ -46,7 +47,8 @@ export default function ForumTable() {
                                 : "text-muted-foreground"
                                 }`}
                         >
-                            {tab}
+                            {tab === 'STUDY_CIRCLES' && 'Study Circles'}
+                            {tab === 'LOCATION_BASED' && 'Location Based'}
                         </button>
                     ))}
                 </div>
@@ -55,7 +57,8 @@ export default function ForumTable() {
             {/* Table Section */}
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-4">
-                    {activeTab} Discussions
+                    {activeTab === 'STUDY_CIRCLES' && 'Study Circles'}
+                    {activeTab === 'LOCATION_BASED' && 'Location Based'} Discussions
                 </h3>
             </div>
 
@@ -65,7 +68,9 @@ export default function ForumTable() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Forum Name</TableHead>
-                            <TableHead>Course</TableHead>
+                            {
+                                activeTab === 'STUDY_CIRCLES' && <TableHead>Course</TableHead>
+                            }
                             <TableHead>Posts</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
@@ -85,12 +90,17 @@ export default function ForumTable() {
 function ForumTableRow({ forum }: { forum: Forum }) {
     return <TableRow key={forum.id}>
         <TableCell className="font-medium">{forum.title}</TableCell>
-        <TableCell>{forum.course?.title}</TableCell>
+        {
+            forum.forumType === 'STUDY_CIRCLES' && <TableCell>{forum.course?.title}</TableCell>
+        }
         <TableCell>{forum._count.posts}</TableCell>
         <TableCell>
-            {
-                forum.forumType === 'LOCATION_BASED' ? <EditFruternityGroup forumId={forum.id} /> : <EditForum forumId={forum.id} />
-            }
+            <div className="flex gap-3">
+                {
+                    forum.forumType === 'LOCATION_BASED' ? <EditFruternityGroup forumId={forum.id} /> : <EditForum forumId={forum.id} />
+                }
+                <DeleteForum forumId={forum.id} />
+            </div>
         </TableCell>
     </TableRow>
 }

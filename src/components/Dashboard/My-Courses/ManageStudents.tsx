@@ -25,7 +25,7 @@ import TableSkeleton from "@/components/Global/TableSkeleton";
 import { useGetAllTierUsersQuery } from "@/redux/api/userApi";
 import { useSearchParams } from "next/navigation";
 import { TQueryParam, User } from "@/types";
-import { Search, Users } from "lucide-react";
+import { Search, UserCog, Users } from "lucide-react";
 import Image from "next/image";
 
 import defaultImg from "@/assets/user.png";
@@ -151,8 +151,8 @@ export default function ManageStudents({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                    <Users className="mr-2 h-4 w-4" />
-                    Manage Students
+                    <UserCog className=" h-4 w-4" />
+                    Students
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-hidden">

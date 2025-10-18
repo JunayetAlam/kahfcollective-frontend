@@ -15,6 +15,7 @@ import { ContentTab } from "./ContentTab";
 import { CourseDetailsTab } from "./CourseDetailsTab";
 import Loading from "@/components/Global/Loading";
 import NoDataFound from "@/components/Global/NoDataFound";
+import { Edit } from "lucide-react";
 
 export default function ManageCourse({ courseId }: { courseId: string }) {
   const [fetchData, setFetchData] = useState(false);
@@ -25,8 +26,8 @@ export default function ManageCourse({ courseId }: { courseId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setFetchData(true)} variant="outline" size="sm">
-          Manage
+        <Button onClick={() => setFetchData(true)} variant="outline" size="icon">
+          <Edit/>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-hidden">

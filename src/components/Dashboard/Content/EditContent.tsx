@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { Edit, Upload } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -149,7 +149,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline">Edit</Button>
+        <Button variant="outline" size={"icon"} ><Edit/></Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>

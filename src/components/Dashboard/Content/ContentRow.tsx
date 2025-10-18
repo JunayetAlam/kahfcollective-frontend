@@ -92,7 +92,7 @@ export default function ContentRow({ content }: ContentItemProps) {
               <Trash />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[400px]">
+          <DialogContent className="!max-w-[400px]">
             <DialogHeader>
               <DialogTitle>Confirm Delete</DialogTitle>
               <p>This action cannot be undone.</p>

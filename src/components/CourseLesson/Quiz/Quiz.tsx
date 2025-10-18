@@ -9,6 +9,8 @@ import { useGetQuizResultQuery } from "@/redux/api/ansQuizApi"
 import QuizResults from "./QuizResult"
 import QuizIntro from "./QuizIntro"
 import QuizQuestion from "./QuizQuestion"
+import { useAppSelector } from "@/redux/store"
+import { useCurrentUser } from "@/redux/authSlice"
 
 interface QuizState {
     started: boolean
@@ -20,7 +22,10 @@ interface QuizState {
 
 export default function Quiz({ contents }: { contents: CourseContents }) {
     const { data, isLoading } = useGetAllQuizzesForCourseQuery(contents.id)
-    const { data: getQuizResult, isLoading: getQuizResultLoading, refetch: refetchQuizResult } = useGetQuizResultQuery(contents.id)
+    const user = useAppSelector(useCurrentUser)
+    const { data: getQuizResult, isLoading: getQuizResultLoading, refetch: refetchQuizResult } = useGetQuizResultQuery(contents.id, {
+        skip: user?.role !== 'USER'
+    })
 
     const [quizState, setQuizState] = useState<QuizState>({
         started: false,
@@ -34,7 +39,7 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
         if (!data) return;
 
         const selectedAnswers: Record<number, string> = (data?.data || []).reduce((acc, item, index) => {
-            const answer = item.quizAnswers[0]?.answer;
+            const answer = ((item?.quizAnswers || [])[0] || {})?.answer;
             if (answer !== undefined) {
                 acc[index] = answer;
             }
@@ -55,7 +60,7 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
     const totalQuestions = allQuizzes.length
     const quizResult = getQuizResult?.data
 
-    const handleStartQuiz = () => setQuizState(prev => ({ ...prev, started: true }))
+    const handleStartQuiz = () => setQuizState(prev => ({ ...prev, started: true, currentQuestionIndex: 0 }))
 
     const handleSkipQuiz = () => {
         setQuizState({
@@ -90,9 +95,11 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
                 !quizState.started ? <QuizResults
                     quizResult={quizResult}
                     viewQuiz={handleRestartQuiz}
+
                 /> : <QuizQuestion
                     allQuizzes={allQuizzes}
                     quizState={quizState}
+                    role={user?.role}
                     setQuizState={setQuizState}
                     refetchQuizResult={refetchQuizResult}
                     isAllAnswered={quizResult?.isAllAnswered || false}
@@ -102,6 +109,7 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
             ) : !quizState.started ? (
                 <QuizIntro
                     contents={contents}
+                    role={user?.role}
                     totalQuestions={totalQuestions}
                     onSkip={handleSkipQuiz}
                     onStart={handleStartQuiz}
@@ -111,6 +119,7 @@ export default function Quiz({ contents }: { contents: CourseContents }) {
                     allQuizzes={allQuizzes}
                     quizState={quizState}
                     setQuizState={setQuizState}
+                    role={user?.role}
                     refetchQuizResult={refetchQuizResult}
                     isAllAnswered={quizResult?.isAllAnswered || false}
                     isAllMarked={quizResult?.isAllMarked || false}

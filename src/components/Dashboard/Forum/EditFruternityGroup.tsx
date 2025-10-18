@@ -20,6 +20,7 @@ import {
 import { FraternityGroupForm } from "./FruternityForm";
 import { Event } from "@/types";
 import Loading from "@/components/Global/Loading";
+import { Edit } from "lucide-react";
 
 
 
@@ -77,7 +78,7 @@ export default function EditFruternityGroup({ forumId }: EditFruternityGroupProp
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Edit Forum</Button>
+                <Button variant="outline" size={"icon"}><Edit/></Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>

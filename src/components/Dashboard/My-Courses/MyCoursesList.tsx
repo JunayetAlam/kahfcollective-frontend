@@ -13,6 +13,7 @@ import ManageStudents from "./ManageStudents";
 import Loading from "@/components/Global/Loading";
 import { useAppSelector } from "@/redux/store";
 import { useCurrentUser } from "@/redux/authSlice";
+import DeleteCourse from "./DeleteCourse";
 
 export default function CourseManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +25,7 @@ export default function CourseManagementDashboard() {
   const { data: courses, isLoading } = useGetAllCoursesQuery(queryFilter);
 
 
-  const filteredCourses = courses?.data ?? [];
+  const allCourses = courses?.data ?? [];
   return (
     <div className="space-y-6 py-6">
       {/* Search Bar */}
@@ -53,8 +54,8 @@ export default function CourseManagementDashboard() {
       <div className="mt-6 space-y-3">
         {isLoading ? (
           <Loading />
-        ) : filteredCourses.length ? (
-          filteredCourses.map((course) => (
+        ) : allCourses.length ? (
+          allCourses.map((course) => (
             <Card key={course.id} className="w-full">
               <CardHeader className="flex items-center justify-between pb-4">
                 <div>
@@ -64,8 +65,10 @@ export default function CourseManagementDashboard() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <ManageCourse courseId={course.id} />
                   <ManageStudents courseId={course.id} tierId={course.tierId} />
+                  <ManageCourse courseId={course.id} />
+
+                  <DeleteCourse courseId={course.id} />
                 </div>
               </CardHeader>
 
