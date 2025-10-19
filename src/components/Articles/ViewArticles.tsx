@@ -25,7 +25,10 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
     })
 
   const pdf = article.articlePDF
-
+  const formatDescription = (text: string) => {
+    return text.replace(/\n/g, '<br>');
+  };
+  const type = article.type
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -41,7 +44,17 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
         <DialogHeader className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <DialogTitle className="text-2xl font-bold text-gray-900 mb-3">{article.title}</DialogTitle>
+              <div className="flex items-center gap-3 mb-3">
+                <DialogTitle className="text-2xl font-bold text-gray-900">
+                  {article.title}
+                </DialogTitle>
+                {type && (
+                  <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary border border-primary/20">
+                    {type}
+                  </span>
+                )}
+              </div>
+
               {/* Metadata Section */}
               <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
                 {article.author?.fullName && (
@@ -70,17 +83,15 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
           <div className="px-6 pt-4 border-b border-gray-200 flex gap-2">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`px-4 py-2 font-medium text-sm rounded-lg transition-colors ${
-                activeTab === "overview" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
-              }`}
+              className={`px-4 py-2 font-medium text-sm rounded-lg transition-colors ${activeTab === "overview" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
+                }`}
             >
               Overview
             </button>
             <button
               onClick={() => setActiveTab("pdf")}
-              className={`px-4 py-2 font-medium text-sm rounded-lg transition-colors flex items-center gap-2 ${
-                activeTab === "pdf" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
-              }`}
+              className={`px-4 py-2 font-medium text-sm rounded-lg transition-colors flex items-center gap-2 ${activeTab === "pdf" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
+                }`}
             >
               <FileText className="w-4 h-4" />
               PDF Document
@@ -106,7 +117,10 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
 
               {/* Article Description */}
               <div className="prose prose-sm max-w-full text-gray-700 leading-relaxed">
-                <div dangerouslySetInnerHTML={{ __html: article.description }} />
+                <div dangerouslySetInnerHTML={{
+                  __html: formatDescription(article.description)
+                }} />
+
               </div>
             </div>
           ) : (
