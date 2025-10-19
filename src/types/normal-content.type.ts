@@ -9,6 +9,7 @@ export interface NormalContent {
   coverImage: string;
   createdAt: string;
   fileLink: string;
+  articlePDF: string;
   isFeatured: boolean;
   id: string;
   type: string;

@@ -3,7 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { ForwardRefExoticComponent, RefAttributes, useEffect, useState } from "react";
 import * as z from "zod";
 import { toast } from "sonner";
 
@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Edit, Upload } from "lucide-react";
+import { Edit, LucideProps, Video } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -35,6 +35,8 @@ import {
 } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
+import { IconType } from "react-icons/lib";
+import { FaFilePdf, FaImage } from "react-icons/fa";
 
 // ----------------- Zod Schema -----------------
 const updateSchema = z.object({
@@ -48,6 +50,7 @@ const updateSchema = z.object({
   tierId: z.string().min(1, "Tier is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
+  articlePDF: z.any().optional(),
 });
 
 type UpdateFormValues = z.infer<typeof updateSchema>;
@@ -109,7 +112,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
   }, [contentData, reset]);
 
   // File change handlers
-  const handleFileChange = (field: "content" | "thumbnail") =>
+  const handleFileChange = (field: "content" | "thumbnail" | 'articlePDF') =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files?.[0]) setValue(field, e.target.files[0]);
     };
@@ -128,6 +131,8 @@ export default function EditContent({ contentId }: { contentId: string }) {
       formData.append("content", data.content);
     if (selectedContentType === "ARTICLE" && data.thumbnail)
       formData.append("thumbnail", data.thumbnail);
+    if (selectedContentType === "ARTICLE" && data.articlePDF)
+      formData.append("articlePDF", data.articlePDF);
 
     try {
       await updateContent({ id: contentId, data: formData }).unwrap();
@@ -140,6 +145,8 @@ export default function EditContent({ contentId }: { contentId: string }) {
     }
   };
   const coverImg = contentData?.data?.coverImage || ''
+  const fileLink = contentData?.data?.fileLink || ''
+  const articlePDF = contentData?.data?.articlePDF || ''
   return (
     <Dialog
       open={open}
@@ -149,9 +156,9 @@ export default function EditContent({ contentId }: { contentId: string }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size={"icon"} ><Edit/></Button>
+        <Button variant="outline" size={"icon"} ><Edit /></Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto !max-w-4xl">
         <DialogHeader>
           <DialogTitle>Edit Content</DialogTitle>
         </DialogHeader>
@@ -267,17 +274,34 @@ export default function EditContent({ contentId }: { contentId: string }) {
                 onChange={handleFileChange("content")}
                 accept="video/*,audio/*"
                 contentType={watch("contentType")}
+                previousUrl={fileLink}
+                title="Video/Audio up to 500MB"
+                Icon={Video}
               />
             ) : (
               <FileUpload
                 label="Upload Thumbnail"
                 value={watch("thumbnail")}
                 onChange={handleFileChange("thumbnail")}
-                coverImg={coverImg}
+                previousUrl={coverImg}
                 accept="image/*"
                 contentType={watch("contentType")}
+                title="PNG, JPG, GIF up to 10MB"
+                Icon={FaImage}
               />
             )}
+
+            {
+              selectedContentType === 'ARTICLE' && <FileUpload
+                label="Upload PDF (Optional)"
+                value={watch("articlePDF")}
+                onChange={handleFileChange("articlePDF")}
+                previousUrl={articlePDF}
+                accept="application/pdf"
+                title="PDF up to 50MB"
+                Icon={FaFilePdf}
+              />
+            }
 
             {/* Actions */}
             <div className="flex justify-end space-x-3 border-t pt-4">
@@ -305,8 +329,10 @@ type FileUploadProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: File | null;
   accept?: string;
-  coverImg?: string
-  contentType: string
+  previousUrl?: string
+  contentType?: string
+  Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>> | IconType
+  title: string
 };
 
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -314,15 +340,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
   onChange,
   value,
   accept,
-  coverImg,
-  contentType
+  previousUrl,
+  contentType,
+  Icon,
+  title
 }) => {
-  const [preview, setPreview] = useState<string | null>(coverImg || null);
+  const [preview, setPreview] = useState<string | null>(previousUrl || null);
   const inputId = `file-upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
 
   useEffect(() => {
-    if (!value) return setPreview(coverImg || null);
+    if (!value) {
+      if (previousUrl) {
+        return setPreview(previousUrl || null)
+      }
 
+    };
     if (value instanceof File && value.type.startsWith("image/")) {
       const url = URL.createObjectURL(value);
       setPreview(url);
@@ -331,11 +363,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
     if (
       value instanceof File &&
-      (value.type.startsWith("audio/") || value.type.startsWith("video/"))
+      (value.type.startsWith("audio/") || value.type.startsWith("video/") || value.type.startsWith("application/pdf"))
     ) {
       setPreview(value.name);
     }
-  }, [value, coverImg]);
+  }, [value, previousUrl]);
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -353,14 +385,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
         >
           {!preview ? (
             <>
-              <Upload className="h-8 w-8 text-gray-400" />
+              <Icon className="h-8 w-8 text-gray-400" />
               <span className="text-sm font-medium text-gray-600">
                 Click to upload file
               </span>
               <span className="text-xs text-gray-400">
-                {label.toLowerCase().includes("thumbnail")
-                  ? "PNG, JPG, GIF up to 10MB"
-                  : "Video/Audio up to 500MB"}
+                {title}
               </span>
             </>
           ) : contentType === 'ARTICLE' ? (

@@ -2,7 +2,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { ForwardRefExoticComponent, RefAttributes, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -25,13 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { LucideProps, Video } from "lucide-react";
 
 import { useCreateNewContentMutation } from "@/redux/api/contentApi";
 import { useGetAllTiersQuery } from "@/redux/api/tierApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { FaFilePdf, FaImage } from "react-icons/fa";
+import { IconType } from "react-icons/lib";
 
 // ------------------------- Zod Schema -------------------------
 const contentSchema = z.object({
@@ -45,6 +47,7 @@ const contentSchema = z.object({
   tierId: z.string().min(1, "Tier is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
+  articlePDF: z.any().optional(),
 });
 
 type ContentFormValues = z.infer<typeof contentSchema>;
@@ -67,6 +70,7 @@ export default function CreateContent() {
       contentOrDescriptor: "",
       content: null,
       thumbnail: null,
+      articlePDF: null,
     },
   });
 
@@ -97,6 +101,9 @@ export default function CreateContent() {
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) setValue("thumbnail", e.target.files[0]);
   };
+  const handlePDFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) setValue("articlePDF", e.target.files[0]);
+  };
 
   // ------------------- Submit Handler -------------------
   const onSubmit = async (data: ContentFormValues) => {
@@ -123,6 +130,7 @@ export default function CreateContent() {
       formData.append("content", data.content!);
     } else {
       formData.append("thumbnail", data.thumbnail!);
+      formData.append("articlePDF", data.articlePDF!);
     }
 
     try {
@@ -264,6 +272,8 @@ export default function CreateContent() {
               value={watch("content")}
               onChange={handleContentChange}
               accept="video/*,audio/*"
+              title="Video/Audio up to 500MB"
+              Icon={Video}
             />
           ) : (
             <FileUpload
@@ -271,8 +281,21 @@ export default function CreateContent() {
               value={watch("thumbnail")}
               onChange={handleThumbnailChange}
               accept="image/*"
+              title="PNG, JPG, GIF up to 10MB"
+              Icon={FaImage}
             />
           )}
+
+          {
+            selectedContentType === 'ARTICLE' && <FileUpload
+              label="Upload PDF (Optional)"
+              value={watch("articlePDF")}
+              onChange={handlePDFChange}
+              accept="application/pdf"
+               title="PDF up to 50MB"
+              Icon={FaFilePdf}
+            />
+          }
 
           {/* Actions */}
           <div className="flex justify-end space-x-3 border-t pt-4">
@@ -299,6 +322,8 @@ type FileUploadProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: File | null;
   accept?: string;
+  Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>> | IconType
+  title: string
 };
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -306,10 +331,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   onChange,
   value,
   accept,
+  Icon,
+  title
 }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const inputId = `file-upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
-
   useEffect(() => {
     if (!value) return setPreview(null);
 
@@ -323,7 +349,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     // For audio/video, show filename instead
     if (
       value instanceof File &&
-      (value.type.startsWith("audio/") || value.type.startsWith("video/"))
+      (value.type.startsWith("audio/") || value.type.startsWith("video/") || value.type.startsWith("application/pdf"))
     ) {
       setPreview(value.name);
     }
@@ -346,14 +372,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         >
           {!preview ? (
             <>
-              <Upload className="h-8 w-8 text-gray-400" />
+              <Icon className="h-8 w-8 text-gray-400" />
               <span className="text-sm font-medium text-gray-600">
                 Click to upload file
               </span>
               <span className="text-xs text-gray-400">
-                {label.toLowerCase().includes("thumbnail")
-                  ? "PNG, JPG, GIF up to 10MB"
-                  : "Video/Audio up to 500MB"}
+                {title}
               </span>
             </>
           ) : value instanceof File && value.type.startsWith("image/") ? (

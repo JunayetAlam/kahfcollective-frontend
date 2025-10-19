@@ -42,13 +42,13 @@ const contentApi = baseApi.injectEndpoints({
       invalidatesTags: ["Contents"],
     }),
     getAllContents: builder.query({
-      query: (args: TQueryParam[]) => {
+      query: (args?: TQueryParam[]) => {
         const params = new URLSearchParams();
         if (args)
           args.forEach((item) =>
             params.append(item.name, item.value as string),
           );
-        return { url: "/contents", method: "GET", params };
+        return { url: "/contents", method: "GET", ...(args && { params }) };
       },
       transformResponse: (
         response: TResponseRedux<NormalContent[]>,
