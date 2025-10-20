@@ -26,16 +26,16 @@ import DeleteUser from './DeleteUser';
 import { toast } from 'sonner';
 
 const roleDisplay: Record<string, string> = {
-  SUPERADMIN: 'SUPERADMIN',
-  INSTRUCTOR: 'INSTRUCTOR',
+  SUPERADMIN: 'Super Admin',
+  INSTRUCTOR: 'Instructor',
   USER: 'Student',
 };
 
 const roleColors: Record<string, string> = {
-  SUPERADMIN: 'bg-secondary !text-foreground',
-  INSTRUCTOR: 'bg-foreground',
-  USER: 'bg-primary',
-};
+  SUPERADMIN: '!text-red-600 bg-red-100 dark:!text-red-400 dark:bg-red-900/50',
+  INSTRUCTOR: '!text-indigo-600 bg-indigo-100 dark:!text-indigo-400 dark:bg-indigo-900/50',
+  USER: '!text-emerald-600 bg-emerald-100 dark:!text-emerald-400 dark:bg-emerald-900/50',
+}
 
 export default function UserRow({ user }: { user: User }) {
 
@@ -100,7 +100,7 @@ export default function UserRow({ user }: { user: User }) {
 
       {/* Tier */}
       <TableCell>
-        <div className='flex flex-wrap gap-3'>
+        <div className='flex flex-wrap gap-3 min-w-[350px]'>
           {tierData?.map((item, index) => (
             <Button
               disabled={assignLoading}
@@ -126,7 +126,7 @@ export default function UserRow({ user }: { user: User }) {
           </SelectTrigger>
           <SelectContent>
             {Object.keys(roleDisplay).map((r) => (
-              <SelectItem key={r} value={r}>
+              <SelectItem   key={r} value={r}>
                 <Badge className={`${roleColors[r]} text-background`}>
                   {roleDisplay[r]}
                 </Badge>

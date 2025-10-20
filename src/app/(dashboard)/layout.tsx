@@ -39,7 +39,7 @@ export default function RootLayout({
           >
             <div className="flex relative">
               <Sidebar />
-              <Container className="py-6 pt-24">
+              <Container className="py-6 pt-24 max-w-full overflow-auto">
                 {children}
               </Container>
             </div>

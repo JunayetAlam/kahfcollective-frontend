@@ -155,7 +155,7 @@ export default function ManageStudents({
                     Students
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-hidden">
+            <DialogContent className="!max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Manage Students</DialogTitle>
                     <p className="text-muted-foreground text-sm">
@@ -176,7 +176,7 @@ export default function ManageStudents({
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-hidden max-h-[500px] overflow-y-auto">
+                    <div className="">
                         {isLoading ? (
                             <TableSkeleton headers={["Student", "Assignment Status"]} />
                         ) : error ? (
