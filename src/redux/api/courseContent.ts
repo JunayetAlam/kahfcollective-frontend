@@ -4,9 +4,9 @@ import { baseApi } from "./baseApi";
 
 const courseContentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    createVideoCourseContent: builder.mutation({
+    createFileContent: builder.mutation({
       query: (formData: FormData) => ({
-        url: `/course-contents/video`,
+        url: `/course-contents`,
         method: "POST",
         body: formData,
       }),
@@ -42,9 +42,9 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CourseContents", "Courses"],
     }),
-    updateVideoMutation: builder.mutation({
+    updateFileContent: builder.mutation({
       query: ({ id, formData }) => ({
-        url: `/course-contents/video/${id}`,
+        url: `/course-contents/${id}`,
         method: "PUT",
         body: formData,
       }),
@@ -155,7 +155,7 @@ const courseContentApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useCreateVideoCourseContentMutation,
+  useCreateFileContentMutation,
   useUpdateCourseContentMutation,
   useGetContentByIdQuery,
   useDeleteCourseContentByIdMutation,
@@ -163,7 +163,7 @@ export const {
   useDeleteSingleQuizMutation,
   useCreateQuizContentMutation,
   useGetAllQuizzesForCourseQuery,
-  useUpdateVideoMutationMutation,
+  useUpdateFileContentMutation,
   useUpdateSingleQuizMutation,
   useAddSingleQuizMutation,
   useGetAllContentForSpecificCourseQuery,

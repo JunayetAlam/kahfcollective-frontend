@@ -28,11 +28,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   useCreateQuizContentMutation,
-  useCreateVideoCourseContentMutation,
+  useCreateFileContentMutation,
 } from "@/redux/api/courseContent";
 import { CourseContentData } from "@/types";
-import {  Plus, Upload, Video } from "lucide-react";
+import { Plus, Upload, Video } from "lucide-react";
 import MF_ManageQuiz from "./MF_ManageQuiz";
+import { TiDocument } from "react-icons/ti";
 
 // ------------------ Zod Schema ------------------
 const contentSchema = z
@@ -41,9 +42,10 @@ const contentSchema = z
     title: z.string().min(1, "Title must be at least 1 characters"),
     description: z.string().min(2, "Description must be at least 2 characters"),
     questionText: z.string().optional(),
-    type: z.enum(["VIDEO", "QUIZ"]),
+    type: z.enum(["VIDEO", "QUIZ", "PDF"]),
     status: z.enum(["DRAFT", "PUBLISHED"]),
     videoFile: z.any().optional(),
+    pdfFile: z.any().optional(),
     questions: z
       .array(
         z.object({
@@ -60,13 +62,14 @@ const contentSchema = z
   .refine(
     (data) => {
       if (data.type === "VIDEO") return !!data.videoFile;
+      if (data.type === "PDF") return !!data.pdfFile;
       if (data.type === "QUIZ") return !!data.questions?.length;
       return true;
     },
     {
       message:
-        "Video is required for VIDEO, at least 1 question required for QUIZ",
-      path: ["videoFile", "questions"],
+        "Video is required for VIDEO, at least 1 question required for QUIZ, PDF is required for PDF",
+      path: ["videoFile", "questions", "pdfFile"],
     },
   );
 
@@ -96,6 +99,7 @@ export function MF_ContentForm({
       type: "VIDEO",
       status: "PUBLISHED",
       videoFile: null,
+      pdfFile: null,
       questionText: "",
       questions: [],
     },
@@ -105,28 +109,36 @@ export function MF_ContentForm({
 
   const [createQuizContent, { isLoading: isContentQuizLoading }] =
     useCreateQuizContentMutation();
-  const [createVideoCourse, { isLoading: isVideoContentLoading }] =
-    useCreateVideoCourseContentMutation();
+  const [createFileCourseContent, { isLoading: isVideoContentLoading }] =
+    useCreateFileContentMutation();
 
   const isLoading =
     isContentQuizLoading || isVideoContentLoading;
 
   // ------------------ Submit Handler ------------------
   const onSubmit: SubmitHandler<ContentFormValues> = async (data) => {
-    if (data.type === "VIDEO") {
-      if (!data.videoFile) return;
+    if (data.type === "VIDEO" || data.type === 'PDF') {
+      if (data.type === 'VIDEO') if (!data.videoFile) return;
+      if (data.type === 'PDF') if (!data.pdfFile) return;
 
       const formData = new FormData();
       formData.append("courseId", courseData.id);
+      formData.append("type", data.type);
       formData.append("title", data.title);
       formData.append("description", data.description);
       formData.append("status", data.status);
-      formData.append("file", data.videoFile);
+      if (data.type === 'VIDEO') {
+        formData.append("file", data.videoFile);
+      }
+      if (data.type === 'PDF') {
+        formData.append("file", data.pdfFile);
+      }
 
       try {
-        await createVideoCourse(formData).unwrap();
+        await createFileCourseContent(formData).unwrap();
+        setOpen(false);
       } catch (err) {
-        console.error("Error creating video content:", err);
+        console.error("Error creating content:", err);
       }
     }
 
@@ -149,6 +161,7 @@ export function MF_ContentForm({
 
       const payload = {
         courseId: data.courseId,
+        type: data.type,
         title: data.title,
         description: data.description,
         status: data.status,
@@ -198,11 +211,9 @@ export function MF_ContentForm({
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="details">Details</TabsTrigger>
               <TabsTrigger value="content">
-                {watchedType === "VIDEO"
-                  ? "Video"
-                  : watchedType === "QUIZ"
-                    ? "Assessment"
-                    : "Question"}
+                {watchedType === "VIDEO" && "Video"}
+                {watchedType === "QUIZ" && "Assessment"}
+                {watchedType === "PDF" && "PDF"}
               </TabsTrigger>
             </TabsList>
 
@@ -250,6 +261,7 @@ export function MF_ContentForm({
                           <SelectContent>
                             <SelectItem value="VIDEO">Video</SelectItem>
                             <SelectItem value="QUIZ">Assessment</SelectItem>
+                            <SelectItem value="PDF">PDF</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
@@ -333,8 +345,58 @@ export function MF_ContentForm({
                   </CardContent>
                 </Card>
               )}
+              {watchedType === "PDF" && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TiDocument className="h-5 w-5" /> PDF Upload
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="overflow-y-auto">
+                    <Controller
+                      name="pdfFile"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
+                          <Upload className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                          <p className="mb-2 text-sm text-gray-600">
+                            Drag & drop or click to upload
+                          </p>
+                          <input
+                            type="file"
+                            accept="application/pdf"
+                            className="hidden"
+                            id="video-upload-input"
+                            onChange={(e) =>
+                              field.onChange(e.target.files?.[0])
+                            }
+                          />
+                          <label htmlFor="video-upload-input">
+                            <Button variant="outline" asChild>
+                              <span>
+                                <Upload className="mr-2 h-4 w-4" />
+                                Choose PDF File
+                              </span>
+                            </Button>
+                          </label>
+                          {field.value && (
+                            <div className="mt-2 text-sm text-green-700">
+                              ✓ {field.value.name} selected
+                            </div>
+                          )}
+                          {errors.pdfFile && (
+                            <p className="mt-2 text-sm text-red-500">
+                              {errors.pdfFile.message?.toString()}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+              )}
 
-             
+
 
               {watchedType === "QUIZ" && (
                 <MF_ManageQuiz control={control} errors={errors} setValue={setValue} watch={watch} />

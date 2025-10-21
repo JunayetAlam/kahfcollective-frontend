@@ -9,6 +9,7 @@ import TableSkeleton from "@/components/Global/TableSkeleton";
 import EditForum from "./EditForum";
 import EditFruternityGroup from "./EditFruternityGroup";
 import DeleteForum from "./DeleteForum";
+import { Button } from "@/components/ui/button";
 
 export default function ForumTable() {
     const [activeTab, setActiveTab] = useState<ForumTypeEnum>("STUDY_CIRCLES");
@@ -37,19 +38,17 @@ export default function ForumTable() {
 
             {/* Tabs */}
             <div className="mb-6">
-                <div className="flex border rounded-lg p-1 bg-background">
+                <div className="border rounded-lg p-1 px-3 bg-background grid grid-cols-2 gap-3">
                     {(["STUDY_CIRCLES", "LOCATION_BASED"] as ForumTypeEnum[]).map((tab) => (
-                        <button
+                        <Button
+                            variant={tab === activeTab ? 'secondary' : 'outline'}
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === tab
-                                ? "bg-secondary shadow-sm"
-                                : "text-muted-foreground"
-                                }`}
+                            className="w-full"
                         >
                             {tab === 'STUDY_CIRCLES' && 'Study Circles'}
                             {tab === 'LOCATION_BASED' && 'Location Based'}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>

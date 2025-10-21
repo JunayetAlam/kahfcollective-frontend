@@ -3,7 +3,7 @@ import { Tier } from "./tiers.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
-export type CourseContentTypeEnum = "VIDEO" | "QUIZ";
+export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | 'PDF';
 export type ContentStatusEnum = "PUBLISHED" | "DRAFT";
 export type RightAnswer = "A" | "B" | "C" | "D";
 
@@ -60,6 +60,7 @@ export interface CourseContents {
   title: string;
   description: string;
   videoUrl?: string | null;
+  pdfUrl?: string | null;
   quizzes?: Quiz[];
   status: ContentStatusEnum;
   isDeleted: boolean;

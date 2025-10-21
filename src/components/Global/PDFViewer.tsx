@@ -1,18 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
-import { useState, useEffect } from "react"
-import { FileText, Loader } from "lucide-react"
-import * as pdfjsLib from "pdfjs-dist"
-
-// Set worker source from node_modules
-if (typeof window !== "undefined") {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-        'pdfjs-dist/build/pdf.worker.min.mjs',
-        import.meta.url
-    ).toString()
-}
+import { useState } from "react"
+import { FileText, Loader, ExternalLink } from "lucide-react"
+import { Button } from "../ui/button"
 
 interface PDFViewerProps {
     pdfUrl: string
@@ -21,144 +11,70 @@ interface PDFViewerProps {
 
 export default function PDFViewer({ pdfUrl, title }: PDFViewerProps) {
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const [pdf, setPdf] = useState<pdfjsLib.PDFDocumentProxy | null>(null)
-    const [totalPages, setTotalPages] = useState(0)
-    const canvasRefs = useState(() => new Map<number, HTMLCanvasElement>())[0]
-    const svgRefs = useState(() => new Map<number, SVGSVGElement>())[0]
+    const [error, setError] = useState(false)
 
-    // Load PDF document
-    useEffect(() => {
-        const loadPdf = async () => {
-            try {
-                setLoading(true)
-                setError(null)
-                
-                const pdfDoc = await pdfjsLib.getDocument({
-                    url: pdfUrl,
-                    withCredentials: false,
-                }).promise
-                
-                setPdf(pdfDoc)
-                setTotalPages(pdfDoc.numPages)
-            } catch (err) {
-                console.error("PDF loading error:", err)
-                setError("Failed to load PDF. Please check the URL and try again.")
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        if (pdfUrl) {
-            loadPdf()
-        }
-    }, [pdfUrl])
-
-    // Render all pages
-    useEffect(() => {
-        if (!pdf || totalPages === 0) return
-
-        const renderAllPages = async () => {
-            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                const canvas = canvasRefs.get(pageNum)
-                const svg = svgRefs.get(pageNum)
-                if (!canvas || !svg) continue
-
-                try {
-                    const page = await pdf.getPage(pageNum)
-                    const viewport = page.getViewport({ scale: 2.5 })
-
-                    // Render canvas
-                    canvas.width = viewport.width
-                    canvas.height = viewport.height
-
-                    const renderContext = {
-                        canvasContext: canvas.getContext("2d")!,
-                        viewport: viewport,
-                        canvas: canvas,
-                    }
-
-                    await page.render(renderContext).promise
-
-                    // Render SVG text layer
-                    svg.setAttribute("width", String(viewport.width))
-                    svg.setAttribute("height", String(viewport.height))
-                    svg.setAttribute("viewBox", `0 0 ${viewport.width} ${viewport.height}`)
-                    svg.innerHTML = ""
-
-                    const textContent = await page.getTextContent()
-                    const textItems = textContent.items as any[]
-
-                    textItems.forEach((item) => {
-                        const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-                        text.setAttribute("x", String(item.transform[4]))
-                        text.setAttribute("y", String(viewport.height - item.transform[5]))
-                        text.setAttribute("font-size", String(Math.max(item.height * 0.8, 8)))
-                        text.setAttribute("fill", "transparent")
-                        text.setAttribute("font-family", "Arial, sans-serif")
-                        text.setAttribute("style", "cursor: text; user-select: text;")
-                        text.textContent = item.str
-
-                        svg.appendChild(text)
-                    })
-                } catch (err) {
-                    console.error(`Page ${pageNum} rendering error:`, err)
-                }
-            }
-        }
-
-        renderAllPages()
-    }, [pdf, totalPages])
-
-    if (loading) {
-        return (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-                <Loader className="w-8 h-8 text-gray-400 animate-spin" />
-                <p className="text-gray-500 text-sm">Loading PDF...</p>
-            </div>
-        )
+    const handleLoad = () => {
+        setLoading(false)
+        setError(false)
     }
 
-    if (error || !pdf) {
-        return (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-                <FileText className="w-12 h-12 text-gray-300" />
-                <p className="text-gray-500 text-center max-w-sm">{error || "Unable to load PDF"}</p>
-            </div>
-        )
+    const handleError = () => {
+        setLoading(false)
+        setError(true)
+    }
+
+    const openInNewTab = () => {
+        window.open(pdfUrl, '_blank')
     }
 
     return (
-        <div className="w-full h-full flex flex-col bg-white overflow-y-auto">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                <div key={pageNum} className="w-full flex items-center justify-center bg-white p-0 relative">
-                    <div className="relative inline-block w-full" style={{ maxWidth: "100%" }}>
-                        <canvas 
-                            ref={(el) => {
-                                if (el) {
-                                    canvasRefs.set(pageNum, el)
-                                }
-                            }}
-                            className="w-full h-auto block"
-                            style={{ maxWidth: "100%", display: "block" }}
-                        />
-                        <svg
-                            ref={(el) => {
-                                if (el) {
-                                    svgRefs.set(pageNum, el)
-                                }
-                            }}
-                            className="absolute top-0 left-0 w-full h-full"
-                            style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                pointerEvents: "auto",
-                            }}
-                        />
-                    </div>
+        <div className="w-full h-full flex flex-col bg-gray-100 relative">
+            {/* Header with title and open in new tab button */}
+            <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-800 truncate">{title}</h2>
+                <Button
+                    onClick={openInNewTab}
+                    title="Open in new tab"
+                >
+                    <ExternalLink />
+                    <span className="hidden sm:inline">Open</span>
+                </Button>
+            </div>
+
+            {/* Loading state */}
+            {loading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white z-10">
+                    <Loader className="w-8 h-8 text-gray-400 animate-spin" />
+                    <p className="text-gray-500 text-sm">Loading PDF...</p>
                 </div>
-            ))}
+            )}
+
+            {/* Error state */}
+            {error && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white z-10">
+                    <FileText className="w-12 h-12 text-gray-300" />
+                    <p className="text-gray-500 text-center max-w-sm px-4">
+                        Unable to load PDF. Your browser may not support inline PDF viewing.
+                    </p>
+                    <button
+                        onClick={openInNewTab}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                        <ExternalLink className="w-4 h-4" />
+                        Open PDF in new tab
+                    </button>
+                </div>
+            )}
+
+            {/* PDF iframe */}
+            <iframe
+                src={pdfUrl}
+                className="w-full h-[60vh] border-0"
+                title={title}
+                onLoad={handleLoad}
+                onError={handleError}
+                style={{ display: error ? 'none' : 'block' }}
+            />
         </div>
     )
 }

@@ -21,6 +21,7 @@ import { Button } from "../ui/button";
 import CourseModuleList from "./CourseModuleList";
 import Quiz from "./Quiz/Quiz";
 import Loading from "../Global/Loading";
+import PDFViewer from "../Global/PDFViewer";
 
 const CourseLesson = ({ slug }: { slug: string }) => {
   const token = useAppSelector(useCurrentToken);
@@ -41,7 +42,7 @@ const CourseLesson = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetAllContentForSpecificCourseQuery(slug);
 
   if (isLoading || courseLoading) {
-    return <Loading/>; 
+    return <Loading />;
   }
 
   const courseContents = data?.data || [];
@@ -79,9 +80,9 @@ const CourseLesson = ({ slug }: { slug: string }) => {
             <Title>{selectedContents.title}</Title>
 
             {/* ✅ Conditional Rendering */}
-            {selectedContents?.type === "QUIZ" ? (
-              <Quiz contents={selectedContents} />
-            ) : <VideoPlayer contents={selectedContents} />}
+            {selectedContents?.type === "QUIZ" && <Quiz contents={selectedContents} />}
+            {selectedContents?.type === "VIDEO" && <VideoPlayer contents={selectedContents} />}
+            {selectedContents?.type === "PDF" && <PDFViewer title="PDF" pdfUrl={selectedContents?.pdfUrl || ''} />}
 
             {/* Navigation Buttons */}
             <div className="flex w-full justify-between gap-4">

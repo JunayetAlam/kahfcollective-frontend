@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 type QuesType = {
     title: string;
     description: string;
-    type: "VIDEO" | "QUIZ";
+    type: "VIDEO" | "QUIZ" | 'PDF';
     status: "DRAFT" | "PUBLISHED";
     courseId?: string | undefined;
     questionText?: string | undefined;

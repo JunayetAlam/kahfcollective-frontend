@@ -33,8 +33,9 @@ import {
   useGetAllQuizzesForCourseAdminQuery,
   useUpdateCourseContentMutation,
   useUpdateSingleQuizMutation,
-  useUpdateVideoMutationMutation,
+  useUpdateFileContentMutation,
 } from "@/redux/api/courseContent";
+import { CourseContents } from "@/types";
 
 const editSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -46,13 +47,13 @@ export default function EditContentForm({
   item,
   onClose,
 }: {
-  item: any;
+  item: CourseContents;
   onClose: () => void;
 }) {
   const [updateContent, { isLoading: isUpdating }] =
     useUpdateCourseContentMutation();
-  const [updateVideo, { isLoading: isUploading }] =
-    useUpdateVideoMutationMutation();
+  const [updateFile, { isLoading: isUploading }] =
+    useUpdateFileContentMutation();
   const [updateQuiz, { isLoading: isUpdatingQuiz }] =
     useUpdateSingleQuizMutation();
   const [deleteQuiz, { isLoading: isDeletingQuiz }] =
@@ -103,20 +104,20 @@ export default function EditContentForm({
     }
   };
 
-  const handleVideoUpload = async () => {
+  const handleFileUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please select a video first");
+      toast.error("Please select a file first");
       return;
     }
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("id", item.id);
-      await updateVideo({ id: item.id, formData }).unwrap();
-      toast.success("Video updated successfully");
+      await updateFile({ id: item.id, formData }).unwrap();
+      toast.success("File updated successfully");
       setSelectedFile(null);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Video upload failed");
+      toast.error(error?.data?.message || "File upload failed");
     }
   };
 
@@ -160,7 +161,7 @@ export default function EditContentForm({
         rightAnswer: newQuiz.rightAnswer,
         type: newQuiz.type,
       };
-      
+
       if (newQuiz.type === "MULTIPLE_CHOICE" && newQuiz.options) {
         payload.options = newQuiz.options;
       }
@@ -385,7 +386,7 @@ export default function EditContentForm({
       )}
 
       {/* Video */}
-      {item.type === "VIDEO" && (
+      {(item.type === "VIDEO") && (
         <div className="space-y-2">
           <label className="block text-sm font-medium">Change Video</label>
           <Input
@@ -399,10 +400,31 @@ export default function EditContentForm({
           )}
           <Button
             type="button"
-            onClick={handleVideoUpload}
+            onClick={handleFileUpload}
             disabled={isUploading}
           >
             {isUploading ? "Uploading..." : "Upload Video"}
+          </Button>
+        </div>
+      )}
+      {(item.type === "PDF") && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">Change PDF</label>
+          <Input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+            disabled={isUploading}
+          />
+          {selectedFile && (
+            <p className="text-sm">Selected: {selectedFile.name}</p>
+          )}
+          <Button
+            type="button"
+            onClick={handleFileUpload}
+            disabled={isUploading}
+          >
+            {isUploading ? "Uploading..." : "Upload PDF"}
           </Button>
         </div>
       )}

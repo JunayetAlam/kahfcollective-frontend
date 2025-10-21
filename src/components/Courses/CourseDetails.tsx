@@ -5,7 +5,7 @@ import Container from '../Global/Container';
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { BookOpen, BookText, Brain, CirclePlay, Globe, User } from 'lucide-react';
+import { BookOpen, BookText, Brain, CirclePlay, FileSpreadsheet, Globe, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import Title from '../Global/Title';
@@ -16,13 +16,14 @@ import Link from 'next/link';
 import { useGetCourseByIdQuery } from '@/redux/api/courseApi';
 import courseImg from "@/assets/articles.jpg"
 import Loading from '../Global/Loading';
+import { TiDocument } from 'react-icons/ti';
 
 
 export default function CourseDetails({ slug }: { slug: string }) {
-     const [activeTab, setActiveTab] = useState("overview")
+    const [activeTab, setActiveTab] = useState("overview")
     const { data, isLoading } = useGetCourseByIdQuery(slug)
     if (isLoading) {
-        return <Loading/>
+        return <Loading />
     }
     const courseDetails = data?.data
     return (
@@ -40,7 +41,7 @@ export default function CourseDetails({ slug }: { slug: string }) {
 
                     {/* Course Info */}
                     <div className="space-y-4 ">
-                        
+
                         <Title>{courseDetails?.title}</Title>
 
                         <Subtitle>{courseDetails?.instructor?.fullName}</Subtitle>
@@ -72,12 +73,12 @@ export default function CourseDetails({ slug }: { slug: string }) {
                                 <TopTitle hideLine className="pb-4">Description</TopTitle>
                                 <div className="space-y-6 text-gray-700 leading-relaxed">
                                     <Subtitle>
-                                       {courseDetails?.description}
+                                        {courseDetails?.description}
                                     </Subtitle>
                                 </div>
                             </div>
 
-                           
+
                         </>
                     )}
 
@@ -85,11 +86,11 @@ export default function CourseDetails({ slug }: { slug: string }) {
                         <div className="mt-4 space-y-6 px-4">
                             {courseDetails?.courseContents.map((topic, index) => (
                                 <div key={index} className='flex items-center gap-2'>
-                                      {
-                                        topic.type === 'QUIZ' ? <Brain /> : <CirclePlay />
-                                      }
+                                    {topic.type === 'QUIZ' && <Brain />}
+                                    {topic.type === 'PDF' && <FileSpreadsheet />}
+                                    {topic.type === 'VIDEO' && <CirclePlay />}
                                     <Subtitle>{topic.title}</Subtitle>
-                                    
+
                                 </div>
                             ))}
                         </div>
@@ -100,7 +101,7 @@ export default function CourseDetails({ slug }: { slug: string }) {
                 <div className="lg:col-span-1">
                     <Card style={{ boxShadow: '4px 5px 11px 0px rgba(0, 0, 0, 0.05)' }} className="sticky top-24 pt-0 shadow-none border-none">
                         <CardContent className="p-3">
-                          
+
 
                             {/* Course Details */}
                             <div className="p-6 space-y-4">
@@ -130,14 +131,14 @@ export default function CourseDetails({ slug }: { slug: string }) {
                                             <p className="text-sm text-gray-600">{courseDetails?.language}</p>
                                         </div>
                                     </div>
-                                    
 
-                                 
+
+
                                 </div>
-                                
+
                             </div>
-                           <Link href={`${courseDetails?.id}/lessons`}> 
-                            <Button className='w-full'>See Contents</Button>
+                            <Link href={`${courseDetails?.id}/lessons`}>
+                                <Button className='w-full'>See Contents</Button>
                             </Link>
                         </CardContent>
                     </Card>

@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
       'kashmirmonitor-s01.sgp1.cdn.digitaloceanspaces.com',
       'www.imana.org',
       'nyc3.digitaloceanspaces.com',
+      "sfo3.digitaloceanspaces.com"
     ],
   },
 };

@@ -92,7 +92,7 @@ export function ContentTab({
               <TableCell className="flex gap-2">
                 <Button
                   variant="destructive"
-                  size="sm"
+                  size="icon"
                   onClick={() => confirmDelete(item)}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -113,10 +113,12 @@ export function ContentTab({
                     <DialogHeader>
                       <DialogTitle>Edit Content</DialogTitle>
                     </DialogHeader>
-                    <EditContentForm
-                      item={editingItem}
-                      onClose={() => setDialogOpen(false)}
-                    />
+                    {
+                      editingItem && <EditContentForm
+                        item={editingItem}
+                        onClose={() => setDialogOpen(false)}
+                      />
+                    }
                   </DialogContent>
                 </Dialog>
               </TableCell>
