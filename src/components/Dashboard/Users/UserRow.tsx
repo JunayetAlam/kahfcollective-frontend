@@ -71,9 +71,9 @@ export default function UserRow({ user }: { user: User }) {
   const tierData = data?.data || []
   const userTier = user?.userTiers.map(item => item?.tier?.id)
   return (
-    <TableRow key={user.id}>
+    <TableRow key={user.id} className='relative'>
       {/* Name + Avatar */}
-      <TableCell>
+      <TableCell className='sticky left-0 z-10 bg-background'>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image

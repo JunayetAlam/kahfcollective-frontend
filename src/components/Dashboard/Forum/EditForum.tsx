@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -26,15 +26,15 @@ type EditForumProps = {
 };
 
 export default function EditForum({ forumId }: EditForumProps) {
+    const [fetch, setFetch] = useState(false)
     const [open, setOpen] = useState(false);
 
     // fetch single forum data
-    const { data, isLoading: fetching } = useGetSingleForumQuery(forumId);
+    const { data, isLoading: fetching } = useGetSingleForumQuery(forumId, {
+        skip: !fetch
+    });
     const [updateForum, { isLoading: updating }] = useUpdateCircleForumMutation();
 
-    if (fetching) {
-        return <Loading/>
-    }
 
     const handleSubmit = async (data: FieldValues) => {
         try {
@@ -62,7 +62,7 @@ export default function EditForum({ forumId }: EditForumProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                 <Button variant="outline" size={"icon"}><Edit/></Button>
+                <Button onClick={() => setFetch(true)} variant="outline" size={"icon"}><Edit /></Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto !max-w-2xl">
                 <DialogHeader>
@@ -73,7 +73,7 @@ export default function EditForum({ forumId }: EditForumProps) {
                 </DialogHeader>
 
                 {fetching ? (
-                    <div className="py-6 text-center text-gray-500">Loading forum data...</div>
+                    <Loading />
                 ) : (
                     <CustomForm
                         onSubmit={handleSubmit}
