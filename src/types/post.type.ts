@@ -41,6 +41,8 @@ export interface Reply {
   message: string;
   joinForum: JoinForum;
   post: Post;
+  user: User;
+  userId: string;
   parentReply?: Reply | null;
   childrenReplies?: Reply[];
   createdAt: string;

@@ -28,9 +28,9 @@ export default function StudyCircleFeed() {
         <SCF_CreatePost />
 
         <div className="space-y-4">
-          {posts.map((post, index) => (
+          {posts.map((post) => (
             <SCFPost
-              key={index}
+              key={post.id}
               post={post}
             />
           ))}

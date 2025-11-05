@@ -96,7 +96,7 @@ export default function SCF_MembersList() {
     }
 
     return (
-        <Card>
+        <Card className='h-fit'>
             <CardHeader>
                 <CardTitle>All members ({users.length})</CardTitle>
             </CardHeader>

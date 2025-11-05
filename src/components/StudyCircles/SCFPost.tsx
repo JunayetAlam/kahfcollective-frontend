@@ -16,12 +16,14 @@ import {
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useGetMeQuery } from '@/redux/api/userApi';
+import { formatTime } from '@/lib/formateTime';
 
 export default function SCFPost({ post }: { post: Post }) {
     const [showAllComments, setShowAllComments] = useState(false);
+    const [expanded, setExpanded] = useState(false);
     const [newComment, setNewComment] = useState('');
     const searchParams = useSearchParams();
-    const {data:me} = useGetMeQuery(undefined);
+    const { data: me } = useGetMeQuery(undefined);
     // query params
     const page = searchParams.get('page') || '';
     const args: TQueryParam[] = [{ name: 'limit', value: '100' }];
@@ -34,6 +36,12 @@ export default function SCFPost({ post }: { post: Post }) {
 
     const reply = data?.data || [];
     const visibleComments = showAllComments ? reply : reply.slice(0, 1);
+
+    const maxChars = 200;
+    const isLong = post.message.length > maxChars;
+    const displayText = expanded
+        ? post.message
+        : post.message.slice(0, maxChars);
 
     // handle comment submit
     const handleCommentSubmit = async () => {
@@ -74,24 +82,42 @@ export default function SCFPost({ post }: { post: Post }) {
     };
 
     const isIReact = (post?.reacts || [])?.length > 0
-
+    const timeLabel = formatTime(post.createdAt);
     return (
         <div className="border p-4 lg:p-8 border-gray-200 rounded-xl space-y-6">
             {/* Post header */}
-            <div className='flex gap-2'>
+            <div className="flex gap-2 items-center">
                 <Avatar className="w-10 h-10">
                     <AvatarImage src={post.user?.profile || ''} alt={post?.user?.fullName || 'NA'} />
-                    <AvatarFallback>{post.user.fullName.slice(0, 2)}</AvatarFallback>
+                    <AvatarFallback>{post.user?.fullName?.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <div className="font-semibold text-gray-800">{post?.user?.fullName || 'NA'}</div>
-                    <div className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleDateString()}</div>
+                    <div className="font-semibold text-gray-800">
+                        {post?.user?.fullName || 'NA'}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                        {timeLabel}
+                    </div>
                 </div>
             </div>
 
             {/* Post body */}
             <div className='flex flex-col gap-6'>
-                <div dangerouslySetInnerHTML={{ __html: post.message }}></div>
+                <div>
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: displayText.replace(/\n/g, '<br>'),
+                        }}
+                    />
+                    {isLong && (
+                        <button
+                            onClick={() => setExpanded(!expanded)}
+                            className="text-primary font-medium mt-1 hover:underline"
+                        >
+                            {expanded ? 'See less' : 'See more'}
+                        </button>
+                    )}
+                </div>
 
                 {/* Reacts & comments */}
                 <div className="grid grid-cols-2 text-gray-600 text-sm gap-2">
@@ -103,7 +129,7 @@ export default function SCFPost({ post }: { post: Post }) {
                         {isReacting ? (
                             <Loader2 className="w-5 h-5 animate-spin text-red-500" />
                         ) : (
-                            <Heart  className={`w-5 h-5 text-red-500 ${isIReact && 'fill-red-500'}`} />
+                            <Heart className={`w-5 h-5 text-red-500 ${isIReact && 'fill-red-500'}`} />
                         )}
                         <span className="font-medium">{post._count?.reacts}</span>
                     </button>
@@ -151,8 +177,8 @@ export default function SCFPost({ post }: { post: Post }) {
                     {/* Add comment */}
                     <div className="flex items-start gap-3">
                         <Avatar className="w-8 h-8">
-                            <AvatarImage src={me?.data?.profile ||''} alt="Me" />
-                            <AvatarFallback>{me?.data?.fullName.slice(0,2)}</AvatarFallback>
+                            <AvatarImage src={me?.data?.profile || ''} alt="Me" />
+                            <AvatarFallback>{me?.data?.fullName.slice(0, 2)}</AvatarFallback>
                         </Avatar>
 
                         <div className="w-full">

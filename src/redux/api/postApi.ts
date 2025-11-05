@@ -20,7 +20,14 @@ const postApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["Post"],
+            invalidatesTags: ["Reply"],
+        }),
+        deleteReply: builder.mutation({
+            query: (id) => ({
+                url: `/posts/reply/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Reply"],
         }),
 
         // Reply to a reply
@@ -96,7 +103,7 @@ const postApi = baseApi.injectEndpoints({
                 return { url: `/posts/replies/${data?.postId}?${queryParams.toString()}`, method: "GET" }
             },
             transformResponse: (response: TResponseRedux<Reply[]>) => ({ data: response.data, meta: response.meta }),
-            providesTags: ["Post"],
+            providesTags: ["Reply"],
         }),
 
         // Get all reactions for a post
@@ -111,6 +118,7 @@ const postApi = baseApi.injectEndpoints({
 export const {
     useCreatePostMutation,
     useReplyToPostMutation,
+    useDeleteReplyMutation,
     useReplyToReplyMutation,
     useGiveReactMutation,
     useTogglePublishMutation,

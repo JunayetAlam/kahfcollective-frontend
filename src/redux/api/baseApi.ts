@@ -56,7 +56,8 @@ export const baseApi = createApi({
     "Forum",
     "Post",
     "QuizAnswer",
-    "Questions"
+    "Questions",
+    "Reply"
   ],
   endpoints: () => ({}),
 });
