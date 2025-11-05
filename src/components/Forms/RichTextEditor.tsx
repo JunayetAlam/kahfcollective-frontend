@@ -39,8 +39,8 @@ const RichTextEditor: React.FC<MYTextEditorProps> = ({
           setContents={content}
           onChange={(content) => onChangeHandler(content)}
           setOptions={{
-            height: "400px",
             minHeight: '160px',
+            maxHeight: '400px',
             width: "100%",
             buttonList: [
               [

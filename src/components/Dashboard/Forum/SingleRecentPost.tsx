@@ -38,7 +38,7 @@ export default function PostItem({ post }: PostItemProps) {
     };
     return (
         <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div className="space-y-4">
+            <div className="space-y-4 w-full">
                 <div className='flex justify-between items-center'>
                     <div className="flex gap-2 items-center">
                         <Avatar className="w-10 h-10">
