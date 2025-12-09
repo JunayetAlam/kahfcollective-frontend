@@ -1,6 +1,3 @@
-Here’s your **enhanced README.md** with **badges, table of contents**, and your project link added:
-
-````markdown
 # Kahf Collective
 
 [![Website](https://img.shields.io/badge/Website-kahfcollective.com-blue)](https://kahfcollective.com/)
