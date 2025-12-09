@@ -127,8 +127,6 @@ npm start
 npm run lint
 ```
 
-## Footer
-
 Developed by Junayet Alam (Full Stack) | Robin Mia (Help) | Mir Noman (Help)
 
 ---
