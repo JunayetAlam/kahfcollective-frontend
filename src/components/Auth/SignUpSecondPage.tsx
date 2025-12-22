@@ -1,4 +1,4 @@
-import { setData, useCurrentSignUpData } from "@/redux/signUpSlice";
+import { resetData, setCurrentPage, setData, useCurrentSignUpData } from "@/redux/signUpSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { FieldValues } from "react-hook-form";
 import CustomForm from "../Forms/CustomForm";
@@ -6,21 +6,48 @@ import CustomInput from "../Forms/CustomInput";
 import CustomRadioCheckpoint from "../Forms/CustomRadioCheckpoints";
 import { Button } from "../ui/button";
 import PageStep from "./PageStep";
+import { toast } from "sonner";
+import { useSignUpMutation } from "@/redux/api/userApi";
+import { useRouter } from "next/navigation";
 
 export default function SignUpSecondPage() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const data = useAppSelector(useCurrentSignUpData).data;
-
+  const [signUp, { isLoading }] = useSignUpMutation();
   const defaultValues = {
-    profession: data.profession || "",
-    wasTakeCourseBefore: data.wasTakeCourseBefore || "",
-    coursesName: data.coursesName || "",
-    isTakeCourseWithSheikh: data.isTakeCourseWithSheikh || "",
-    howLongCorrespondence: data.howLongCorrespondence || "",
+    currentClass: data.currentClass || "",
+    roll: data.roll || "",
+    subject: data.subject || "",
   };
 
-  const handleSubmit = (formData: FieldValues) => {
-    dispatch(setData({ data: formData, currentPage: 3 }));
+  const handleSubmit = async (formData: FieldValues) => {
+    const registerData = {
+      fullName: data.fullName,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      password: data.password,
+      address: data.fullAddress,
+      introduction: data.shortIntroduction,
+      referredBy: formData.other,
+      gender: data.gender,
+      currentClass: formData.currentClass,
+      roll: Number(formData.roll),
+      subject: formData.subject,
+
+    };
+    const toastId = toast.loading("Creating your account...");
+    try {
+      const result = await signUp(registerData).unwrap();
+      toast.success(result?.message, { id: toastId });
+      dispatch(resetData());
+      router.push(`/auth/check-email?email=${data.email}`);
+    } catch (error: any) {
+      if (error?.data?.message === "User already exists with the email") {
+        dispatch(setCurrentPage({ currentPage: 1 }));
+      }
+      toast.error(error?.data?.message || "Sign up failed", { id: toastId });
+    }
   };
   return (
     <CustomForm
@@ -28,63 +55,44 @@ export default function SignUpSecondPage() {
       defaultValues={defaultValues}
       className="space-y-4"
     >
-      {/* Profession */}
+      {/* Current Class */}
       <CustomInput
         required
-        label="What is your current profession/major in college?"
-        name="profession"
+        label="What is your current class?"
+        name="currentClass"
         type="text"
-        placeholder="profession/major"
+        placeholder="current class"
       />
 
-      {/* Was Take Course Before */}
-      <CustomRadioCheckpoint
-        name="wasTakeCourseBefore"
-        label="Have you taken Islamic Courses before?"
-        options={[
-          { value: "yes", label: "Yes" },
-          { value: "no", label: "No" },
-        ]}
-        otherFieldName="coursesName"
-        placeholder="Enter course name"
-      />
-
-      {/* Courses Name (conditional) */}
+      {/* Roll */}
       <CustomInput
-        name="coursesName"
-        type="text"
-        label="If yes, list them"
-        placeholder="Name of the course(s) you took"
+        required
+        label="What is your roll?"
+        name="roll"
+        type="number"
+        placeholder="roll"
       />
 
-      {/* Is Take Course With Sheikh */}
-      <CustomRadioCheckpoint
-        name="isTakeCourseWithSheikh"
-        label="Have you taken courses with Sheikh Salman before?"
-        options={[
-          { value: "yes", label: "Yes" },
-          { value: "no", label: "No" },
-        ]}
-      />
-
-      {/* How Long Correspondence */}
-
+      {/* Subject */}
       <CustomInput
-        label="If yes, how long have you been taking classes with Sheikh Salman?"
-        name="howLongCorrespondence"
+        required
+        label="What is your subject?"
+        name="subject"
         type="text"
-        placeholder="Correspond"
+        placeholder="subject"
       />
 
-      <PageStep />
+
+      <PageStep disable={isLoading} />
 
       <Button
         type="submit"
+        disabled={isLoading}
         className="mt-6 w-full"
         size="lg"
         variant="secondary"
       >
-        Next
+        Confirm
       </Button>
     </CustomForm>
   );

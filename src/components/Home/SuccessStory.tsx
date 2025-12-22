@@ -1,5 +1,5 @@
 'use client'
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '../Global/Container';
 import TopTitle from '../Global/TopTitle';
 import Title from '../Global/Title';
@@ -71,7 +71,7 @@ export default function SuccessStory() {
                                     <div className="mt-auto flex items-end justify-between">
                                         <div>
                                             <TopTitle hideLine>{testimonial.name}</TopTitle>
-                                            <Subtitle>{testimonial.tier} Student</Subtitle>
+                                            <Subtitle>{testimonial.group} Student</Subtitle>
                                         </div>
                                         <div className='bg-white/50 p-2.5 rounded-3xl'>
                                             <Rating rating={testimonial.rating} />

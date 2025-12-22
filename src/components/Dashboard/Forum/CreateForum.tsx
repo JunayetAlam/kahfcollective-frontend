@@ -20,7 +20,7 @@ const defaultValues = {
     title: "",
     description: "",
     courseId: "",
-    tierId: "",
+    groupId: "",
 };
 
 export default function CreateForum() {
@@ -29,7 +29,7 @@ export default function CreateForum() {
 
     const handleSubmit = async (data: FieldValues) => {
         try {
-           await createForum(data).unwrap();
+            await createForum(data).unwrap();
 
             toast.success("Forum created successfully!");
 

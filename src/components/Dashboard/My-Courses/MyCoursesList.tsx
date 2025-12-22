@@ -65,7 +65,7 @@ export default function CourseManagementDashboard() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <ManageStudents courseId={course.id} tierId={course.tierId} />
+                  <ManageStudents courseId={course.id} groupId={course.groupId} />
                   <ManageCourse courseId={course.id} />
 
                   <DeleteCourse courseId={course.id} />
@@ -84,7 +84,7 @@ export default function CourseManagementDashboard() {
                   </Badge>
 
                   <Badge variant="secondary" className="text-xs">
-                    {course?.tier?.name}
+                    {course?.group?.name}
                   </Badge>
                 </div>
 
@@ -93,7 +93,7 @@ export default function CourseManagementDashboard() {
             </Card>
           ))
         ) : (
-          <p>No courses found for this tier.</p>
+          <p>No courses found for this group.</p>
         )}
       </div>
     </div>

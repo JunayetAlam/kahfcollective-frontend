@@ -20,10 +20,10 @@ import { Loader2 } from 'lucide-react';
 import { useUpdateUserRoleMutation, useToggleIsUserVerifiedMutation } from '@/redux/api/userApi';
 import { Switch } from "@/components/ui/switch";
 import { UserDetailsModal } from '../Users/UserDetailsModal';
-import { useGetAllTiersQuery, useToggleAssignTierMutation } from '@/redux/api/tierApi';
 import Loading from '@/components/Global/Loading';
 import DeleteUser from './DeleteUser';
 import { toast } from 'sonner';
+import { useGetAllGroupsQuery, useToggleAssignGroupMutation } from '@/redux/api/groupApi';
 
 const roleDisplay: Record<string, string> = {
   SUPERADMIN: 'Super Admin',
@@ -40,8 +40,8 @@ const roleColors: Record<string, string> = {
 export default function UserRow({ user }: { user: User }) {
 
   const [updateUserRole, { isLoading }] = useUpdateUserRoleMutation();
-  const [toggleTierAssignInBackend, { isLoading: assignLoading }] = useToggleAssignTierMutation()
-  const { data, isLoading: tierIsLoading } = useGetAllTiersQuery([{ name: 'limit', value: '100' }])
+  const [toggleGroupAssignInBackend, { isLoading: assignLoading }] = useToggleAssignGroupMutation()
+  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([{ name: 'limit', value: '100' }])
   const [toggleVerify, { isLoading: isVerifyLoading }] = useToggleIsUserVerifiedMutation();
 
   const handleRoleChange = async (newRole: string) => {
@@ -61,15 +61,15 @@ export default function UserRow({ user }: { user: User }) {
     }
   };
 
-  const toggleTierAssign = async (tierId: string, userId: string) => {
-    await toggleTierAssignInBackend({ tierId, userId }).unwrap()
+  const toggleGroupAssign = async (groupId: string, userId: string) => {
+    await toggleGroupAssignInBackend({ groupId, userId }).unwrap()
   }
 
-  if (tierIsLoading) {
+  if (groupIsLoading) {
     return <Loading />
   }
-  const tierData = data?.data || []
-  const userTier = user?.userTiers.map(item => item?.tier?.id)
+  const groupData = data?.data || []
+  const userGroup = user?.userGroups.map(item => item?.group?.id)
   return (
     <TableRow key={user.id} className='relative'>
       {/* Name + Avatar */}
@@ -93,20 +93,18 @@ export default function UserRow({ user }: { user: User }) {
       {/* Phone */}
       <TableCell>{user.phoneNumber}</TableCell>
       <TableCell>
-        {user.isReferredBySheikhSalmam
-          ? "Sheikh Salman"
-          : user.referredBy || "—"}
+        {user.currentClass}
       </TableCell>
 
-      {/* Tier */}
+      {/* Group */}
       <TableCell>
         <div className='flex flex-wrap gap-3 min-w-[350px]'>
-          {tierData?.map((item, index) => (
+          {groupData?.map((item, index) => (
             <Button
               disabled={assignLoading}
-              onClick={() => toggleTierAssign(item.id, user.id)}
+              onClick={() => toggleGroupAssign(item.id, user.id)}
               key={index}
-              variant={userTier.includes(item.id) ? 'default' : 'outline'}
+              variant={userGroup.includes(item.id) ? 'default' : 'outline'}
               size="sm">
               {item?.name}
             </Button>
@@ -126,7 +124,7 @@ export default function UserRow({ user }: { user: User }) {
           </SelectTrigger>
           <SelectContent>
             {Object.keys(roleDisplay).map((r) => (
-              <SelectItem   key={r} value={r}>
+              <SelectItem key={r} value={r}>
                 <Badge className={`${roleColors[r]} text-background`}>
                   {roleDisplay[r]}
                 </Badge>

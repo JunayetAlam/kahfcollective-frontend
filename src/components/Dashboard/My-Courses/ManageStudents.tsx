@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "@/components/Global/Pagination";
 import TableSkeleton from "@/components/Global/TableSkeleton";
-import { useGetAllTierUsersQuery } from "@/redux/api/userApi";
+import { useGetAllGroupUsersQuery } from "@/redux/api/userApi";
 import { useSearchParams } from "next/navigation";
 import { TQueryParam, User } from "@/types";
 import { Search, UserCog, Users } from "lucide-react";
@@ -125,10 +125,10 @@ function StudentRow({ student, courseId }: { student: User; courseId: string }) 
 
 // ---------------- Main Component ----------------
 export default function ManageStudents({
-    tierId,
+    groupId,
     courseId,
 }: {
-    tierId: string;
+    groupId: string;
     courseId: string;
 }) {
     const [open, setOpen] = useState(false);
@@ -143,7 +143,7 @@ export default function ManageStudents({
     ]?.filter((item) => item?.value);
 
     const { data, isLoading, error } =
-        useGetAllTierUsersQuery({ args: queryFilter, tierId }) || {};
+        useGetAllGroupUsersQuery({ args: queryFilter, groupId }) || {};
 
     const students = data?.data || [];
 

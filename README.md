@@ -1,6 +1,6 @@
 # Kahf Collective
 
-[![Website](https://img.shields.io/badge/Website-kahfcollective.com-blue)](https://kahfcollective.com/)
+[![Website](https://img.shields.io/badge/Website-kahfcollective.vercel.app-blue)](https://kahfcollective.vercel.app/)
 [![License](https://img.shields.io/badge/License-MIT-green)]()
 
 Kahf Collective is an e-learning platform with multiple features. The platform has three roles: Admin, Instructor, and Student.
@@ -131,6 +131,6 @@ Developed by Junayet Alam (Full Stack) | Robin Mia (Help) | Mir Noman (Help)
 
 ---
 
-**Check the live project:** [https://kahfcollective.com/](https://kahfcollective.com/)
+**Check the live project:** [https://kahfcollective.vercel.app/](https://kahfcollective.vercel.app/)
 
 ```

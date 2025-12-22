@@ -32,8 +32,8 @@ interface ContentItemProps {
 export default function ContentRow({ content }: ContentItemProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const [deleteContent, {isLoading: isDeleteLoading}] = useDeleteContentByIdMutation();
-  const [toggleFeatured, {isLoading: isToggleLoading}] = useToggleIsFeaturedMutation();
+  const [deleteContent, { isLoading: isDeleteLoading }] = useDeleteContentByIdMutation();
+  const [toggleFeatured, { isLoading: isToggleLoading }] = useToggleIsFeaturedMutation();
 
   const handleDelete = async () => {
     try {
@@ -56,7 +56,7 @@ export default function ContentRow({ content }: ContentItemProps) {
     } catch (err: any) {
       console.error(err);
       toast.error(err?.data?.message || "Failed to toggle featured");
-    } 
+    }
   };
   return (
     <TableRow>
@@ -65,7 +65,7 @@ export default function ContentRow({ content }: ContentItemProps) {
       </TableCell>
       <TableCell className="font-medium">{content.author.fullName}</TableCell>
       <TableCell className="truncate">{content.title}</TableCell>
-      <TableCell>{content.tier.name}</TableCell>
+      <TableCell>{content.group.name}</TableCell>
       <TableCell className="flex items-center space-x-2">
         {/* Featured Switch */}
         <div className="relative flex items-center">

@@ -44,7 +44,7 @@ export default function EditFruternityGroup({ forumId }: EditFruternityGroupProp
     }, [data]);
 
     if (fetching) {
-        return <Loading/>;
+        return <Loading />;
     }
 
     const handleSubmit = async (data: FieldValues) => {
@@ -72,13 +72,13 @@ export default function EditFruternityGroup({ forumId }: EditFruternityGroupProp
         title: forum?.title || "",
         description: forum?.description || "",
         country: forum?.country || "",
-        tierId: forum?.tierId || "",
+        groupId: forum?.groupId || "",
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size={"icon"}><Edit/></Button>
+                <Button variant="outline" size={"icon"}><Edit /></Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>

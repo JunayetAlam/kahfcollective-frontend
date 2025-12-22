@@ -28,7 +28,7 @@ import {
 import { LucideProps, Video } from "lucide-react";
 
 import { useCreateNewContentMutation } from "@/redux/api/contentApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,7 +44,7 @@ const contentSchema = z.object({
   type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
   contentOrDescriptor: z.string().min(1, "Content/Description is required"),
-  tierId: z.string().min(1, "Tier is required"),
+  groupId: z.string().min(1, "Group is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
   articlePDF: z.any().optional(),
@@ -66,7 +66,7 @@ export default function CreateContent() {
       title: "",
       type: '',
       authorId: "",
-      tierId: "",
+      groupId: "",
       contentOrDescriptor: "",
       content: null,
       thumbnail: null,
@@ -84,14 +84,14 @@ export default function CreateContent() {
 
   const selectedContentType = watch("contentType");
 
-  // Fetch users & tiers
+  // Fetch users & groups
   const { data: usersData } = useGetAllUsersQuery([]);
-  const { data: tiersData } = useGetAllTiersQuery([]);
+  const { data: groupsData } = useGetAllGroupsQuery([]);
 
   const userOptions: Option[] =
     usersData?.data?.map((u) => ({ id: u.id, name: u.fullName })) || [];
-  const tierOptions: Option[] =
-    tiersData?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
+  const groupOptions: Option[] =
+    groupsData?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
 
   // ---------------- File Change Handlers ----------------
   const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +121,7 @@ export default function CreateContent() {
     formData.append("title", data.title);
     formData.append("authorId", data.authorId);
     formData.append("description", data.contentOrDescriptor);
-    formData.append("tierId", data.tierId);
+    formData.append("groupId", data.groupId);
     if (data.type) {
       formData.append("type", data.type);
     }
@@ -239,16 +239,16 @@ export default function CreateContent() {
             <p className="text-sm text-red-500">{errors.authorId.message}</p>
           )}
 
-          {/* Tier */}
+          {/* Group */}
           <SearchableSelect
-            label="Tier"
-            options={tierOptions}
-            value={watch("tierId")}
-            onChange={(val) => setValue("tierId", val)}
-            placeholder="Search tier..."
+            label="Group"
+            options={groupOptions}
+            value={watch("groupId")}
+            onChange={(val) => setValue("groupId", val)}
+            placeholder="Search group..."
           />
-          {errors.tierId && (
-            <p className="text-sm text-red-500">{errors.tierId.message}</p>
+          {errors.groupId && (
+            <p className="text-sm text-red-500">{errors.groupId.message}</p>
           )}
 
           {/* Content/Description */}
@@ -292,7 +292,7 @@ export default function CreateContent() {
               value={watch("articlePDF")}
               onChange={handlePDFChange}
               accept="application/pdf"
-               title="PDF up to 50MB"
+              title="PDF up to 50MB"
               Icon={FaFilePdf}
             />
           }

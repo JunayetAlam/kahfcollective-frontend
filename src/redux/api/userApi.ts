@@ -90,11 +90,11 @@ const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
-    getAllTierUsers: builder.query({
-      query: ({ args, tierId }: { args: TQueryParam[], tierId: string }) => {
+    getAllGroupUsers: builder.query({
+      query: ({ args, groupId }: { args: TQueryParam[], groupId: string }) => {
         const params = new URLSearchParams();
         if (args) args.forEach((item) => params.append(item.name, item.value as string));
-        return { url: `/users/tier-users/${tierId}`, method: "GET", params };
+        return { url: `/users/group-users/${groupId}`, method: "GET", params };
       },
       transformResponse: (response: TResponseRedux<User[]>) => ({
         data: response.data,
@@ -166,7 +166,7 @@ export const {
   useResetPasswordMutation,
   useChangePasswordMutation,
   useGetAllUsersQuery,
-  useGetAllTierUsersQuery,
+  useGetAllGroupUsersQuery,
   useGetUserByIdQuery,
   useGetMeQuery,
   useUpdateProfileMutation,

@@ -22,7 +22,7 @@ const defaultValues = {
     title: "",
     description: "",
     country: "",
-    tierId: "",
+    groupId: "",
 };
 
 export default function CreateFraternityGroup() {
@@ -41,7 +41,7 @@ export default function CreateFraternityGroup() {
                 events,
             };
 
-           await createLocationForum(transformedData).unwrap();
+            await createLocationForum(transformedData).unwrap();
 
             toast.success("✅ Fraternity Group created successfully!");
 

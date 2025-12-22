@@ -26,13 +26,13 @@ import {
 } from "@/components/ui/select";
 
 import { useCreateCourseMutation } from "@/redux/api/courseApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 
 // -------------------- Zod Schema --------------------
 const courseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  tierId: z.string().min(1, "Tier is required"),
+  groupId: z.string().min(1, "Group is required"),
   language: z.string().min(1, "Language is required"),
   status: z.enum(["DRAFT", "ACTIVE", "HIDDEN"], "Status is required"),
 });
@@ -44,15 +44,15 @@ export default function CreateCourse() {
   const [open, setOpen] = useState(false);
   const [createCourse] = useCreateCourseMutation();
 
-  const { data: tiersData } = useGetAllTiersQuery([]);
-  const tierOptions = tiersData?.data || [];
+  const { data: groupData } = useGetAllGroupsQuery([]);
+  const groupOptions = groupData?.data || [];
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       title: "",
       description: "",
-      tierId: "",
+      groupId: "",
       language: "",
       status: "" as "ACTIVE",
     },
@@ -120,28 +120,28 @@ export default function CreateCourse() {
             )}
           </div>
 
-          {/* Tier */}
+          {/* Group */}
           <Controller
             control={control}
-            name="tierId"
+            name="groupId"
             render={({ field }) => (
               <div>
-                <Label>Tier</Label>
+                <Label>Group</Label>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Tier" />
+                    <SelectValue placeholder="Select Group" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tierOptions.map((tier: any) => (
-                      <SelectItem key={tier.id} value={tier.id}>
-                        {tier.name}
+                    {groupOptions.map((group: any) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.tierId && (
+                {errors.groupId && (
                   <p className="text-sm text-red-500">
-                    {errors.tierId.message}
+                    {errors.groupId.message}
                   </p>
                 )}
               </div>

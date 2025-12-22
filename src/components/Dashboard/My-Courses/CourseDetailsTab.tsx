@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCourseMutation } from "@/redux/api/courseApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { Course } from "@/types";
 import { toast } from "sonner";
 
@@ -29,7 +29,7 @@ interface CourseDetailsTabProps {
 const courseSchema = z.object({
   title: z.string().min(1, "Title must be at least 1 characters"),
   description: z.string().min(1, "Description must be at least 1 characters"),
-  tierId: z.string().min(1, "Tier is required"),
+  groupId: z.string().min(1, "Group is required"),
   status: z.enum(["ACTIVE", "HIDDEN"]),
   language: z.string().min(2, "Language must be at least 2 characters"),
 });
@@ -40,8 +40,8 @@ export function CourseDetailsTab({
   courseData,
   setOpen,
 }: CourseDetailsTabProps) {
-  const { data: tiersData } = useGetAllTiersQuery([]);
-  const tierOptions = tiersData?.data || [];
+  const { data: groupData } = useGetAllGroupsQuery([]);
+  const groupOptions = groupData?.data || [];
 
   const [updateCourse, { isLoading }] = useUpdateCourseMutation();
 
@@ -57,7 +57,7 @@ export function CourseDetailsTab({
     defaultValues: {
       title: courseData.title,
       description: courseData.description || "",
-      tierId: courseData?.tierId || "",
+      groupId: courseData?.groupId || "",
       status: courseData.status as "ACTIVE",
       language: courseData.language || "",
     },
@@ -93,28 +93,28 @@ export function CourseDetailsTab({
           )}
         </div>
 
-        {/* Tier, Status, Language */}
+        {/* Group, Status, Language */}
         <div className="grid grid-cols-3 gap-4">
-          {/* Tier Level */}
+          {/* Group Level */}
           <div className="space-y-2">
-            <Label>Tier Level</Label>
+            <Label>Group Level</Label>
             <Select
-              value={watch("tierId")}
-              onValueChange={(val) => setValue("tierId", val)}
+              value={watch("groupId")}
+              onValueChange={(val) => setValue("groupId", val)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select tier" />
+                <SelectValue placeholder="Select group" />
               </SelectTrigger>
               <SelectContent>
-                {tierOptions.map((tier) => (
-                  <SelectItem key={tier.id} value={tier.id}>
-                    {tier.name}
+                {groupOptions.map((group) => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.tierId && (
-              <p className="text-sm text-red-500">{errors.tierId.message}</p>
+            {errors.groupId && (
+              <p className="text-sm text-red-500">{errors.groupId.message}</p>
             )}
           </div>
 

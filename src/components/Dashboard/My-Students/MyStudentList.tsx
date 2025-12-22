@@ -13,7 +13,7 @@ interface Student {
     name: string;
     email: string;
     course: string;
-    tier?: string;
+    group?: string;
     progress: number;
     status: 'completed' | 'in-progress' | 'not-started';
 }
@@ -24,7 +24,7 @@ interface StudentCardProps {
 }
 
 const StudentCard: React.FC<StudentCardProps> = ({ student }) => {
-    const { name, email, course, tier, progress, status } = student;
+    const { name, email, course, group, progress, status } = student;
 
     // const getStatusColor = (status: Student['status']) => {
     //     switch (status) {
@@ -51,10 +51,10 @@ const StudentCard: React.FC<StudentCardProps> = ({ student }) => {
                             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                 <Book className="w-4 h-4" />
                                 <span>{course}</span>
-                                {tier && (
+                                {group && (
                                     <>
                                         <Award className="w-4 h-4" />
-                                        <span>{tier}</span>
+                                        <span>{group}</span>
                                     </>
                                 )}
                             </div>
@@ -102,7 +102,7 @@ export default function MyStudentList() {
             name: "Ahmed Hassan",
             email: "ahmed@example.com",
             course: "Foundations of Faith",
-            tier: "Ascend tier",
+            group: "Ascend group",
             progress: 75,
             status: "in-progress"
         },
@@ -110,7 +110,7 @@ export default function MyStudentList() {
             name: "Ahmed Hassan",
             email: "ahmed@example.com",
             course: "Foundations of Faith",
-            tier: "Ascend tier",
+            group: "Ascend group",
             progress: 100,
             status: "completed"
         },
@@ -118,7 +118,7 @@ export default function MyStudentList() {
             name: "Ahmed Hassan",
             email: "ahmed@example.com",
             course: "Foundations of Faith",
-            tier: "Ascend tier",
+            group: "Ascend group",
             progress: 75,
             status: "in-progress"
         },
@@ -126,7 +126,7 @@ export default function MyStudentList() {
             name: "Sarah Johnson",
             email: "sarah@example.com",
             course: "Advanced Studies",
-            tier: "Premium tier",
+            group: "Premium group",
             progress: 45,
             status: "in-progress"
         },
@@ -134,7 +134,7 @@ export default function MyStudentList() {
             name: "Michael Chen",
             email: "michael@example.com",
             course: "Introduction to Philosophy",
-            tier: "Basic tier",
+            group: "Basic group",
             progress: 100,
             status: "completed"
         },
@@ -142,7 +142,7 @@ export default function MyStudentList() {
             name: "Emma Williams",
             email: "emma@example.com",
             course: "Islamic History",
-            tier: "Ascend tier",
+            group: "Ascend group",
             progress: 60,
             status: "in-progress"
         }

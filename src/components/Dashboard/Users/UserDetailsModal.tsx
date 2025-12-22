@@ -6,7 +6,7 @@ import Image from "next/image";
 import avatarImg from "@/assets/user.png";
 import { User } from "@/types";
 import { PiGenderNeuterBold } from "react-icons/pi";
-import { Mail, Phone, MapPin, BookOpen, UserCircle, Shield} from "lucide-react";
+import { Mail, Phone, MapPin, BookOpen, UserCircle, Shield } from "lucide-react";
 
 interface UserDetailsModalProps {
     user: User | null;
@@ -63,7 +63,7 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
                             <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={user.phoneNumber} />
                             <InfoRow icon={<MapPin className="w-4 h-4" />} label="Address" value={user.address} />
                             <InfoRow icon={<PiGenderNeuterBold className="w-4 h-4" />} label="Gender" value={user.gender} />
-                            {user.bio && <InfoRow label="Bio" value={user.bio} fullWidth className="md:col-span-2" />}
+                            {user.introduction && <InfoRow label="Introduction" value={user.introduction} fullWidth className="md:col-span-2" />}
                         </div>
                     </div>
 
@@ -73,41 +73,22 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold flex items-center gap-2">
                             <BookOpen className="w-5 h-5" />
-                            Course Information
+                            Class Information
                         </h3>
                         <div className="grid md:grid-cols-2 gap-3 pl-7">
-                            <InfoRow label="Major/Profession" value={user.majorOrProfession} />
-                            <InfoRow 
-                                label="Previous Courses" 
-                                value={user.haveTakenCoursesBefore ? "Yes" : "No"}
-                            />
-                            {user.coursesName && (
-                                <InfoRow label="Course Name" value={user.coursesName}  className="md:col-span-2"   />
+                            <InfoRow label="Subject" value={user.subject || 'N/A'} />
+
+                            {user.currentClass && (
+                                <InfoRow label="Course Name" value={user.currentClass} className="md:col-span-2" />
                             )}
-                            {user.howLongInCourse && (
-                                <InfoRow label="Duration" value={user.howLongInCourse} />
-                            )}
-                            {user.introduction && (
-                                <InfoRow label="Introduction" value={user.introduction} fullWidth className="md:col-span-2" />
+                            {user.roll && (
+                                <InfoRow label="Roll" value={user.roll.toString()} />
                             )}
                         </div>
                     </div>
 
                     <Separator />
 
-                    {/* Additional Information */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <Shield className="w-5 h-5" />
-                            Additional Information
-                        </h3>
-                        <div className="grid gap-3 pl-7">
-                            <InfoRow 
-                                label="Referred By" 
-                                value={user.isReferredBySheikhSalmam ? "Sheikh Salman" : user.referredBy || "—"} 
-                            />
-                        </div>
-                    </div>
                 </div>
             </DialogContent>
         </Dialog>
@@ -115,16 +96,16 @@ export function UserDetailsModal({ user }: UserDetailsModalProps) {
 }
 
 // Helper component for consistent info rows
-function InfoRow({ 
-    icon, 
-    label, 
-    value, 
+function InfoRow({
+    icon,
+    label,
+    value,
     fullWidth = false,
     className = ""
-}: { 
-    icon?: React.ReactNode; 
-    label: string; 
-    value: string; 
+}: {
+    icon?: React.ReactNode;
+    label: string;
+    value: string;
     fullWidth?: boolean;
     className?: string;
 }) {

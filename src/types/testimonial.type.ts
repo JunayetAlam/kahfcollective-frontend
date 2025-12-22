@@ -4,5 +4,5 @@ export type Testimonial = {
   role: string;
   rating: number;
   content: string;
-  tier: string;
+  group: string;
 };

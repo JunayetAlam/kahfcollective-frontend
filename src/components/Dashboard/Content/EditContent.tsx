@@ -33,7 +33,7 @@ import {
   useGetContentByIdQuery,
   useUpdateContentMutation,
 } from "@/redux/api/contentApi";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { IconType } from "react-icons/lib";
 import { FaFilePdf, FaImage } from "react-icons/fa";
@@ -47,7 +47,7 @@ const updateSchema = z.object({
   type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
   description: z.string().min(1, "Description is required"),
-  tierId: z.string().min(1, "Tier is required"),
+  groupId: z.string().min(1, "Group is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
   articlePDF: z.any().optional(),
@@ -62,12 +62,12 @@ export default function EditContent({ contentId }: { contentId: string }) {
 
   const { data: contentData, isFetching } = useGetContentByIdQuery(contentId);
   const { data: usersData } = useGetAllUsersQuery([]);
-  const { data: tiersData } = useGetAllTiersQuery([]);
+  const { data: groupsData } = useGetAllGroupsQuery([]);
 
   const userOptions: Option[] =
     usersData?.data?.map((u: any) => ({ id: u.id, name: u.fullName })) || [];
-  const tierOptions: Option[] =
-    tiersData?.data?.map((t: any) => ({ id: t.id, name: t.name })) || [];
+  const groupOptions: Option[] =
+    groupsData?.data?.map((t: any) => ({ id: t.id, name: t.name })) || [];
 
   const form = useForm<UpdateFormValues>({
     resolver: zodResolver(updateSchema),
@@ -77,7 +77,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
       type: "",
       authorId: "",
       description: "",
-      tierId: "",
+      groupId: "",
       content: null,
       thumbnail: null,
     },
@@ -103,7 +103,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
         title: c.title || "",
         type: c.type || "",
         authorId: c.authorId || "",
-        tierId: c.tierId || "",
+        groupId: c.groupId || "",
         description: c.description || "",
         content: null,
         thumbnail: null,
@@ -125,7 +125,7 @@ export default function EditContent({ contentId }: { contentId: string }) {
     formData.append("title", data.title);
     formData.append("authorId", data.authorId);
     formData.append("description", data.description);
-    formData.append("tierId", data.tierId);
+    formData.append("groupId", data.groupId);
     if (data.type) formData.append("type", data.type);
     if (selectedContentType === "SERMONS" && data.content)
       formData.append("content", data.content);
@@ -240,16 +240,16 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.authorId.message}</p>
             )}
 
-            {/* Tier */}
+            {/* Group */}
             <SearchableSelect
-              label="Tier"
-              options={tierOptions}
-              value={watch("tierId")}
-              onChange={(val) => setValue("tierId", val)}
-              placeholder="Search tier..."
+              label="Group"
+              options={groupOptions}
+              value={watch("groupId")}
+              onChange={(val) => setValue("groupId", val)}
+              placeholder="Search group..."
             />
-            {errors.tierId && (
-              <p className="text-sm text-red-500">{errors.tierId.message}</p>
+            {errors.groupId && (
+              <p className="text-sm text-red-500">{errors.groupId.message}</p>
             )}
 
             {/* Description */}

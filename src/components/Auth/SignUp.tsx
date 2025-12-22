@@ -10,7 +10,6 @@ import Link from "next/link";
 import Subtitle from "../Global/Subtitle";
 import SIgnUpFirstPage from "./SIgnUpFirstPage";
 import SignUpSecondPage from "./SignUpSecondPage";
-import SignUpThirdPage from "./SignUpThirdPage";
 
 export default function SignUp() {
   const [isLoading] = useState(false);
@@ -23,7 +22,6 @@ export default function SignUp() {
       </Subtitle>
       {currentPage === 1 && <SIgnUpFirstPage />}
       {currentPage === 2 && <SignUpSecondPage />}
-      {currentPage === 3 && <SignUpThirdPage />}
 
       <div className="pt-4 text-center">
         <p className="text-sm text-gray-600">

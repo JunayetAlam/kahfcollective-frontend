@@ -1,5 +1,5 @@
 import { Forum } from "./forum.type";
-import { Tier } from "./tiers.type";
+import { Group } from "./groups.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
@@ -18,7 +18,7 @@ export interface Course {
   id: string;
   title: string;
   description: string;
-  tierId: string;
+  groupId: string;
   status: CourseStatus;
   language: string;
   isDeleted: boolean;
@@ -26,7 +26,7 @@ export interface Course {
   forums?: Forum[];
   courseContents: CourseContents[];
   coursesEnroll?: CourseEnroll[];
-  tier: Tier;
+  group: Group;
   instructor: User;
   createdAt: string;
   updatedAt: string;

@@ -1,9 +1,9 @@
-import { Tier } from "./tiers.type";
+import { Group } from "./groups.type";
 import { User } from "./user.type";
 
 export interface NormalContent {
   author: User;
-  tier: Tier;
+  group: Group;
   description: string;
   contentType: string;
   coverImage: string;

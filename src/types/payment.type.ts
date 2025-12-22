@@ -1,4 +1,4 @@
-import { Tier } from "./tiers.type";
+import { Group } from "./groups.type";
 import { User } from "./user.type";
 
 export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELED";
@@ -8,7 +8,7 @@ export type PaymentMethodType = "CARD" | "BANK_TRANSFER" | "PAYPAL" | "STRIPE" |
 export interface Payment {
     id: string;
     userId: string;
-    tierId: string;
+    groupId: string;
     amount: number;
     currency: Currency;
     status: PaymentStatus;
@@ -19,7 +19,7 @@ export interface Payment {
     cardExpMonth?: number;
     cardExpYear?: number;
     user: User
-    tier: Tier
+    group: Group
 
     stripePaymentId?: string;
     stripeSessionId?: string;

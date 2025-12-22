@@ -10,7 +10,7 @@ export default function PageStep({ disable }: { disable?: boolean }) {
     }
     return (
         <div className="flex justify-center items-center space-x-4 mt-8">
-            {[1, 2, 3].map((step) => (
+            {[1, 2].map((step) => (
                 <React.Fragment key={step}>
                     <button
                         onClick={() => {
@@ -35,7 +35,7 @@ export default function PageStep({ disable }: { disable?: boolean }) {
                     >
                         {step}
                     </button>
-                    {step < 3 && (
+                    {step < 1 && (
                         <div
                             className={`w-8 h-0.5 ${currentPage > step ? "bg-gray-300" : "bg-gray-200"
                                 }`}

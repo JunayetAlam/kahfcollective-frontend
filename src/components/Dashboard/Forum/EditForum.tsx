@@ -56,7 +56,7 @@ export default function EditForum({ forumId }: EditForumProps) {
         title: forum?.title || '',
         description: forum?.description || '',
         courseId: forum?.courseId || '',
-        tierId: forum?.tierId || '',
+        groupId: forum?.groupId || '',
     };
 
     return (

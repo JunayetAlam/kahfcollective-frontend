@@ -1,6 +1,6 @@
 import { Course } from "./course.type";
 import { Post, React, Reply } from "./post.type";
-import { Tier } from "./tiers.type";
+import { Group } from "./groups.type";
 import { User } from "./user.type";
 
 export type ForumTypeEnum = "STUDY_CIRCLES" | "LOCATION_BASED";
@@ -21,14 +21,14 @@ export interface Forum {
   status: ForumStatus;
   description: string;
   courseId?: string | null;
-  tierId?: string | null;
+  groupId?: string | null;
   country?: string | null;
   isDeleted: boolean;
   events?: Event[];
   posts?: Post[];
   joinForums?: JoinForum[];
   course?: Course | null;
-  tier?: Tier | null;
+  group?: Group | null;
   createdAt: string;
   updatedAt: string;
   _count: {

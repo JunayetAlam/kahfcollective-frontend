@@ -7,18 +7,18 @@ import { Button } from '@/components/ui/button';
 import { useGetAllConnectedUserToForumQuery } from '@/redux/api/forumApi';
 import { useParams, useSearchParams } from 'next/navigation';
 import { TQueryParam } from '@/types';
-import {  UserTier } from '@/types/tiers.type';
+import { UserGroup } from '@/types/groups.type';
 
-const MemberTiers = ({ tiers }: {tiers: UserTier[]}) => {
+const MemberGroups = ({ groups }: { groups: UserGroup[] }) => {
     const [showAll, setShowAll] = useState(false);
-    const visibleTiers = showAll ? tiers : tiers.slice(0, 3);
-    const remainingCount = tiers.length - 3;
+    const visibleGroups = showAll ? groups : groups.slice(0, 3);
+    const remainingCount = groups.length - 3;
 
     return (
         <div className="flex gap-1.5 flex-wrap justify-end items-center">
-            {visibleTiers.map((item, index) => (
+            {visibleGroups.map((item, index) => (
                 <Badge key={index} variant="outline">
-                    {item.tier?.name}
+                    {item.group?.name}
                 </Badge>
             ))}
             {!showAll && remainingCount > 0 && (
@@ -31,7 +31,7 @@ const MemberTiers = ({ tiers }: {tiers: UserTier[]}) => {
                     +{remainingCount} more
                 </Button>
             )}
-            {showAll && tiers.length > 3 && (
+            {showAll && groups.length > 3 && (
                 <Button
                     variant="ghost"
                     size="sm"
@@ -52,9 +52,9 @@ export default function SCF_MembersList() {
     const page = searchparams.get('page');
     if (page) args.push({ name: 'page', value: page });
 
-    const { data, isLoading } = useGetAllConnectedUserToForumQuery({ 
-        forumId: forumId as string, 
-        args 
+    const { data, isLoading } = useGetAllConnectedUserToForumQuery({
+        forumId: forumId as string,
+        args
     });
 
     const users = data?.data || [];
@@ -105,9 +105,9 @@ export default function SCF_MembersList() {
                     <div key={i} className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-3">
                             <Avatar>
-                                <AvatarImage 
-                                    src={member.user?.profile || ''} 
-                                    alt={member.user?.fullName} 
+                                <AvatarImage
+                                    src={member.user?.profile || ''}
+                                    alt={member.user?.fullName}
                                 />
                                 <AvatarFallback>
                                     {member.user?.fullName?.slice(0, 2).toUpperCase()}
@@ -117,8 +117,8 @@ export default function SCF_MembersList() {
                                 {member.user?.fullName}
                             </div>
                         </div>
-                        {member.user?.userTiers && member.user.userTiers.length > 0 && (
-                            <MemberTiers tiers={member.user.userTiers} />
+                        {member.user?.userGroups && member.user.userGroups.length > 0 && (
+                            <MemberGroups groups={member.user.userGroups} />
                         )}
                     </div>
                 ))}

@@ -2,7 +2,7 @@ import { Forum } from "./forum.type";
 import { NormalContent } from "./normal-content.type";
 import { User } from "./user.type";
 
-export type Tier = {
+export type Group = {
   id: string;
   name: string;
   isDeleted: boolean;
@@ -10,15 +10,15 @@ export type Tier = {
   updatedAt: string;
   contents?: NormalContent[];
   forums?: Forum[];
-  userTiers?: UserTier[];
+  userGroups?: UserGroup[];
 };
 
-export type UserTier = {
+export type UserGroup = {
   id: string;
-  tierId: string;
+  groupId: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
-  tier?: Tier;
+  group?: Group;
   user?: User;
 };

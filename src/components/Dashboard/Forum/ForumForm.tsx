@@ -3,7 +3,7 @@ import { CustomSearchSelect } from '@/components/Forms/CustomSearchSelect';
 
 import CustomTextarea from '@/components/Forms/CustomTextarea';
 import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
-import { useGetAllTiersQuery } from '@/redux/api/tierApi';
+import { useGetAllGroupsQuery } from '@/redux/api/groupApi';
 import React from 'react';
 
 type Option = {
@@ -11,19 +11,19 @@ type Option = {
     value: string
 }
 export default function ForumForm() {
-    const { data: course, isLoading: courseLoading } = useGetAllCoursesQuery([{name: 'limit', value: '1000'}]);
-    const { data: tier, isLoading: tierLoading } = useGetAllTiersQuery([{name: 'limit', value: '1000'}]);
+    const { data: course, isLoading: courseLoading } = useGetAllCoursesQuery([{ name: 'limit', value: '1000' }]);
+    const { data: group, isLoading: groupLoading } = useGetAllGroupsQuery([{ name: 'limit', value: '1000' }]);
 
 
 
-if(courseLoading || tierLoading){
-    return  ''
-}
+    if (courseLoading || groupLoading) {
+        return ''
+    }
 
-    const courseOption: Option[] =  (course?.data || [])?.map((u) => ({ value: u.id, label: u.title })) || [];
-    const tierOption: Option[] =  (tier?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
+    const courseOption: Option[] = (course?.data || [])?.map((u) => ({ value: u.id, label: u.title })) || [];
+    const groupOption: Option[] = (group?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
 
-   
+
     return (
         <div className='space-y-6'>
             {/* Forum Title */}
@@ -57,11 +57,11 @@ if(courseLoading || tierLoading){
 
                 {/* Membership */}
                 <CustomSearchSelect
-                 required
-                    name="tierId"
+                    required
+                    name="groupId"
                     label="Membership"
                     placeholder="Medium"
-                    options={tierOption}
+                    options={groupOption}
                 />
             </div>
         </div>

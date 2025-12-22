@@ -16,7 +16,7 @@ import { useSearchParams } from "next/navigation";
 import TableSkeleton from "@/components/Global/TableSkeleton";
 import { TQueryParam } from "@/types";
 import UserRow from "./UserRow";
-import TierManagement from "../Tier/Tier";
+import GroupManagement from "../Group/Group";
 
 export default function UserTable() {
     const searchParams = useSearchParams();
@@ -41,9 +41,9 @@ export default function UserTable() {
             <Tabs defaultValue="users" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="users">User Management</TabsTrigger>
-                    <TabsTrigger value="tiers">Tier Management</TabsTrigger>
+                    <TabsTrigger value="groups">Group Management</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="users">
                     <div className="rounded-lg p-6 bg-background border border-border">
                         {/* Header */}
@@ -56,7 +56,7 @@ export default function UserTable() {
                         <div className="overflow-hidden">
                             {isLoading ? (
                                 <TableSkeleton
-                                    headers={["Name", "Email", "Phone", "Tier", "Role", "Referrals", "Action"]}
+                                    headers={["Name", "Email", "Phone", "Group", "Role", "Referrals", "Action"]}
                                 />
                             ) : (
                                 <Table>
@@ -66,7 +66,7 @@ export default function UserTable() {
                                             <TableHead>Email</TableHead>
                                             <TableHead>Phone</TableHead>
                                             <TableHead>Referrals</TableHead>
-                                            <TableHead>Tier</TableHead>
+                                            <TableHead>Group</TableHead>
                                             <TableHead>Role</TableHead>
                                             <TableHead>Verify Status</TableHead>
                                             <TableHead>Action</TableHead>
@@ -84,9 +84,9 @@ export default function UserTable() {
                         <Pagination totalPages={data?.meta?.totalPage || 0} />
                     </div>
                 </TabsContent>
-                
-                <TabsContent value="tiers">
-                    <TierManagement />
+
+                <TabsContent value="groups">
+                    <GroupManagement />
                 </TabsContent>
             </Tabs>
         </div>

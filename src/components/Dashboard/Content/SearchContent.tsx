@@ -11,21 +11,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { handleSetSearchParams } from "@/lib/utils";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function SearchUser() {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("searchTerm") || "";
-  const tier = searchParams.get("tierId") || "";
+  const group = searchParams.get("groupId") || "";
 
   const [search, setSearch] = useState(searchTerm);
 
   const router = useRouter();
 
-  const { data: tiersData } = useGetAllTiersQuery([]);
-  const tiers = tiersData?.data || [];
+  const { data: groupsData } = useGetAllGroupsQuery([]);
+  const groups = groupsData?.data || [];
 
   const handleSetUrl = React.useCallback(
     (data: Record<string, string>) => {
@@ -53,19 +53,19 @@ export default function SearchUser() {
       />
 
       <Select
-        value={tier}
+        value={group}
         onValueChange={(value) =>
-          handleSetUrl({ tierId: value === "all" ? "" : value })
+          handleSetUrl({ groupId: value === "all" ? "" : value })
         }
       >
         <SelectTrigger className="min-w-[120px]">
-          <SelectValue placeholder="Tier" />
+          <SelectValue placeholder="Group" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Tier</SelectLabel>
+            <SelectLabel>Group</SelectLabel>
             <SelectItem value="all">All</SelectItem>
-            {tiers.map((t: any) => (
+            {groups.map((t: any) => (
               <SelectItem key={t.id} value={t.id}>
                 {t.name}
               </SelectItem>

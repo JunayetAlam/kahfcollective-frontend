@@ -8,46 +8,46 @@ import Subtitle from '../Global/Subtitle';
 
 
 const plans = [
-  {
-    name: "Awaken",
-    price: "$0",
-    period: "month",
-    features: [
-      "10 transactions/month",
-      "Basic invoicing",
-      "Email support",
-      "Mobile app access"
-    ],
-    popular: false,
-  },
-  {
-    name: "Ascend",
-    price: "$29",
-    period: "month",
-    features: [
-      "Unlimited transactions",
-      "Advanced invoicing",
-      "Priority support",
-      "Multi-currency",
-      "API access"
-    ],
-    popular: true,
-  },
-  {
-    name: "Actualize",
-    price: "$99",
-    period: "month",
-    features: [
-      "All Pro features",
-      "White-label solution",
-      "Dedicated manager",
-      "Custom integrations"
-    ],
-    popular: false,
-  },
+    {
+        name: "Awaken",
+        price: "$0",
+        period: "month",
+        features: [
+            "10 transactions/month",
+            "Basic invoicing",
+            "Email support",
+            "Mobile app access"
+        ],
+        popular: false,
+    },
+    {
+        name: "Ascend",
+        price: "$29",
+        period: "month",
+        features: [
+            "Unlimited transactions",
+            "Advanced invoicing",
+            "Priority support",
+            "Multi-currency",
+            "API access"
+        ],
+        popular: true,
+    },
+    {
+        name: "Actualize",
+        price: "$99",
+        period: "month",
+        features: [
+            "All Pro features",
+            "White-label solution",
+            "Dedicated manager",
+            "Custom integrations"
+        ],
+        popular: false,
+    },
 ];
 
-export default function Pricing({ title = 'Learning Tiers', subtitle = 'Progress through structured tiers designed to build your Islamic knowledge systematically.' }: { title?: string, subtitle?: string }) {
+export default function Pricing({ title = 'Learning Groups', subtitle = 'Progress through structured groups designed to build your Islamic knowledge systematically.' }: { title?: string, subtitle?: string }) {
     return (
         <Container className='pb-20 max-w-7xl'>
             <Title className='text-center pb-3'>{title}</Title>

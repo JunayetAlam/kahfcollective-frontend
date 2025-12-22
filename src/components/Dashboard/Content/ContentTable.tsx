@@ -25,14 +25,14 @@ export default function ContentTable() {
   const role = searchParams?.get("role") || "";
   const searchTerm = searchParams?.get("searchTerm") || "";
   const status = searchParams?.get("status") || "";
-  const tierId = searchParams?.get("tierId") || "";
+  const groupId = searchParams?.get("groupId") || "";
 
   const queryFilter: TQueryParam[] = [
     { name: "page", value: page },
     { name: "role", value: role },
     { name: "searchTerm", value: searchTerm },
     { name: "status", value: status },
-    { name: "tierId", value: tierId },
+    { name: "groupId", value: groupId },
   ].filter((item) => item.value);
 
   const { data, isLoading } = useGetAllContentsQuery(queryFilter);
@@ -41,7 +41,7 @@ export default function ContentTable() {
   const contents = data?.data || [];
 
 
-  
+
 
   return (
     <div className="rounded-lg">
@@ -57,7 +57,7 @@ export default function ContentTable() {
               <TableHead>Type</TableHead>
               <TableHead>Creator</TableHead>
               <TableHead>Title</TableHead>
-              <TableHead>Tier</TableHead>
+              <TableHead>Group</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>

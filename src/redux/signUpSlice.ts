@@ -9,14 +9,10 @@ type TData = {
     confirmPassword: string
     fullAddress: string
     shortIntroduction: string
-    gender: 'MALE' | 'FEMALE' | ''
-    profession: string
-    wasTakeCourseBefore: 'yes' | 'no' | ''
-    coursesName?: string
-    isTakeCourseWithSheikh: 'yes' | 'no' | ''
-    howLongCorrespondence: string
-    isSheikhSalmanReferred: 'yes' | 'no' | ''
-    other: string
+    gender: 'MALE' | 'FEMALE' | '',
+    currentClass: string,
+    roll: string,
+    subject: string,
 }
 
 type TSignUpState = {
@@ -34,13 +30,9 @@ const initialState: TSignUpState = {
         fullAddress: '',
         shortIntroduction: '',
         gender: '',
-        profession: '',
-        wasTakeCourseBefore: '',
-        coursesName: '',
-        isTakeCourseWithSheikh: '',
-        howLongCorrespondence: '',
-        isSheikhSalmanReferred: '',
-        other: '',
+        currentClass: '',
+        roll: '',
+        subject: '',
     },
     currentPage: 1
 };
@@ -74,13 +66,9 @@ const signUpSlice = createSlice({
                 fullAddress: '',
                 shortIntroduction: '',
                 gender: 'MALE',
-                profession: '',
-                wasTakeCourseBefore: '',
-                coursesName: '',
-                isTakeCourseWithSheikh: '',
-                howLongCorrespondence: '',
-                isSheikhSalmanReferred: '',
-                other: '',
+                currentClass: '',
+                roll: '',
+                subject: '',
             };
         },
     }

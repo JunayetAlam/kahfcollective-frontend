@@ -84,7 +84,6 @@ export default function SignUpThirdPage() {
         disabled={isLoading}
       />
 
-      <PageStep disable={isLoading} />
 
       <Button
         disabled={isLoading}

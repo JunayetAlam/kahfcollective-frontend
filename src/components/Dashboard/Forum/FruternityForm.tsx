@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { COUNTRIES } from "@/data";
 import { cn } from "@/lib/utils";
-import { useGetAllTiersQuery } from "@/redux/api/tierApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { format } from "date-fns";
@@ -22,21 +22,21 @@ export function FraternityGroupForm({
     events: Event[];
     setEvents: Dispatch<SetStateAction<Event[]>>;
 }) {
-    const { data: tier, isLoading: tierLoading } = useGetAllTiersQuery([
+    const { data: group, isLoading: groupLoading } = useGetAllGroupsQuery([
         { name: "limit", value: "1000" },
     ]);
 
-    if (tierLoading) {
-        return <div>Loading tiers...</div>;
+    if (groupLoading) {
+        return <div>Loading groups...</div>;
     }
 
-    const tierOption =
-        (tier?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
+    const groupOption =
+        (group?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
 
     const addEvent = () => {
         setEvents([
             ...events,
-            {time: '', about: '', date: undefined, eventName: '', location: ''}
+            { time: '', about: '', date: undefined, eventName: '', location: '' }
         ]);
     };
 
@@ -88,10 +88,10 @@ export function FraternityGroupForm({
                 {/* Membership */}
                 <CustomSearchSelect
                     required
-                    name="tierId"
+                    name="groupId"
                     label="Membership"
-                    placeholder="Select Tier"
-                    options={tierOption}
+                    placeholder="Select Group"
+                    options={groupOption}
                 />
             </div>
 

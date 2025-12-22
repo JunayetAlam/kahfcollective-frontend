@@ -50,7 +50,7 @@ export const baseApi = createApi({
     "User",
     "Payment",
     "Contents",
-    "Tier",
+    "Group",
     "Courses",
     "CourseContents",
     "Forum",
