@@ -26,16 +26,17 @@ export default function SearchUser() {
     (data: Record<string, string>) => {
       handleSetSearchParams(data, searchParams, router);
     },
-    [searchParams, router]
+    [searchParams, router],
   );
 
   useEffect(() => {
-    setTimeout(() => {
+    console.log("search", search);
+    const timeout = setTimeout(() => {
       handleSetUrl({ searchTerm: search });
     }, 500);
 
-    return () => {};
-  }, [search, handleSetUrl]);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   return (
     <div className="flex gap-4">
