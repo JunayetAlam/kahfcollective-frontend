@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useGetAllCoursesQuery } from "@/redux/api/courseApi";
+import { useGetAllCoursesQuery, useToggleAssignCourseToGroupMutation } from "@/redux/api/courseApi";
 import { TQueryParam } from "@/types";
 import { Search, Users } from "lucide-react";
 import { useState } from "react";
@@ -14,11 +14,18 @@ import Loading from "@/components/Global/Loading";
 import { useAppSelector } from "@/redux/store";
 import { useCurrentUser } from "@/redux/authSlice";
 import DeleteCourse from "./DeleteCourse";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { Button } from "@/components/ui/button";
 
 export default function CourseManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const role = useAppSelector(useCurrentUser)?.role;
-
+  const [toggleGroupAssignInBackend, { isLoading: assignLoading }] =
+    useToggleAssignCourseToGroupMutation();
+  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([
+    { name: "limit", value: "100" },
+  ]);
+  const groupData = data?.data || [];
   const queryFilter: TQueryParam[] = [
     { name: "searchTerm", value: searchTerm },
   ];
@@ -80,6 +87,22 @@ export default function CourseManagementDashboard() {
               </CardHeader>
 
               <CardContent className="pt-0">
+                <div className="flex min-w-[350px] flex-wrap gap-3 mb-4">
+                  {groupData?.map((item, index) => (
+                    <Button
+                      disabled={assignLoading}
+                      onClick={() => toggleGroupAssignInBackend({ courseId: course.id, groupId: item.id }).unwrap()}
+                      key={index}
+                      variant={course.groupCourses?.map(
+                        (groupCourse) => groupCourse.group.id,
+                      ).includes(item.id) ? "default" : "outline"}
+                      size="sm"
+                    >
+                      {item?.name}
+                    </Button>
+                  ))}
+                  {groupData.length === 0 && <p>-</p>}
+                </div>
                 <div className="text-muted-foreground mb-3 flex items-center gap-6 text-sm">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />

@@ -66,6 +66,14 @@ const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Courses"],
     }),
+    toggleAssignCourseToGroup: builder.mutation({
+      query: (body) => ({
+        url: `/courses/assign-course-to-group`,
+        method: "POST",
+        body
+      }),
+      invalidatesTags: ["Courses", "Group"],
+    }),
     getEnrolledStudents: builder.query({
       query: (id: string) => ({
         url: `/courses/enrolled-students/${id}`,
@@ -102,4 +110,5 @@ export const {
   useToggleCompleteCourseMutation,
   useToggleDeleteCourseMutation,
   useToggleEnrollCourseMutation,
+  useToggleAssignCourseToGroupMutation
 } = courseApi;
