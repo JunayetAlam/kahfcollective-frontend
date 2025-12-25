@@ -64,8 +64,10 @@ export default function UserTable() {
                     "Email",
                     "Phone",
                     "Group",
+                    "Class & Roll",
+                    "Subject",
                     "Role",
-                    "Referrals",
+                    "Verify Status",
                     "Action",
                   ]}
                 />
@@ -76,14 +78,15 @@ export default function UserTable() {
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
-                      <TableHead>Referrals</TableHead>
                       <TableHead>Group</TableHead>
+                      <TableHead>Class & Roll</TableHead>
+                      <TableHead>Subject</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Verify Status</TableHead>
                       <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody colSpan={8}>
+                  <TableBody colSpan={9}>
                     {users.map((user) => (
                       <UserRow key={user.id} user={user} />
                     ))}

@@ -17,13 +17,13 @@ import DeleteCourse from "./DeleteCourse";
 
 export default function CourseManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
-  const role = useAppSelector(useCurrentUser)?.role
+  const role = useAppSelector(useCurrentUser)?.role;
 
-  const queryFilter: TQueryParam[] = [{ name: "searchTerm", value: searchTerm }]
-
+  const queryFilter: TQueryParam[] = [
+    { name: "searchTerm", value: searchTerm },
+  ];
 
   const { data: courses, isLoading } = useGetAllCoursesQuery(queryFilter);
-
 
   const allCourses = courses?.data ?? [];
   return (
@@ -32,7 +32,7 @@ export default function CourseManagementDashboard() {
       <div className="relative w-full max-w-md">
         <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <Input
-          placeholder="Search courses..."
+          placeholder="Search coursess..."
           className="pl-10"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -41,14 +41,11 @@ export default function CourseManagementDashboard() {
 
       {/* Header with Add Course Button */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{role === 'INSTRUCTOR' ? 'My Courses' : 'Courses'}</h1>
-        {
-          role === 'INSTRUCTOR' && <CreateCourse />
-        }
-
+        <h1 className="text-2xl font-bold">
+          {role === "INSTRUCTOR" ? "My Courses" : "Courses"}
+        </h1>
+        <CreateCourse />
       </div>
-
-
 
       {/* Course Cards */}
       <div className="mt-6 space-y-3">
@@ -59,13 +56,23 @@ export default function CourseManagementDashboard() {
             <Card key={course.id} className="w-full">
               <CardHeader className="flex items-center justify-between pb-4">
                 <div>
-                  <CardTitle className="text-lg font-semibold">{course.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Instructor: <span className="font-medium text-foreground">{course.instructor?.fullName}</span>
+                  <CardTitle className="text-lg font-semibold">
+                    {course.title}
+                  </CardTitle>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    Instructor:{" "}
+                    <span className="text-foreground font-medium">
+                      {course.instructor?.fullName}
+                    </span>
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <ManageStudents courseId={course.id} groupId={course.groupId} />
+                  <ManageStudents
+                    courseId={course.id}
+                    groupIds={course.groupCourses?.map(
+                      (groupCourse) => groupCourse.group.id,
+                    )}
+                  />
                   <ManageCourse courseId={course.id} />
 
                   <DeleteCourse courseId={course.id} />
@@ -82,10 +89,17 @@ export default function CourseManagementDashboard() {
                   <Badge variant="secondary" className="text-xs">
                     {course.status}
                   </Badge>
-
-                  <Badge variant="secondary" className="text-xs">
-                    {course?.group?.name}
-                  </Badge>
+                  <div className="flex items-center gap-1">
+                    {course.groupCourses?.map((groupCourse) => (
+                      <Badge
+                        variant="secondary"
+                        className="text-xs"
+                        key={groupCourse.group.id}
+                      >
+                        {groupCourse.group.name}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <p>{course.description}</p>

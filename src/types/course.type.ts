@@ -3,7 +3,7 @@ import { Group } from "./groups.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
-export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | 'PDF';
+export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | "PDF";
 export type ContentStatusEnum = "PUBLISHED" | "DRAFT";
 export type RightAnswer = "A" | "B" | "C" | "D";
 
@@ -18,7 +18,6 @@ export interface Course {
   id: string;
   title: string;
   description: string;
-  groupId: string;
   status: CourseStatus;
   language: string;
   isDeleted: boolean;
@@ -26,7 +25,7 @@ export interface Course {
   forums?: Forum[];
   courseContents: CourseContents[];
   coursesEnroll?: CourseEnroll[];
-  group: Group;
+  groupCourses: GroupCourses[];
   instructor: User;
   createdAt: string;
   updatedAt: string;
@@ -89,7 +88,7 @@ export interface CourseQuestion {
 }
 
 export interface Quiz {
-  type: 'MULTIPLE_CHOICE' | 'WRITE_ANSWER',
+  type: "MULTIPLE_CHOICE" | "WRITE_ANSWER";
   options: QuizOptions;
   id: string;
   courseContentId: string;
@@ -98,7 +97,7 @@ export interface Quiz {
   rightAnswer: string;
   isDeleted: boolean;
   index: number;
-  quizAnswers: QuizAnswers[],
+  quizAnswers: QuizAnswers[];
   createdAt: string;
   updatedAt: string;
 }
@@ -133,4 +132,12 @@ export type EnrollCourse = {
   course: Course;
   createdAt: string;
   updatedAt: string;
+};
+
+export type GroupCourses = {
+  id: string;
+  courseId: string;
+  groupId: string;
+  group: Group;
+  course: Course;
 };

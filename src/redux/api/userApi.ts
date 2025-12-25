@@ -114,6 +114,32 @@ const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+    getAllMultipleGroupUsers: builder.query({
+      query: ({
+        args,
+        groupIds,
+      }: {
+        args: TQueryParam[];
+        groupIds: string[];
+      }) => {
+        const params = new URLSearchParams();
+        if (args)
+          args.forEach((item) =>
+            params.append(item.name, item.value as string),
+          );
+        params.append("groupIds", groupIds.join(","));
+        return {
+          url: `/users/all/multiple-group-users`,
+          method: "GET",
+          params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<User[]>) => ({
+        data: response.data,
+        meta: response.meta,
+      }),
+      providesTags: ["User"],
+    }),
     getUserById: builder.query({
       query: (id: string) => ({ url: `/users/${id}`, method: "GET" }),
       transformResponse: (response: TResponseRedux<User>) => ({
@@ -207,4 +233,5 @@ export const {
   useUpdateUserStatusMutation,
   useToggleIsUserVerifiedMutation,
   useCreateMultipleUsersMutation,
+  useGetAllMultipleGroupUsersQuery,
 } = userApi;

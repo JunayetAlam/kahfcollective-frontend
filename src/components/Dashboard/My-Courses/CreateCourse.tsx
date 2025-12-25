@@ -46,7 +46,7 @@ export default function CreateCourse() {
 
   const { data: groupData } = useGetAllGroupsQuery([]);
   const groupOptions = groupData?.data || [];
-
+  console.log(groupData);
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -88,7 +88,7 @@ export default function CreateCourse() {
       <DialogTrigger asChild>
         <Button>Create new Course</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto ">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Course</DialogTitle>
           <p className="text-sm text-gray-600">

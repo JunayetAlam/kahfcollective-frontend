@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { TableCell, TableRow } from '@/components/ui/table';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
-import { User } from '@/types';
-import Image from 'next/image';
-import React from 'react';
+import { User } from "@/types";
+import Image from "next/image";
+import React from "react";
 import avatarImg from "@/assets/user.png";
 import {
   Select,
@@ -15,41 +15,51 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
-import { useUpdateUserRoleMutation, useToggleIsUserVerifiedMutation } from '@/redux/api/userApi';
+} from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import {
+  useUpdateUserRoleMutation,
+  useToggleIsUserVerifiedMutation,
+} from "@/redux/api/userApi";
 import { Switch } from "@/components/ui/switch";
-import { UserDetailsModal } from '../Users/UserDetailsModal';
-import Loading from '@/components/Global/Loading';
-import DeleteUser from './DeleteUser';
-import { toast } from 'sonner';
-import { useGetAllGroupsQuery, useToggleAssignGroupMutation } from '@/redux/api/groupApi';
+import { UserDetailsModal } from "../Users/UserDetailsModal";
+import Loading from "@/components/Global/Loading";
+import DeleteUser from "./DeleteUser";
+import { toast } from "sonner";
+import {
+  useGetAllGroupsQuery,
+  useToggleAssignGroupMutation,
+} from "@/redux/api/groupApi";
 
 const roleDisplay: Record<string, string> = {
-  SUPERADMIN: 'Super Admin',
-  INSTRUCTOR: 'Instructor',
-  USER: 'Student',
+  SUPERADMIN: "Super Admin",
+  INSTRUCTOR: "Instructor",
+  USER: "Student",
 };
 
 const roleColors: Record<string, string> = {
-  SUPERADMIN: '!text-red-600 bg-red-100 dark:!text-red-400 dark:bg-red-900/50',
-  INSTRUCTOR: '!text-indigo-600 bg-indigo-100 dark:!text-indigo-400 dark:bg-indigo-900/50',
-  USER: '!text-emerald-600 bg-emerald-100 dark:!text-emerald-400 dark:bg-emerald-900/50',
-}
+  SUPERADMIN: "!text-red-600 bg-red-100 dark:!text-red-400 dark:bg-red-900/50",
+  INSTRUCTOR:
+    "!text-indigo-600 bg-indigo-100 dark:!text-indigo-400 dark:bg-indigo-900/50",
+  USER: "!text-emerald-600 bg-emerald-100 dark:!text-emerald-400 dark:bg-emerald-900/50",
+};
 
 export default function UserRow({ user }: { user: User }) {
-
   const [updateUserRole, { isLoading }] = useUpdateUserRoleMutation();
-  const [toggleGroupAssignInBackend, { isLoading: assignLoading }] = useToggleAssignGroupMutation()
-  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([{ name: 'limit', value: '100' }])
-  const [toggleVerify, { isLoading: isVerifyLoading }] = useToggleIsUserVerifiedMutation();
+  const [toggleGroupAssignInBackend, { isLoading: assignLoading }] =
+    useToggleAssignGroupMutation();
+  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([
+    { name: "limit", value: "100" },
+  ]);
+  const [toggleVerify, { isLoading: isVerifyLoading }] =
+    useToggleIsUserVerifiedMutation();
 
   const handleRoleChange = async (newRole: string) => {
     try {
       await updateUserRole({ id: user.id, data: { role: newRole } }).unwrap();
-      toast.success("Role Changed Successfully")
+      toast.success("Role Changed Successfully");
     } catch (err: any) {
-      toast.error(err?.data?.message || "Something went wrong")
+      toast.error(err?.data?.message || "Something went wrong");
     }
   };
 
@@ -62,20 +72,20 @@ export default function UserRow({ user }: { user: User }) {
   };
 
   const toggleGroupAssign = async (groupId: string, userId: string) => {
-    await toggleGroupAssignInBackend({ groupId, userId }).unwrap()
-  }
+    await toggleGroupAssignInBackend({ groupId, userId }).unwrap();
+  };
 
   if (groupIsLoading) {
-    return <Loading />
+    return <Loading />;
   }
-  const groupData = data?.data || []
-  const userGroup = user?.userGroups.map(item => item?.group?.id)
+  const groupData = data?.data || [];
+  const userGroup = user?.userGroups.map((item) => item?.group?.id);
   return (
-    <TableRow key={user.id} className='relative'>
+    <TableRow key={user.id} className="relative">
       {/* Name + Avatar */}
-      <TableCell className='sticky left-0 z-10 bg-background'>
+      <TableCell className="bg-background sticky left-0 z-10">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
+          <div className="h-8 w-8 overflow-hidden rounded-full">
             <Image
               src={user.profile || avatarImg}
               alt={user.fullName}
@@ -92,25 +102,29 @@ export default function UserRow({ user }: { user: User }) {
 
       {/* Phone */}
       <TableCell>{user.phoneNumber}</TableCell>
-      <TableCell>
-        {user.currentClass}
-      </TableCell>
 
       {/* Group */}
       <TableCell>
-        <div className='flex flex-wrap gap-3 min-w-[350px]'>
+        <div className="flex min-w-[350px] flex-wrap gap-3">
           {groupData?.map((item, index) => (
             <Button
               disabled={assignLoading}
               onClick={() => toggleGroupAssign(item.id, user.id)}
               key={index}
-              variant={userGroup.includes(item.id) ? 'default' : 'outline'}
-              size="sm">
+              variant={userGroup.includes(item.id) ? "default" : "outline"}
+              size="sm"
+            >
               {item?.name}
             </Button>
           ))}
+          {groupData.length === 0 && <p>-</p>}
         </div>
       </TableCell>
+      <TableCell>
+        <div>Class: {user.currentClass}</div>
+        <div>Roll: {user.roll}</div>
+      </TableCell>
+      <TableCell>{user.subject}</TableCell>
 
       {/* Role */}
       <TableCell>
@@ -151,7 +165,7 @@ export default function UserRow({ user }: { user: User }) {
       </TableCell>
 
       {/* Action */}
-      <TableCell >
+      <TableCell>
         <div className="flex gap-2">
           <UserDetailsModal user={user} />
           <DeleteUser userId={user.id} />
