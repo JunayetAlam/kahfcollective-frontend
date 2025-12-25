@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,198 +12,149 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
+import CustomForm from "@/components/Forms/CustomForm";
+import CustomInput from "@/components/Forms/CustomInput";
+import CustomSelect from "@/components/Forms/CustomSelect";
+import CustomComboBoxMultiple from "@/components/Forms/CustomComboBoxMultiple";
 
 import { useCreateCourseMutation } from "@/redux/api/courseApi";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllUsersQuery } from "@/redux/api/userApi";
+import Spinner from "@/components/Global/Spinner";
 
-// -------------------- Zod Schema --------------------
-const courseSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  groupId: z.string().min(1, "Group is required"),
-  language: z.string().min(1, "Language is required"),
-  status: z.enum(["DRAFT", "ACTIVE", "HIDDEN"], "Status is required"),
-});
+// -------------------- Default Values --------------------
+const defaultValues = {
+  title: "",
+  description: "",
+  instructorId: "",
+  language: "",
+  status: "ACTIVE",
+};
 
-type CourseFormValues = z.infer<typeof courseSchema>;
-
-// ------------------- Component -------------------
+// -------------------- Component --------------------
 export default function CreateCourse() {
   const [open, setOpen] = useState(false);
-  const [createCourse] = useCreateCourseMutation();
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: groupData } = useGetAllGroupsQuery([]);
-  const groupOptions = groupData?.data || [];
-  console.log(groupData);
-  const form = useForm<CourseFormValues>({
-    resolver: zodResolver(courseSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      groupId: "",
-      language: "",
-      status: "" as "ACTIVE",
-    },
-  });
+  const [createCourse, { isLoading }] = useCreateCourseMutation();
 
   const {
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-    reset,
-  } = form;
+    data: userData,
+    isLoading: isUserLoading,
+    isError,
+  } = useGetAllUsersQuery([{ name: "searchTerm", value: searchTerm }]);
 
-  const onSubmit = async (data: any) => {
+  const instructorOptions = userData?.data || [];
+  console.log("instructorOptions", instructorOptions);
+  const handleSave = async (data: any) => {
+    const toastId = toast.loading("Creating course...");
     try {
       await createCourse(data).unwrap();
-      toast.success("✅ Course created successfully!");
+      toast.success("Course created successfully", { id: toastId });
       setOpen(false);
-      reset();
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.data?.message || "❌ Something went wrong!");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to create course", {
+        id: toastId,
+      });
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) reset();
-      }}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Create new Course</Button>
       </DialogTrigger>
+
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Course</DialogTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-muted-foreground text-sm">
             Add a new course to your curriculum.
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
+        <CustomForm
+          onSubmit={handleSave}
+          defaultValues={defaultValues}
+          className="bg-background space-y-6 py-4"
+        >
           {/* Title */}
-          <div>
-            <Label>Title</Label>
-            <Input {...form.register("title")} placeholder="Course title" />
-            {errors.title && (
-              <p className="text-sm text-red-500">{errors.title.message}</p>
-            )}
-          </div>
+          <CustomInput
+            required
+            type="text"
+            name="title"
+            label="Title"
+            placeholder="Course title"
+            disabled={isLoading}
+          />
 
           {/* Description */}
-          <div>
-            <Label>Description</Label>
-            <Input
-              {...form.register("description")}
-              placeholder="Course description"
-            />
-            {errors.description && (
-              <p className="text-sm text-red-500">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+          <CustomInput
+            required
+            type="text"
+            name="description"
+            label="Description"
+            placeholder="Course description"
+            disabled={isLoading}
+          />
 
-          {/* Group */}
-          <Controller
-            control={control}
-            name="groupId"
-            render={({ field }) => (
-              <div>
-                <Label>Group</Label>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Group" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {groupOptions.map((group: any) => (
-                      <SelectItem key={group.id} value={group.id}>
-                        {group.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.groupId && (
-                  <p className="text-sm text-red-500">
-                    {errors.groupId.message}
-                  </p>
-                )}
-              </div>
-            )}
+          {/* Instructor */}
+          <CustomComboBoxMultiple
+            name="instructorId"
+            mode="single"
+            label="Instructor"
+            placeholder="Select Instructor"
+            required
+            options={instructorOptions.map((u: any) => ({
+              value: u.id,
+              name: u.fullName || "",
+            }))}
+            onSearchChange={setSearchTerm}
+            emptyMessage="No instructor found"
+            isLoading={isUserLoading}
+            isError={isError}
+            searchPlaceholder="Search instructor"
           />
 
           {/* Language */}
-          <div>
-            <Label>Language</Label>
-            <Input
-              {...form.register("language")}
-              placeholder="Course language"
-            />
-            {errors.language && (
-              <p className="text-sm text-red-500">{errors.language.message}</p>
-            )}
-          </div>
-
-          {/* Status */}
-          <Controller
-            control={control}
-            name="status"
-            render={({ field }) => (
-              <div>
-                <Label>Status</Label>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* <SelectItem value="DRAFT">Draft</SelectItem> */}
-                    <SelectItem value="ACTIVE">Active</SelectItem>
-                    <SelectItem value="HIDDEN">Hidden</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.status && (
-                  <p className="text-sm text-red-500">
-                    {errors.status.message}
-                  </p>
-                )}
-              </div>
-            )}
+          <CustomInput
+            required
+            type="text"
+            name="language"
+            label="Language"
+            placeholder="Course language"
+            disabled={isLoading}
           />
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 border-t pt-4">
+          {/* Status */}
+          <CustomSelect
+            name="status"
+            label="Status"
+            placeholder="Select status"
+            disabled={isLoading}
+            options={[
+              { label: "Active", value: "ACTIVE" },
+              { label: "Hidden", value: "HIDDEN" },
+            ]}
+          />
+
+          {/* Actions */}
+          <div className="flex justify-end gap-2 border-t pt-4">
             <Button
               type="button"
               variant="outline"
+              size="sm"
               onClick={() => setOpen(false)}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Creating Course...
-                </>
-              ) : (
-                "Create Course"
-              )}
+
+            <Button size="sm" disabled={isLoading}>
+              {isLoading ? <Spinner /> : "Create Course"}
             </Button>
           </div>
-        </form>
+        </CustomForm>
       </DialogContent>
     </Dialog>
   );
