@@ -1,10 +1,10 @@
 import { Course } from "./course.type";
 import { Post, React, Reply } from "./post.type";
-import { Group } from "./groups.type";
+import { Class } from "./class.type";
 import { User } from "./user.type";
 
-export type ForumTypeEnum = "STUDY_CIRCLES" | "LOCATION_BASED";
-export type ForumStatus = "PENDING" | 'PUBLISHED'
+export type GroupTypeEnum = "STUDY_CIRCLES" | "LOCATION_BASED";
+export type GroupStatus = "PENDING" | 'PUBLISHED'
 export interface Event {
   id?: string;
   eventName?: string;
@@ -14,11 +14,11 @@ export interface Event {
   time: string;
 }
 
-export interface Forum {
+export interface Group {
   id: string;
   title: string;
-  forumType: ForumTypeEnum;
-  status: ForumStatus;
+  forumType: GroupTypeEnum;
+  status: GroupStatus;
   description: string;
   courseId?: string | null;
   groupId?: string | null;
@@ -26,9 +26,9 @@ export interface Forum {
   isDeleted: boolean;
   events?: Event[];
   posts?: Post[];
-  joinForums?: JoinForum[];
+  joinForums?: JoinGroup[];
   course?: Course | null;
-  group?: Group | null;
+  group?: Class | null;
   createdAt: string;
   updatedAt: string;
   _count: {
@@ -36,16 +36,22 @@ export interface Forum {
   }
 }
 
-export interface JoinForum {
+export interface JoinGroup {
   id: string;
   userId: string;
   forumId: string;
   isLeave: boolean;
   isDeleted: boolean;
   user: User;
-  forum: Forum;
+  forum: Group;
   replies?: Reply[];
   reacts?: React[];
   createdAt: string;
   updatedAt: string;
 }
+
+/** API shape aliases kept for response field names */
+export type ForumTypeEnum = GroupTypeEnum;
+export type Forum = Group;
+export type JoinForum = JoinGroup;
+export type ForumStatus = GroupStatus;

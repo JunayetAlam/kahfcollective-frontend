@@ -72,7 +72,7 @@ const courseApi = baseApi.injectEndpoints({
         method: "POST",
         body
       }),
-      invalidatesTags: ["Courses", "Group"],
+      invalidatesTags: ["Courses", "Class"],
     }),
     getEnrolledStudents: builder.query({
       query: (id: string) => ({

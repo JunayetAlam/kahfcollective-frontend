@@ -5,7 +5,7 @@ import Container from '../Global/Container';
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { BookOpen, BookText, Brain, CirclePlay, FileSpreadsheet, Globe, User } from 'lucide-react';
+import { BookOpen, BookText, Brain, CirclePlay, FileSpreadsheet, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import Title from '../Global/Title';
@@ -123,16 +123,6 @@ export default function CourseDetails({ slug }: { slug: string }) {
                                             <p className="text-sm text-gray-600">{courseDetails?.courseContents?.length}</p>
                                         </div>
                                     </div>
-
-                                    <div className="flex gap-1.5">
-                                        <Globe className="w-4 h-4 text-gray-500 mt-0.5" />
-                                        <div className='flex gap-1'>
-                                            <p className="text-sm font-medium text-gray-900">Language:</p>
-                                            <p className="text-sm text-gray-600">{courseDetails?.language}</p>
-                                        </div>
-                                    </div>
-
-
 
                                 </div>
 

@@ -1,9 +1,9 @@
-import { Group } from "./groups.type";
+import { Class } from "./class.type";
 import { User } from "./user.type";
 
 export interface NormalContent {
   author: User;
-  group: Group;
+  group: Class;
   description: string;
   contentType: string;
   coverImage: string;

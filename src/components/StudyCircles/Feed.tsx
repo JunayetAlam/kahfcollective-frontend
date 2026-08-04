@@ -4,111 +4,177 @@ import GlobalHero from '../Global/GlobalHero';
 import Title from '../Global/Title';
 import Subtitle from '../Global/Subtitle';
 import StudyCircleFeed from './StudyCircleFeed';
-import { useGetSingleForumQuery } from '@/redux/api/forumApi';
-import { Card, CardContent } from '../ui/card';
-import { CalendarDays, Clock4, MapPin} from 'lucide-react';
+import { useGetSingleGroupQuery } from '@/redux/api/groupApi';
+import Container from '../Global/Container';
+import { CalendarDays, Clock4, GraduationCap, MapPin, UserRound } from 'lucide-react';
+import Loading from '../Global/Loading';
+
+function leadFromDescription(description?: string | null) {
+    if (!description) return '';
+    const plain = description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (plain.length <= 140) return plain;
+    const sentence = plain.split(/(?<=[.!?])\s+/)[0];
+    if (sentence && sentence.length <= 160) return sentence;
+    return `${plain.slice(0, 140).trim()}…`;
+}
 
 export default function Feed({ slug }: { slug: string }) {
-    const { data, isLoading } = useGetSingleForumQuery(slug);
+    const { data, isLoading } = useGetSingleGroupQuery(slug);
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="flex min-h-64 items-center justify-center py-32">
+                <Loading />
             </div>
         );
     }
 
     const circleData = data?.data;
+    const lead = leadFromDescription(circleData?.description);
+    const assignedClass = circleData?.group?.name;
+    const instructor = circleData?.course?.instructor?.fullName;
+    const courseTitle = circleData?.course?.title;
 
     return (
-        <div>
-            <GlobalHero>
-                <Title className='text-center pb-6 max-w-3xl mx-auto'>
+        <div className="bg-[#f7f8f5]">
+            <GlobalHero className="pb-20 pt-40">
+                <Title className="mx-auto max-w-3xl pb-4 text-center text-primary-foreground">
                     {circleData?.title}
                 </Title>
-                <Subtitle className='text-center pb-6 max-w-lg mx-auto text-[#C4D0B9]'>
-                    {circleData?.description}
-                </Subtitle>
+                {lead ? (
+                    <Subtitle className="mx-auto max-w-xl text-center text-[#C4D0B9]">
+                        {lead}
+                    </Subtitle>
+                ) : null}
             </GlobalHero>
-            <StudyCircleFeed />
 
-            {/* Events Section - Only show for LOCATION_BASED forums */}
-            {circleData?.forumType === 'LOCATION_BASED' && circleData?.events && circleData.events.length > 0 && (
-                <div className="max-w-6xl mx-auto px-4 py-8">
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Upcoming Events</h2>
-                        <p className="text-gray-600">Join us for these exciting upcoming events</p>
-                    </div>
+            <Container className="relative z-10 -mt-10 pb-10">
+                <section className="rounded-2xl border border-[#d7ded0] bg-white px-6 py-8 shadow-sm md:px-10 md:py-10">
+                    <div className="mx-auto max-w-3xl">
+                        <p className="mb-3 text-xs font-semibold tracking-[0.18em] text-[#6f7f63] uppercase">
+                            About
+                        </p>
+                        <p className="text-base leading-relaxed text-[#304437] md:text-lg">
+                            {circleData?.description}
+                        </p>
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {circleData.events.map((event, index) => (
-                            <Card key={index} className="hover:shadow-lg transition-shadow duration-300 border border-gray-200">
-                                <CardContent className="p-6">
-                                    <div className="space-y-4">
-                                        {/* Event Header */}
-                                        <div className="border-b border-gray-100 pb-3">
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                                                {event.eventName}
-                                            </h3>
-                                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                                                Event {index + 1}
-                                            </span>
+                        {(courseTitle || instructor || assignedClass || circleData?.country) ? (
+                            <div className="mt-8 grid gap-4 border-t border-[#e4e9dc] pt-6 sm:grid-cols-2">
+                                {courseTitle ? (
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eef2e8] text-[#5f7254]">
+                                            <GraduationCap size={18} />
                                         </div>
-
-                                        {/* Event Details */}
-                                        <div className="space-y-3">
-                                            {/* Location */}
-                                            <div className="flex items-center gap-3 text-gray-600">
-                                                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                                    <MapPin size={16} className="text-gray-500" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">Location</p>
-                                                    <p className="text-sm text-gray-600">{event.location}</p>
-                                                </div>
-                                            </div>
-
-                                            {/* Date */}
-                                            <div className="flex items-center gap-3 text-gray-600">
-                                                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                                    <CalendarDays size={16} className="text-gray-500" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">Date</p>
-                                                    <p className="text-sm text-gray-600">
-                                                        {new Date(event.date || '').toLocaleDateString('en-US', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric'
-                                                        })}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* Time */}
-                                            <div className="flex items-center gap-3 text-gray-600">
-                                                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                                    <Clock4 size={16} className="text-gray-500" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">Time</p>
-                                                    <p className="text-sm text-gray-600">{event.time}</p>
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <p className="text-xs font-medium tracking-wide text-[#6f7f63] uppercase">Course</p>
+                                            <p className="text-sm font-medium text-[#304437]">{courseTitle}</p>
                                         </div>
-
-
                                     </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                ) : null}
+
+                                {instructor ? (
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eef2e8] text-[#5f7254]">
+                                            <UserRound size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium tracking-wide text-[#6f7f63] uppercase">Instructor</p>
+                                            <p className="text-sm font-medium text-[#304437]">{instructor}</p>
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                {assignedClass ? (
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eef2e8] text-[#5f7254]">
+                                            <UserRound size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium tracking-wide text-[#6f7f63] uppercase">Class</p>
+                                            <p className="text-sm font-medium text-[#304437]">{assignedClass}</p>
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                {circleData?.country ? (
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eef2e8] text-[#5f7254]">
+                                            <MapPin size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium tracking-wide text-[#6f7f63] uppercase">Country</p>
+                                            <p className="text-sm font-medium text-[#304437]">{circleData.country}</p>
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </div>
+                        ) : null}
                     </div>
-                </div>
-            )}
+                </section>
+            </Container>
 
+            {circleData?.forumType === 'LOCATION_BASED' && circleData?.events && circleData.events.length > 0 ? (
+                <Container className="pb-6">
+                    <section className="border-y border-[#dce3d4] bg-transparent py-12">
+                        <div className="mb-8 max-w-2xl">
+                            <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-[#6f7f63] uppercase">
+                                Schedule
+                            </p>
+                            <h2 className="text-2xl font-semibold tracking-tight text-[#304437]">Upcoming events</h2>
+                            <p className="mt-2 text-sm text-[#5c6b55]">
+                                Details for gatherings linked to this location based group.
+                            </p>
+                        </div>
 
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {circleData.events.map((event, index) => (
+                                <article
+                                    key={event.id || index}
+                                    className="border border-[#d7ded0] bg-white p-6"
+                                >
+                                    <h3 className="mb-4 text-lg font-semibold text-[#304437]">
+                                        {event.eventName}
+                                    </h3>
+                                    <div className="space-y-3 text-sm text-[#5c6b55]">
+                                        {event.location ? (
+                                            <div className="flex items-center gap-3">
+                                                <MapPin size={16} className="shrink-0 text-[#6f7f63]" />
+                                                <span>{event.location}</span>
+                                            </div>
+                                        ) : null}
+                                        {event.date ? (
+                                            <div className="flex items-center gap-3">
+                                                <CalendarDays size={16} className="shrink-0 text-[#6f7f63]" />
+                                                <span>
+                                                    {new Date(event.date).toLocaleDateString('en-US', {
+                                                        weekday: 'long',
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    })}
+                                                </span>
+                                            </div>
+                                        ) : null}
+                                        {event.time ? (
+                                            <div className="flex items-center gap-3">
+                                                <Clock4 size={16} className="shrink-0 text-[#6f7f63]" />
+                                                <span>{event.time}</span>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                    {event.about ? (
+                                        <p className="mt-4 border-t border-[#e4e9dc] pt-4 text-sm leading-relaxed text-[#304437]">
+                                            {event.about}
+                                        </p>
+                                    ) : null}
+                                </article>
+                            ))}
+                        </div>
+                    </section>
+                </Container>
+            ) : null}
+
+            <StudyCircleFeed />
         </div>
     );
 }

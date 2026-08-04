@@ -13,9 +13,15 @@ import userImg from '@/assets/user.png'
 import { useAppSelector } from "@/redux/store";
 import { useCurrentToken } from "@/redux/authSlice";
 import { useGetMeQuery } from "@/redux/api/userApi";
+import { Button } from "../ui/button";
+import { RefreshCcw } from "lucide-react";
+import { useInvalidateFullRedisMutation } from "@/redux/api/utilsApi";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const Topbar = ({ isOpen, title = 'Welcome' }: { isOpen: boolean, title: string }) => {
   const token = useAppSelector(useCurrentToken);
+  const [refresh, { isLoading: refreshLoading }] = useInvalidateFullRedisMutation()
   const { data, isLoading } = useGetMeQuery(undefined, { skip: !token });
   // Loader while fetching user
   if (isLoading) {
@@ -36,6 +42,18 @@ const Topbar = ({ isOpen, title = 'Welcome' }: { isOpen: boolean, title: string 
       </div>
     );
   }
+
+  const handleRefresh = async () => {
+    const toastId = toast.loading('Refreshing...')
+    try {
+      await refresh(undefined).unwrap()
+      toast.success('Refreshed successfully', { id: toastId })
+      window.location.reload()
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to refresh', { id: toastId })
+    }
+
+  }
   const user = data?.data
   return (
     <div className={`bg-background border-b h-20 fixed top-0 left-0 w-full z-50   flex `}>
@@ -55,22 +73,33 @@ const Topbar = ({ isOpen, title = 'Welcome' }: { isOpen: boolean, title: string 
             {title}
           </h2>
         </div>
-        <div className="flex items-center space-x-4">
-          <Link
-            href={`/dashboard/profile`}
-            className="rounded-full overflow-hidden border"
+        <div className="flex gap-4 items-center">
+          <Button
+            size={'icon'}
+            onClick={handleRefresh}
+            variant={'outline'}
+            disabled={refreshLoading}
+
           >
-            <Image
-              src={!user?.profile ? userImg : `${user?.profile}`}
-              alt={`${user?.fullName}`}
-              width={50}
-              height={50}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          </Link>
-          <div>
-            <h4 className="text-sm md:text-base font-semibold text-foreground">{user?.fullName}</h4>
-            <h4 className="text-xs md:text-sm text-foreground/70">{user?.role}</h4>
+            <RefreshCcw className={cn(refreshLoading && 'cursor-not-allowed animate-spin')} />
+          </Button>
+          <div className="flex items-center space-x-4">
+            <Link
+              href={`/dashboard/profile`}
+              className="rounded-full overflow-hidden border"
+            >
+              <Image
+                src={!user?.profile ? userImg : `${user?.profile}`}
+                alt={`${user?.fullName}`}
+                width={50}
+                height={50}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            </Link>
+            <div>
+              <h4 className="text-sm md:text-base font-semibold text-foreground">{user?.fullName}</h4>
+              <h4 className="text-xs md:text-sm text-foreground/70">{user?.role}</h4>
+            </div>
           </div>
         </div>
       </Container>

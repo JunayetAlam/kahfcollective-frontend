@@ -27,9 +27,9 @@ import Loading from "@/components/Global/Loading";
 import DeleteUser from "./DeleteUser";
 import { toast } from "sonner";
 import {
-  useGetAllGroupsQuery,
-  useToggleAssignGroupMutation,
-} from "@/redux/api/groupApi";
+  useGetAllClassesQuery,
+  useToggleAssignClassMutation,
+} from "@/redux/api/classApi";
 
 const roleDisplay: Record<string, string> = {
   SUPERADMIN: "Super Admin",
@@ -46,9 +46,9 @@ const roleColors: Record<string, string> = {
 
 export default function UserRow({ user }: { user: User }) {
   const [updateUserRole, { isLoading }] = useUpdateUserRoleMutation();
-  const [toggleGroupAssignInBackend, { isLoading: assignLoading }] =
-    useToggleAssignGroupMutation();
-  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([
+  const [toggleClassAssignInBackend, { isLoading: assignLoading }] =
+    useToggleAssignClassMutation();
+  const { data, isLoading: classIsLoading } = useGetAllClassesQuery([
     { name: "limit", value: "100" },
   ]);
   const [toggleVerify, { isLoading: isVerifyLoading }] =
@@ -71,15 +71,15 @@ export default function UserRow({ user }: { user: User }) {
     }
   };
 
-  const toggleGroupAssign = async (groupId: string, userId: string) => {
-    await toggleGroupAssignInBackend({ groupId, userId }).unwrap();
+  const toggleClassAssign = async (groupId: string, userId: string) => {
+    await toggleClassAssignInBackend({ groupId, userId }).unwrap();
   };
 
-  if (groupIsLoading) {
+  if (classIsLoading) {
     return <Loading />;
   }
-  const groupData = data?.data || [];
-  const userGroup = user?.userGroups.map((item) => item?.group?.id);
+  const classData = data?.data || [];
+  const userClasses = user?.userGroups.map((item) => item?.group?.id);
   return (
     <TableRow key={user.id} className="relative">
       {/* Name + Avatar */}
@@ -103,21 +103,21 @@ export default function UserRow({ user }: { user: User }) {
       {/* Phone */}
       <TableCell>{user.phoneNumber}</TableCell>
 
-      {/* Group */}
+      {/* Class */}
       <TableCell>
         <div className="flex min-w-[350px] flex-wrap gap-3">
-          {groupData?.map((item, index) => (
+          {classData?.map((item, index) => (
             <Button
               disabled={assignLoading}
-              onClick={() => toggleGroupAssign(item.id, user.id)}
+              onClick={() => toggleClassAssign(item.id, user.id)}
               key={index}
-              variant={userGroup.includes(item.id) ? "default" : "outline"}
+              variant={userClasses.includes(item.id) ? "default" : "outline"}
               size="sm"
             >
               {item?.name}
             </Button>
           ))}
-          {groupData.length === 0 && <p>-</p>}
+          {classData.length === 0 && <p>-</p>}
         </div>
       </TableCell>
       <TableCell>

@@ -28,7 +28,7 @@ export default function SCF_CreatePost() {
         data: { message },
       }).unwrap();
 
-      setMessage(""); // clear textarea
+      setMessage("");
       toast.success("Your post is under review, admin will approve it if it's okay.");
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to create post");
@@ -36,7 +36,8 @@ export default function SCF_CreatePost() {
   };
 
   return (
-    <div className="p-4 lg:p-8 border border-gray-200 rounded-xl">
+    <div className="border border-[#d7ded0] bg-white p-5 md:p-6">
+      <p className="mb-4 text-sm font-medium text-[#304437]">Share a message</p>
       <RichTextEditor
         hideLevel
         name="What's on your mind?"
@@ -46,9 +47,12 @@ export default function SCF_CreatePost() {
         required
         disable={isLoading}
       />
-      <div className="flex justify-end mt-4">
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <p className="text-xs text-[#6f7f63]">
+          Posts are reviewed before they appear in the discussion.
+        </p>
         <Button
-          size={"lg"}
+          size="lg"
           className="!px-8 flex items-center gap-2"
           onClick={handleSubmit}
           disabled={isLoading}

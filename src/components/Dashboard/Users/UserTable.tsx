@@ -15,7 +15,7 @@ import { useSearchParams } from "next/navigation";
 import TableSkeleton from "@/components/Global/TableSkeleton";
 import { TQueryParam } from "@/types";
 import UserRow from "./UserRow";
-import GroupManagement from "../Group/Group";
+import ClassManagement from "../Class/Class";
 import AddUser from "./AddUser";
 
 export default function UserTable() {
@@ -41,7 +41,7 @@ export default function UserTable() {
       <Tabs defaultValue="users" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="users">User Management</TabsTrigger>
-          <TabsTrigger value="groups">Group Management</TabsTrigger>
+          <TabsTrigger value="classes">Class Management</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users">
@@ -63,7 +63,7 @@ export default function UserTable() {
                     "Name",
                     "Email",
                     "Phone",
-                    "Group",
+                    "Class",
                     "Class & Roll",
                     "Subject",
                     "Role",
@@ -78,7 +78,7 @@ export default function UserTable() {
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
-                      <TableHead>Group</TableHead>
+                      <TableHead>Class</TableHead>
                       <TableHead>Class & Roll</TableHead>
                       <TableHead>Subject</TableHead>
                       <TableHead>Role</TableHead>
@@ -99,8 +99,8 @@ export default function UserTable() {
           </div>
         </TabsContent>
 
-        <TabsContent value="groups">
-          <GroupManagement />
+        <TabsContent value="classes">
+          <ClassManagement />
         </TabsContent>
       </Tabs>
     </div>

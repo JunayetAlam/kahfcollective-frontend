@@ -14,7 +14,7 @@ import Loading from "@/components/Global/Loading";
 import { useAppSelector } from "@/redux/store";
 import { useCurrentUser } from "@/redux/authSlice";
 import DeleteCourse from "./DeleteCourse";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllClassesQuery } from "@/redux/api/classApi";
 import { Button } from "@/components/ui/button";
 
 export default function CourseManagementDashboard() {
@@ -22,10 +22,10 @@ export default function CourseManagementDashboard() {
   const role = useAppSelector(useCurrentUser)?.role;
   const [toggleGroupAssignInBackend, { isLoading: assignLoading }] =
     useToggleAssignCourseToGroupMutation();
-  const { data, isLoading: groupIsLoading } = useGetAllGroupsQuery([
+  const { data, isLoading: classIsLoading } = useGetAllClassesQuery([
     { name: "limit", value: "100" },
   ]);
-  const groupData = data?.data || [];
+  const classData = data?.data || [];
   const queryFilter: TQueryParam[] = [
     { name: "searchTerm", value: searchTerm },
   ];
@@ -88,7 +88,7 @@ export default function CourseManagementDashboard() {
 
               <CardContent className="pt-0">
                 <div className="flex min-w-[350px] flex-wrap gap-3 mb-4">
-                  {groupData?.map((item, index) => (
+                  {classData?.map((item, index) => (
                     <Button
                       disabled={assignLoading}
                       onClick={() => toggleGroupAssignInBackend({ courseId: course.id, groupId: item.id }).unwrap()}
@@ -101,7 +101,7 @@ export default function CourseManagementDashboard() {
                       {item?.name}
                     </Button>
                   ))}
-                  {groupData.length === 0 && <p>-</p>}
+                  {classData.length === 0 && <p>-</p>}
                 </div>
                 <div className="text-muted-foreground mb-3 flex items-center gap-6 text-sm">
                   <div className="flex items-center gap-1">

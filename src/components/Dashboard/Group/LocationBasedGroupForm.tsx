@@ -9,29 +9,29 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { COUNTRIES } from "@/data";
 import { cn } from "@/lib/utils";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllClassesQuery } from "@/redux/api/classApi";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { format } from "date-fns";
 import { Event } from "@/types";
 
-export function FraternityGroupForm({
+export function LocationBasedGroupForm({
     events,
     setEvents,
 }: {
     events: Event[];
     setEvents: Dispatch<SetStateAction<Event[]>>;
 }) {
-    const { data: group, isLoading: groupLoading } = useGetAllGroupsQuery([
+    const { data: classData, isLoading: classLoading } = useGetAllClassesQuery([
         { name: "limit", value: "1000" },
     ]);
 
-    if (groupLoading) {
-        return <div>Loading groups...</div>;
+    if (classLoading) {
+        return <div>Loading classes...</div>;
     }
 
-    const groupOption =
-        (group?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
+    const classOption =
+        (classData?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
 
     const addEvent = () => {
         setEvents([
@@ -56,13 +56,13 @@ export function FraternityGroupForm({
 
     return (
         <div className="space-y-6">
-            {/* Forum Title */}
+            {/* Group Title */}
             <CustomInput
                 required
                 name="title"
                 type="text"
-                label="Forum Title"
-                placeholder="Enter forum title..."
+                label="Group Title"
+                placeholder="Enter group title..."
             />
 
             {/* Description */}
@@ -70,7 +70,7 @@ export function FraternityGroupForm({
                 required
                 name="description"
                 label="Description"
-                placeholder="Describe the purpose of this forum..."
+                placeholder="Describe the purpose of this group..."
                 rows={4}
             />
 
@@ -85,13 +85,13 @@ export function FraternityGroupForm({
                     options={COUNTRIES}
                 />
 
-                {/* Membership */}
+                {/* Class */}
                 <CustomSearchSelect
                     required
                     name="groupId"
-                    label="Membership"
-                    placeholder="Select Group"
-                    options={groupOption}
+                    label="Class"
+                    placeholder="Select Class"
+                    options={classOption}
                 />
             </div>
 

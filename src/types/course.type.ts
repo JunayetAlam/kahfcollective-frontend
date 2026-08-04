@@ -1,5 +1,5 @@
-import { Forum } from "./forum.type";
-import { Group } from "./groups.type";
+import { Group } from "./group.type";
+import { Class } from "./class.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
@@ -19,10 +19,9 @@ export interface Course {
   title: string;
   description: string;
   status: CourseStatus;
-  language: string;
   isDeleted: boolean;
   instructorId: string;
-  forums?: Forum[];
+  forums?: Group[];
   courseContents: CourseContents[];
   coursesEnroll?: CourseEnroll[];
   groupCourses: GroupCourses[];
@@ -138,6 +137,6 @@ export type GroupCourses = {
   id: string;
   courseId: string;
   groupId: string;
-  group: Group;
+  group: Class;
   course: Course;
 };

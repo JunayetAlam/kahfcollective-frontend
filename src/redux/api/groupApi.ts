@@ -1,99 +1,112 @@
-import { TQueryParam, TResponseRedux } from "@/types";
+import { Group, TQueryParam, TResponseRedux, User } from "@/types";
 import { baseApi } from "./baseApi";
-import { Group } from "@/types/groups.type";
 
 const groupApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    // Create Group
-    createGroup: builder.mutation({
-      query: (data) => ({
-        url: "/groups",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Group"],
-    }),
+    endpoints: (builder) => ({
+        // Create Study Circles Group
+        createCircleGroup: builder.mutation({
+            query: (groupData: Partial<Group>) => ({
+                url: "/forums/circle",
+                method: "POST",
+                body: groupData,
+            }),
+            invalidatesTags: ["Group"],
+        }),
 
-    // Get All Groups (public)
-    getAllGroups: builder.query({
-      query: (args?: TQueryParam[]) => {
-        const params = new URLSearchParams();
-        if (args) args.forEach((item) => params.append(item.name, item.value as string));
-        return { url: "/groups", method: "GET", params };
-      },
-      transformResponse: (response: TResponseRedux<Group[]>) => ({
-        data: response.data,
-        meta: response.meta,
-      }),
-      providesTags: ["Group"],
-    }),
+        // Create Location Based Group
+        createLocationGroup: builder.mutation({
+            query: (groupData) => ({
+                url: "/forums/location",
+                method: "POST",
+                body: groupData,
+            }),
+            invalidatesTags: ["Group"],
+        }),
 
-    // Get All Groups (admin only)
-    getAllGroupsAdmin: builder.query({
-      query: (args?: TQueryParam[]) => {
-        const params = new URLSearchParams();
-        if (args) args.forEach((item) => params.append(item.name, item.value as string));
-        return { url: "/groups/admin", method: "GET", params };
-      },
-      transformResponse: (response: TResponseRedux<Group[]>) => ({
-        data: response.data,
-        meta: response.meta,
-      }),
-      providesTags: ["Group"],
-    }),
+        // Join Group
+        joinGroup: builder.mutation({
+            query: (forumId: string) => ({
+                url: `/forums/join/${forumId}`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Group", "User"],
+        }),
 
-    // Get Group by ID
-    getGroupById: builder.query({
-      query: (id: string) => ({ url: `/groups/${id}`, method: "GET" }),
-      transformResponse: (response: TResponseRedux<Group>) => ({ data: response.data }),
-      providesTags: (result, error, id) => [{ type: "Group", id }],
-    }),
+        // Get all groups (with optional query params)
+        getAllGroups: builder.query({
+            query: (args?: TQueryParam[]) => {
+                const params = new URLSearchParams();
+                args?.forEach((item) => params.append(item.name, item.value as string));
+                return { url: "/forums", method: "GET", params };
+            },
+            transformResponse: (response: TResponseRedux<Group[]>) => ({
+                data: response.data,
+                meta: response.meta,
+            }),
+            providesTags: ["Group"],
+        }),
 
-    // Get Group by ID (admin only)
-    getGroupByIdAdmin: builder.query({
-      query: (id: string) => ({ url: `/groups/admin/${id}`, method: "GET" }),
-      transformResponse: (response: TResponseRedux<Group>) => ({ data: response.data }),
-      providesTags: (result, error, id) => [{ type: "Group", id }],
-    }),
+        // Get single group
+        getSingleGroup: builder.query({
+            query: (id: string) => ({ url: `/forums/${id}`, method: "GET" }),
+            transformResponse: (response: TResponseRedux<Group>) => ({
+                data: response.data,
+            }),
+            providesTags: (result, error, id) => [{ type: "Group", id }],
+        }),
 
-    // Toggle Assign Group
-    toggleAssignGroup: builder.mutation({
-      query: (data) => ({
-        url: `/groups/toggle-group`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: ["User", "Group"],
-    }),
+        // Get all users connected to a group
+        getAllConnectedUserToGroup: builder.query({
+            query: ({ forumId, args }: { forumId: string, args: TQueryParam[] }) => {
+                const params = new URLSearchParams();
+                args?.forEach((item) => params.append(item.name, item.value as string));
+                return { url: `/forums/join/${forumId}`, method: "GET", params }
+            },
+            transformResponse: (response: TResponseRedux<{ user: User }[]>) => ({
+                data: response.data,
+            }),
+            providesTags: ["User"],
+        }),
 
-    // Update Group
-    updateGroup: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/groups/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => ["Group", { type: "Group", id }],
-    }),
+        // Update Study Circles Group
+        updateCircleGroup: builder.mutation({
+            query: ({ id, body }) => ({
+                url: `/forums/circle/${id}`,
+                method: "PATCH",
+                body: body,
+            }),
+            invalidatesTags: ["Group"],
+        }),
 
-    // Toggle Delete Group
-    toggleDeleteGroup: builder.mutation({
-      query: (id: string) => ({
-        url: `/groups/${id}/toggle-delete`,
-        method: "PATCH",
-      }),
-      invalidatesTags: ["Group"],
+        // Update Location Based Group
+        updateLocationGroup: builder.mutation({
+            query: ({ id, body }) => ({
+                url: `/forums/location/${id}`,
+                method: "PATCH",
+                body: body,
+            }),
+            invalidatesTags: ["Group"],
+        }),
+
+        // Delete Group
+        deleteGroup: builder.mutation({
+            query: (forumId: string) => ({
+                url: `/forums/${forumId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Group"],
+        }),
     }),
-  }),
 });
 
 export const {
-  useCreateGroupMutation,
-  useGetAllGroupsQuery,
-  useGetAllGroupsAdminQuery,
-  useGetGroupByIdQuery,
-  useGetGroupByIdAdminQuery,
-  useToggleAssignGroupMutation,
-  useUpdateGroupMutation,
-  useToggleDeleteGroupMutation,
+    useCreateCircleGroupMutation,
+    useCreateLocationGroupMutation,
+    useJoinGroupMutation,
+    useGetAllGroupsQuery,
+    useGetSingleGroupQuery,
+    useGetAllConnectedUserToGroupQuery,
+    useUpdateCircleGroupMutation,
+    useUpdateLocationGroupMutation,
+    useDeleteGroupMutation,
 } = groupApi;

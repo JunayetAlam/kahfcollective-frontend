@@ -3,36 +3,36 @@ import { CustomSearchSelect } from '@/components/Forms/CustomSearchSelect';
 
 import CustomTextarea from '@/components/Forms/CustomTextarea';
 import { useGetAllCoursesQuery } from '@/redux/api/courseApi';
-import { useGetAllGroupsQuery } from '@/redux/api/groupApi';
+import { useGetAllClassesQuery } from '@/redux/api/classApi';
 import React from 'react';
 
 type Option = {
     label: string
     value: string
 }
-export default function ForumForm() {
+export default function StudyCirclesGroupForm() {
     const { data: course, isLoading: courseLoading } = useGetAllCoursesQuery([{ name: 'limit', value: '1000' }]);
-    const { data: group, isLoading: groupLoading } = useGetAllGroupsQuery([{ name: 'limit', value: '1000' }]);
+    const { data: classData, isLoading: classLoading } = useGetAllClassesQuery([{ name: 'limit', value: '1000' }]);
 
 
 
-    if (courseLoading || groupLoading) {
+    if (courseLoading || classLoading) {
         return ''
     }
 
     const courseOption: Option[] = (course?.data || [])?.map((u) => ({ value: u.id, label: u.title })) || [];
-    const groupOption: Option[] = (group?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
+    const classOption: Option[] = (classData?.data || [])?.map((u) => ({ value: u.id, label: u.name })) || [];
 
 
     return (
         <div className='space-y-6'>
-            {/* Forum Title */}
+            {/* Group Title */}
             <CustomInput
                 required
                 name="title"
                 type="text"
-                label="Forum Title"
-                placeholder="Enter forum title..."
+                label="Group Title"
+                placeholder="Enter group title..."
             />
 
             {/* Description */}
@@ -40,11 +40,11 @@ export default function ForumForm() {
                 required
                 name="description"
                 label="Description"
-                placeholder="Describe the purpose of this forum..."
+                placeholder="Describe the purpose of this group..."
                 rows={4}
             />
 
-            {/* Associated Course and Membership in a row */}
+            {/* Associated Course and Class in a row */}
             <div className="grid grid-cols-2 gap-4">
                 {/* Associated Course */}
                 <CustomSearchSelect
@@ -55,13 +55,13 @@ export default function ForumForm() {
                     options={courseOption}
                 />
 
-                {/* Membership */}
+                {/* Class */}
                 <CustomSearchSelect
                     required
                     name="groupId"
-                    label="Membership"
-                    placeholder="Medium"
-                    options={groupOption}
+                    label="Class"
+                    placeholder="Select Class"
+                    options={classOption}
                 />
             </div>
         </div>

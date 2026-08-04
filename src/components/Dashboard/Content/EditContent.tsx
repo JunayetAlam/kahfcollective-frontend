@@ -33,7 +33,7 @@ import {
   useGetContentByIdQuery,
   useUpdateContentMutation,
 } from "@/redux/api/contentApi";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllClassesQuery } from "@/redux/api/classApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { IconType } from "react-icons/lib";
 import { FaFilePdf, FaImage } from "react-icons/fa";
@@ -47,7 +47,7 @@ const updateSchema = z.object({
   type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
   description: z.string().min(1, "Description is required"),
-  groupId: z.string().min(1, "Group is required"),
+  groupId: z.string().min(1, "Class is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
   articlePDF: z.any().optional(),
@@ -62,12 +62,12 @@ export default function EditContent({ contentId }: { contentId: string }) {
 
   const { data: contentData, isFetching } = useGetContentByIdQuery(contentId);
   const { data: usersData } = useGetAllUsersQuery([]);
-  const { data: groupsData } = useGetAllGroupsQuery([]);
+  const { data: classesData } = useGetAllClassesQuery([]);
 
   const userOptions: Option[] =
     usersData?.data?.map((u: any) => ({ id: u.id, name: u.fullName })) || [];
-  const groupOptions: Option[] =
-    groupsData?.data?.map((t: any) => ({ id: t.id, name: t.name })) || [];
+  const classOptions: Option[] =
+    classesData?.data?.map((t: any) => ({ id: t.id, name: t.name })) || [];
 
   const form = useForm<UpdateFormValues>({
     resolver: zodResolver(updateSchema),
@@ -240,13 +240,13 @@ export default function EditContent({ contentId }: { contentId: string }) {
               <p className="text-sm text-red-500">{errors.authorId.message}</p>
             )}
 
-            {/* Group */}
+            {/* Class */}
             <SearchableSelect
-              label="Group"
-              options={groupOptions}
+              label="Class"
+              options={classOptions}
               value={watch("groupId")}
               onChange={(val) => setValue("groupId", val)}
-              placeholder="Search group..."
+              placeholder="Search class..."
             />
             {errors.groupId && (
               <p className="text-sm text-red-500">{errors.groupId.message}</p>

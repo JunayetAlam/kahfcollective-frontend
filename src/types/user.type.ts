@@ -2,7 +2,7 @@ import { Payment } from "./payment.type";
 import { Post } from "./post.type";
 import { Course, CourseContents, EnrollCourse, Quiz, QuizAnswers } from "./course.type";
 import { NormalContent } from "./normal-content.type";
-import { UserGroup } from "./groups.type";
+import { UserClass } from "./class.type";
 
 
 export type UserRoleEnum = "USER" | "INSTRUCTOR" | "SUPERADMIN";
@@ -44,7 +44,7 @@ export interface User {
   courses?: Course[];
   coursesContents?: CourseContents[];
   quizzes?: Quiz[];
-  userGroups: UserGroup[]
+  userGroups: UserClass[]
   enrollCourses: EnrollCourse[]
   createdAt: string;
   updatedAt: string;

@@ -13,23 +13,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useDeleteForumMutation } from "@/redux/api/forumApi";
+import { useDeleteGroupMutation } from "@/redux/api/groupApi";
 
-interface DeleteForumProps {
+interface DeleteGroupProps {
   forumId: string;
 }
 
-export default function DeleteForum({ forumId }: DeleteForumProps) {
-  const [isOpen, setIsOpen] = useState(false); // control dialog open state
-  const [deleteForum, { isLoading }] = useDeleteForumMutation();
+export default function DeleteGroup({ forumId }: DeleteGroupProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [deleteGroup, { isLoading }] = useDeleteGroupMutation();
 
   const handleDelete = async () => {
     try {
-      await deleteForum(forumId).unwrap();
-      toast.success("Forum deleted successfully!");
-      setIsOpen(false); // close dialog after success
+      await deleteGroup(forumId).unwrap();
+      toast.success("Group deleted successfully!");
+      setIsOpen(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete the forum.");
+      toast.error(error?.data?.message || "Failed to delete the group.");
     }
   };
 
@@ -45,9 +45,9 @@ export default function DeleteForum({ forumId }: DeleteForumProps) {
 
       <DialogContent className="!max-w-md">
         <DialogHeader>
-          <DialogTitle>Delete Forum</DialogTitle>
+          <DialogTitle>Delete Group</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this forum? This action cannot be undone.
+            Are you sure you want to delete this group? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 

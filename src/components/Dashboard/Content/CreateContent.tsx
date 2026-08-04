@@ -28,7 +28,7 @@ import {
 import { LucideProps, Video } from "lucide-react";
 
 import { useCreateNewContentMutation } from "@/redux/api/contentApi";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllClassesQuery } from "@/redux/api/classApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,7 +44,7 @@ const contentSchema = z.object({
   type: z.string().optional(),
   authorId: z.string().min(1, "Author is required"),
   contentOrDescriptor: z.string().min(1, "Content/Description is required"),
-  groupId: z.string().min(1, "Group is required"),
+  groupId: z.string().min(1, "Class is required"),
   content: z.any().optional(),
   thumbnail: z.any().optional(),
   articlePDF: z.any().optional(),
@@ -84,14 +84,14 @@ export default function CreateContent() {
 
   const selectedContentType = watch("contentType");
 
-  // Fetch users & groups
+  // Fetch users & classes
   const { data: usersData } = useGetAllUsersQuery([]);
-  const { data: groupsData } = useGetAllGroupsQuery([]);
+  const { data: classesData } = useGetAllClassesQuery([]);
 
   const userOptions: Option[] =
     usersData?.data?.map((u) => ({ id: u.id, name: u.fullName })) || [];
-  const groupOptions: Option[] =
-    groupsData?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
+  const classOptions: Option[] =
+    classesData?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
 
   // ---------------- File Change Handlers ----------------
   const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,13 +239,13 @@ export default function CreateContent() {
             <p className="text-sm text-red-500">{errors.authorId.message}</p>
           )}
 
-          {/* Group */}
+          {/* Class */}
           <SearchableSelect
-            label="Group"
-            options={groupOptions}
+            label="Class"
+            options={classOptions}
             value={watch("groupId")}
             onChange={(val) => setValue("groupId", val)}
-            placeholder="Search group..."
+            placeholder="Search class..."
           />
           {errors.groupId && (
             <p className="text-sm text-red-500">{errors.groupId.message}</p>

@@ -8,10 +8,10 @@ export * from './article.type'
 export * from './study-circle.type'
 export * from './post.type'
 export * from './fraternity.type'
-export * from './content.type'
+export * from './class.type'
 export * from './user.type'
 export * from './payment.type'
-export * from './forum.type'
+export * from './group.type'
 export * from './quiz.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;

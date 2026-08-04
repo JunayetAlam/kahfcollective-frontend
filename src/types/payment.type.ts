@@ -1,4 +1,4 @@
-import { Group } from "./groups.type";
+import { Class } from "./class.type";
 import { User } from "./user.type";
 
 export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELED";
@@ -19,7 +19,7 @@ export interface Payment {
     cardExpMonth?: number;
     cardExpYear?: number;
     user: User
-    group: Group
+    group: Class
 
     stripePaymentId?: string;
     stripeSessionId?: string;

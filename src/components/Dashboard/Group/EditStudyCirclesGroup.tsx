@@ -13,37 +13,36 @@ import { Button } from "@/components/ui/button";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import CustomForm from "@/components/Forms/CustomForm";
-import ForumForm from "./ForumForm";
+import StudyCirclesGroupForm from "./StudyCirclesGroupForm";
 import {
-    useGetSingleForumQuery,
-    useUpdateCircleForumMutation,
-} from "@/redux/api/forumApi";
+    useGetSingleGroupQuery,
+    useUpdateCircleGroupMutation,
+} from "@/redux/api/groupApi";
 import Loading from "@/components/Global/Loading";
 import { Edit } from "lucide-react";
 
-type EditForumProps = {
+type EditStudyCirclesGroupProps = {
     forumId: string;
 };
 
-export default function EditForum({ forumId }: EditForumProps) {
+export default function EditStudyCirclesGroup({ forumId }: EditStudyCirclesGroupProps) {
     const [fetch, setFetch] = useState(false)
     const [open, setOpen] = useState(false);
 
-    // fetch single forum data
-    const { data, isLoading: fetching } = useGetSingleForumQuery(forumId, {
+    const { data, isLoading: fetching } = useGetSingleGroupQuery(forumId, {
         skip: !fetch
     });
-    const [updateForum, { isLoading: updating }] = useUpdateCircleForumMutation();
+    const [updateGroup, { isLoading: updating }] = useUpdateCircleGroupMutation();
 
 
     const handleSubmit = async (data: FieldValues) => {
         try {
-            await updateForum({ id: forumId, body: data }).unwrap();
+            await updateGroup({ id: forumId, body: data }).unwrap();
 
-            toast.success("Forum updated successfully!");
+            toast.success("Group updated successfully!");
             setOpen(false);
         } catch (error: any) {
-            console.error("Forum update error:", error);
+            console.error("Group update error:", error);
             toast.error(error?.data?.message || "Oops! Something went wrong. Please try again.");
         }
     };
@@ -51,12 +50,12 @@ export default function EditForum({ forumId }: EditForumProps) {
     const handleCancel = () => {
         setOpen(false);
     };
-    const forum = data?.data
+    const group = data?.data
     const defaultValues = {
-        title: forum?.title || '',
-        description: forum?.description || '',
-        courseId: forum?.courseId || '',
-        groupId: forum?.groupId || '',
+        title: group?.title || '',
+        description: group?.description || '',
+        courseId: group?.courseId || '',
+        groupId: group?.groupId || '',
     };
 
     return (
@@ -66,9 +65,9 @@ export default function EditForum({ forumId }: EditForumProps) {
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto !max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Edit Study Circles Forum</DialogTitle>
+                    <DialogTitle>Edit Study Circles Group</DialogTitle>
                     <p className="text-sm text-gray-600">
-                        Update the forum details below.
+                        Update the group details below.
                     </p>
                 </DialogHeader>
 
@@ -80,7 +79,7 @@ export default function EditForum({ forumId }: EditForumProps) {
                         defaultValues={defaultValues}
                         className="space-y-6 py-4"
                     >
-                        <ForumForm />
+                        <StudyCirclesGroupForm />
 
                         {/* Action Buttons */}
                         <div className="flex justify-end space-x-3 pt-4 border-t">
@@ -96,10 +95,10 @@ export default function EditForum({ forumId }: EditForumProps) {
                                 {updating ? (
                                     <div className="flex items-center">
                                         <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                        Updating Forum...
+                                        Updating Group...
                                     </div>
                                 ) : (
-                                    "Update Forum"
+                                    "Update Group"
                                 )}
                             </Button>
                         </div>

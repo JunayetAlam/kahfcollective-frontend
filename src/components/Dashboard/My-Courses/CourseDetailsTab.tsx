@@ -44,7 +44,6 @@ export function CourseDetailsTab({ courseData, setOpen }: CourseDetailsTabProps)
     title: courseData.title || "",
     description: courseData.description || "",
     instructorId: courseData.instructorId || "",
-    language: courseData.language || "",
     status: courseData.status || "ACTIVE",
   };
 
@@ -101,16 +100,6 @@ export function CourseDetailsTab({ courseData, setOpen }: CourseDetailsTabProps)
         isLoading={isUserLoading}
         isError={isError}
         searchPlaceholder="Search instructor"
-      />
-
-      {/* Language */}
-      <CustomInput
-        required
-        type="text"
-        name="language"
-        label="Language"
-        placeholder="Course language"
-        disabled={isLoading}
       />
 
       {/* Status */}

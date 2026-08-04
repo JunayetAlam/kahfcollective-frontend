@@ -10,7 +10,7 @@ const postApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["Post", "Forum"],
+            invalidatesTags: ["Post", "Group"],
         }),
 
         // Reply to a post
@@ -65,8 +65,8 @@ const postApi = baseApi.injectEndpoints({
             invalidatesTags: ["Post"],
         }),
 
-        // Get all posts for a forum (with optional query params)
-        getAllPostForSpecificForum: builder.query({
+        // Get all posts for a group (with optional query params)
+        getAllPostForSpecificGroup: builder.query({
             query: (data?: { forumId: string; args?: TQueryParam[] }) => {
                 const queryParams = new URLSearchParams();
                 data?.args?.forEach((item) => queryParams.append(item.name, item.value as string));
@@ -91,7 +91,10 @@ const postApi = baseApi.injectEndpoints({
                 }
                 return { url: `/posts`, method: "GET", params }
             },
-            transformResponse: (response: TResponseRedux<Post[]>) => ({ data: response.data }),
+            transformResponse: (response: TResponseRedux<Post[]>) => ({
+                data: response.data,
+                meta: response.meta,
+            }),
             providesTags: ["Post"],
         }),
 
@@ -122,7 +125,7 @@ export const {
     useReplyToReplyMutation,
     useGiveReactMutation,
     useTogglePublishMutation,
-    useGetAllPostForSpecificForumQuery,
+    useGetAllPostForSpecificGroupQuery,
     useGetAllPostQuery,
     useGetAllReplyForSpecificPostQuery,
     useGetAllReactForPostQuery,

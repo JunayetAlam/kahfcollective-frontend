@@ -27,7 +27,6 @@ const defaultValues = {
   title: "",
   description: "",
   instructorId: "",
-  language: "",
   status: "ACTIVE",
 };
 
@@ -114,16 +113,6 @@ export default function CreateCourse() {
             isLoading={isUserLoading}
             isError={isError}
             searchPlaceholder="Search instructor"
-          />
-
-          {/* Language */}
-          <CustomInput
-            required
-            type="text"
-            name="language"
-            label="Language"
-            placeholder="Course language"
-            disabled={isLoading}
           />
 
           {/* Status */}

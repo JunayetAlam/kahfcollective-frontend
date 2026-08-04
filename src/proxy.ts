@@ -7,7 +7,7 @@ const roleBasedRoutes = {
   USER: ["/", "/checkout", "/checkout/complete", "/profile", "/study-circles", "/study-circles/feed", "/course-details/*"],
   INSTRUCTOR: [
     "/dashboard",
-    "/dashboard/discussion",
+    "/dashboard/discussion/*",
     "/dashboard/my-courses",
     "/dashboard/students",
     "/dashboard/profile",
@@ -23,7 +23,7 @@ const roleBasedRoutes = {
   SUPERADMIN: [
     "/dashboard",
     "/dashboard/content",
-    "/dashboard/discussion",
+    "/dashboard/discussion/*",
     "/dashboard/my-courses",
     "/dashboard/assessment",
     "/dashboard/profile",

@@ -24,12 +24,10 @@ export default function SCFPost({ post }: { post: Post }) {
     const [newComment, setNewComment] = useState('');
     const searchParams = useSearchParams();
     const { data: me } = useGetMeQuery(undefined);
-    // query params
     const page = searchParams.get('page') || '';
     const args: TQueryParam[] = [{ name: 'limit', value: '100' }];
     if (page) args.push({ name: 'page', value: page });
 
-    // API hooks
     const { data, isLoading } = useGetAllReplyForSpecificPostQuery({ postId: post.id, args });
     const [replyToPost, { isLoading: isReplying }] = useReplyToPostMutation();
     const [giveReact, { isLoading: isReacting }] = useGiveReactMutation();
@@ -37,13 +35,12 @@ export default function SCFPost({ post }: { post: Post }) {
     const reply = data?.data || [];
     const visibleComments = showAllComments ? reply : reply.slice(0, 1);
 
-    const maxChars = 200;
+    const maxChars = 280;
     const isLong = post.message.length > maxChars;
     const displayText = expanded
         ? post.message
         : post.message.slice(0, maxChars);
 
-    // handle comment submit
     const handleCommentSubmit = async () => {
         if (!newComment.trim()) {
             toast.error('Comment cannot be empty');
@@ -63,7 +60,6 @@ export default function SCFPost({ post }: { post: Post }) {
         }
     };
 
-    // handle enter press
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -71,7 +67,6 @@ export default function SCFPost({ post }: { post: Post }) {
         }
     };
 
-    // handle like
     const handleReact = async () => {
         try {
             await giveReact(post.id).unwrap();
@@ -84,26 +79,24 @@ export default function SCFPost({ post }: { post: Post }) {
     const isIReact = (post?.reacts || [])?.length > 0
     const timeLabel = formatTime(post.createdAt);
     return (
-        <div className="border p-4 lg:p-8 border-gray-200 rounded-xl space-y-6">
-            {/* Post header */}
-            <div className="flex gap-2 items-center">
-                <Avatar className="w-10 h-10">
+        <article className="space-y-5 py-8 first:pt-6 last:pb-6">
+            <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
                     <AvatarImage src={post.user?.profile || ''} alt={post?.user?.fullName || 'NA'} />
                     <AvatarFallback>{post.user?.fullName?.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <div className="font-semibold text-gray-800">
+                    <div className="font-semibold text-[#304437]">
                         {post?.user?.fullName || 'NA'}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-[#6f7f63]">
                         {timeLabel}
                     </div>
                 </div>
             </div>
 
-            {/* Post body */}
-            <div className='flex flex-col gap-6'>
-                <div>
+            <div className="space-y-5">
+                <div className="text-[15px] leading-relaxed text-[#304437]">
                     <div
                         dangerouslySetInnerHTML={{
                             __html: displayText.replace(/\n/g, '<br>'),
@@ -112,42 +105,41 @@ export default function SCFPost({ post }: { post: Post }) {
                     {isLong && (
                         <button
                             onClick={() => setExpanded(!expanded)}
-                            className="text-primary font-medium mt-1 hover:underline"
+                            className="mt-2 text-sm font-medium text-[#5f7254] hover:underline"
                         >
                             {expanded ? 'See less' : 'See more'}
                         </button>
                     )}
                 </div>
 
-                {/* Reacts & comments */}
-                <div className="grid grid-cols-2 text-gray-600 text-sm gap-2">
+                <div className="flex gap-3 text-sm text-[#5c6b55]">
                     <button
                         onClick={handleReact}
                         disabled={isReacting}
-                        className="flex items-center gap-2.5 justify-center h-10 rounded-lg cursor-pointer transition-all duration-300 hover:bg-gray-50 border border-transparent hover:border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-md border border-transparent transition-colors hover:border-[#d7ded0] hover:bg-[#f4f6f0] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {isReacting ? (
-                            <Loader2 className="w-5 h-5 animate-spin text-red-500" />
+                            <Loader2 className="h-5 w-5 animate-spin text-red-500" />
                         ) : (
-                            <Heart className={`w-5 h-5 text-red-500 ${isIReact && 'fill-red-500'}`} />
+                            <Heart className={`h-5 w-5 text-red-500 ${isIReact ? 'fill-red-500' : ''}`} />
                         )}
                         <span className="font-medium">{post._count?.reacts}</span>
                     </button>
 
                     <Button
-                        size={'lg'}
-                        variant={'outline'}
+                        size="lg"
+                        variant="outline"
+                        className="flex-1 border-[#d7ded0]"
                         onClick={() => setShowAllComments(!showAllComments)}
                     >
-                        <MessageCircle className="w-5 h-5 fill-current" />
+                        <MessageCircle className="h-5 w-5 fill-current" />
                         {post._count.replies}
                     </Button>
                 </div>
 
-                {/* Comments Section */}
                 <div className="space-y-4">
                     {isLoading ? (
-                        <div className="text-sm text-gray-500">Loading comments...</div>
+                        <div className="text-sm text-[#6f7f63]">Loading comments...</div>
                     ) : (
                         <>
                             {visibleComments.map(comment => (
@@ -157,7 +149,7 @@ export default function SCFPost({ post }: { post: Post }) {
                             {!showAllComments && reply.length > 1 && (
                                 <button
                                     onClick={() => setShowAllComments(true)}
-                                    className="text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors duration-200 px-2 py-1 hover:bg-gray-50 rounded"
+                                    className="rounded px-2 py-1 text-sm font-medium text-[#5c6b55] transition-colors hover:bg-[#f4f6f0] hover:text-[#304437]"
                                 >
                                     View {reply.length - 1} more comment{reply.length - 1 > 1 ? 's' : ''}
                                 </button>
@@ -166,7 +158,7 @@ export default function SCFPost({ post }: { post: Post }) {
                             {showAllComments && reply.length > 1 && (
                                 <button
                                     onClick={() => setShowAllComments(false)}
-                                    className="text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors duration-200 px-2 py-1 hover:bg-gray-50 rounded"
+                                    className="rounded px-2 py-1 text-sm font-medium text-[#5c6b55] transition-colors hover:bg-[#f4f6f0] hover:text-[#304437]"
                                 >
                                     Show less
                                 </button>
@@ -174,15 +166,14 @@ export default function SCFPost({ post }: { post: Post }) {
                         </>
                     )}
 
-                    {/* Add comment */}
                     <div className="flex items-start gap-3">
-                        <Avatar className="w-8 h-8">
+                        <Avatar className="h-8 w-8">
                             <AvatarImage src={me?.data?.profile || ''} alt="Me" />
-                            <AvatarFallback>{me?.data?.fullName.slice(0, 2)}</AvatarFallback>
+                            <AvatarFallback>{me?.data?.fullName?.slice(0, 2)}</AvatarFallback>
                         </Avatar>
 
                         <div className="w-full">
-                            <div className="flex gap-3 items-end">
+                            <div className="flex items-end gap-3">
                                 <div className="flex-1">
                                     <Textarea
                                         value={newComment}
@@ -190,13 +181,13 @@ export default function SCFPost({ post }: { post: Post }) {
                                         onKeyPress={handleKeyPress}
                                         placeholder="Write your comment..."
                                         disabled={isReplying}
-                                        className="w-full min-h-[60px] resize-none border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="min-h-[60px] w-full resize-none rounded-md border border-[#d7ded0] p-3 focus:border-[#93a87e] focus:ring-2 focus:ring-[#93a87e]/30 focus:outline-none"
                                     />
                                 </div>
                                 <button
                                     onClick={handleCommentSubmit}
                                     disabled={!newComment.trim() || isReplying}
-                                    className='bg-primary text-background size-9 rounded-md flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors duration-200'
+                                    className='flex size-9 items-center justify-center rounded-md bg-primary text-background transition-colors duration-200 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50'
                                 >
                                     {isReplying ? (
                                         <Loader2 className="animate-spin" size={20} />
@@ -209,6 +200,6 @@ export default function SCFPost({ post }: { post: Post }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
     )
 }

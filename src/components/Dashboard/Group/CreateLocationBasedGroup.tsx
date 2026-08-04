@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import CustomForm from "@/components/Forms/CustomForm";
-import { useCreateLocationForumMutation } from "@/redux/api/forumApi"; // <-- import mutation
-import { FraternityGroupForm } from "./FruternityForm";
+import { useCreateLocationGroupMutation } from "@/redux/api/groupApi";
+import { LocationBasedGroupForm } from "./LocationBasedGroupForm";
 import { Event } from "@/types";
 
 
@@ -25,14 +25,13 @@ const defaultValues = {
     groupId: "",
 };
 
-export default function CreateFraternityGroup() {
+export default function CreateLocationBasedGroup() {
     const [open, setOpen] = useState(false);
     const [events, setEvents] = useState<Event[]>([
         { eventName: "", about: "", location: "", date: undefined, time: "" },
     ]);
 
-    // RTK mutation hook
-    const [createLocationForum, { isLoading }] = useCreateLocationForumMutation();
+    const [createLocationGroup, { isLoading }] = useCreateLocationGroupMutation();
 
     const handleSubmit = async (data: FieldValues) => {
         try {
@@ -41,14 +40,14 @@ export default function CreateFraternityGroup() {
                 events,
             };
 
-            await createLocationForum(transformedData).unwrap();
+            await createLocationGroup(transformedData).unwrap();
 
-            toast.success("✅ Fraternity Group created successfully!");
+            toast.success("Location Based Group created successfully!");
 
             setOpen(false);
         } catch (error: any) {
-            console.error("Fraternity group creation error:", error);
-            toast.error(error?.data?.message || "❌ Oops! Something went wrong.");
+            console.error("Location based group creation error:", error);
+            toast.error(error?.data?.message || "Oops! Something went wrong.");
         }
     };
 
@@ -59,13 +58,13 @@ export default function CreateFraternityGroup() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>Create Fraternity Group</Button>
+                <Button>Create Location Based Group</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Create Fraternity Group</DialogTitle>
+                    <DialogTitle>Create Location Based Group</DialogTitle>
                     <p className="text-sm text-gray-600">
-                        Create a new discussion forum for your community.
+                        Create a new location based discussion group for your community.
                     </p>
                 </DialogHeader>
 
@@ -74,7 +73,7 @@ export default function CreateFraternityGroup() {
                     defaultValues={defaultValues}
                     className="space-y-6 py-4"
                 >
-                    <FraternityGroupForm events={events} setEvents={setEvents} />
+                    <LocationBasedGroupForm events={events} setEvents={setEvents} />
 
                     {/* Action Buttons */}
                     <div className="flex justify-end space-x-3 pt-4 border-t">
@@ -90,10 +89,10 @@ export default function CreateFraternityGroup() {
                             {isLoading ? (
                                 <>
                                     <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    Creating Forum...
+                                    Creating Group...
                                 </>
                             ) : (
-                                "Create Forum"
+                                "Create Group"
                             )}
                         </Button>
                     </div>

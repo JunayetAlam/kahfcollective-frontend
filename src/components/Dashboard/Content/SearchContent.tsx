@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { handleSetSearchParams } from "@/lib/utils";
-import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { useGetAllClassesQuery } from "@/redux/api/classApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -24,8 +24,8 @@ export default function SearchUser() {
 
   const router = useRouter();
 
-  const { data: groupsData } = useGetAllGroupsQuery([]);
-  const groups = groupsData?.data || [];
+  const { data: classesData } = useGetAllClassesQuery([]);
+  const classes = classesData?.data || [];
 
   const handleSetUrl = React.useCallback(
     (data: Record<string, string>) => {
@@ -59,13 +59,13 @@ export default function SearchUser() {
         }
       >
         <SelectTrigger className="min-w-[120px]">
-          <SelectValue placeholder="Group" />
+          <SelectValue placeholder="Class" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Group</SelectLabel>
+            <SelectLabel>Class</SelectLabel>
             <SelectItem value="all">All</SelectItem>
-            {groups.map((t: any) => (
+            {classes.map((t: any) => (
               <SelectItem key={t.id} value={t.id}>
                 {t.name}
               </SelectItem>

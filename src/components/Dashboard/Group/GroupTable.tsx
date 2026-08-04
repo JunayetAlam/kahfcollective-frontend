@@ -1,45 +1,43 @@
 "use client"
 import React, { useState } from "react";
-import CreateForum from "./CreateForum";
-import CreateFraternityGroup from "./CreateFruternityGroup";
+import Link from "next/link";
+import CreateStudyCirclesGroup from "./CreateStudyCirclesGroup";
+import CreateLocationBasedGroup from "./CreateLocationBasedGroup";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useGetAllForumsQuery } from "@/redux/api/forumApi";
-import { Forum, ForumTypeEnum } from "@/types";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
+import { Group, GroupTypeEnum } from "@/types";
 import TableSkeleton from "@/components/Global/TableSkeleton";
-import EditForum from "./EditForum";
-import EditFruternityGroup from "./EditFruternityGroup";
-import DeleteForum from "./DeleteForum";
+import EditStudyCirclesGroup from "./EditStudyCirclesGroup";
+import EditLocationBasedGroup from "./EditLocationBasedGroup";
+import DeleteGroup from "./DeleteGroup";
 import { Button } from "@/components/ui/button";
 
-export default function ForumTable() {
-    const [activeTab, setActiveTab] = useState<ForumTypeEnum>("STUDY_CIRCLES");
+export default function GroupTable() {
+    const [activeTab, setActiveTab] = useState<GroupTypeEnum>("STUDY_CIRCLES");
 
-    const { data, isLoading } = useGetAllForumsQuery([{ name: "limit", value: '1000', }, { name: 'forumType', value: activeTab }]);
+    const { data, isLoading } = useGetAllGroupsQuery([{ name: "limit", value: '1000', }, { name: 'forumType', value: activeTab }]);
     if (isLoading) {
-        return <TableSkeleton headers={['Forum Name', 'Course', 'Posts', 'Action']} />
+        return <TableSkeleton headers={['Group Name', 'Course', 'Posts', 'Action']} />
     };
-    const forumData = data?.data || []
+    const groupData = data?.data || []
 
     return (
         <div className="py-6">
-            {/* Header */}
             <div className="mb-8">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h1 className="text-xl font-semibold mb-1">All Forums</h1>
+                        <h1 className="text-xl font-semibold mb-1">All Groups</h1>
                         <p className="text-sm text-muted-foreground">Manage class discussions, workshop themes, and open topics</p>
                     </div>
                     {
-                        activeTab === 'LOCATION_BASED' ? <CreateFraternityGroup /> : <CreateForum />
-
+                        activeTab === 'LOCATION_BASED' ? <CreateLocationBasedGroup /> : <CreateStudyCirclesGroup />
                     }
                 </div>
             </div>
 
-            {/* Tabs */}
             <div className="mb-6">
                 <div className="border rounded-lg p-1 px-3 bg-background grid grid-cols-2 gap-3">
-                    {(["STUDY_CIRCLES", "LOCATION_BASED"] as ForumTypeEnum[]).map((tab) => (
+                    {(["STUDY_CIRCLES", "LOCATION_BASED"] as GroupTypeEnum[]).map((tab) => (
                         <Button
                             variant={tab === activeTab ? 'secondary' : 'outline'}
                             key={tab}
@@ -53,20 +51,18 @@ export default function ForumTable() {
                 </div>
             </div>
 
-            {/* Table Section */}
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-4">
                     {activeTab === 'STUDY_CIRCLES' && 'Study Circles'}
-                    {activeTab === 'LOCATION_BASED' && 'Location Based'} Discussions
+                    {activeTab === 'LOCATION_BASED' && 'Location Based'} Groups
                 </h3>
             </div>
 
-            {/* Table */}
             <div className="border rounded-lg overflow-hidden bg-background shadow-sm">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Forum Name</TableHead>
+                            <TableHead>Group Name</TableHead>
                             {
                                 activeTab === 'STUDY_CIRCLES' && <TableHead>Course</TableHead>
                             }
@@ -75,8 +71,8 @@ export default function ForumTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody colSpan={4}>
-                        {forumData.map((forum) => (
-                            <ForumTableRow key={forum.id} forum={forum} />
+                        {groupData.map((group) => (
+                            <GroupTableRow key={group.id} group={group} />
                         ))}
                     </TableBody>
                 </Table>
@@ -86,19 +82,26 @@ export default function ForumTable() {
 }
 
 
-function ForumTableRow({ forum }: { forum: Forum }) {
-    return <TableRow key={forum.id}>
-        <TableCell className="font-medium">{forum.title}</TableCell>
+function GroupTableRow({ group }: { group: Group }) {
+    return <TableRow key={group.id}>
+        <TableCell className="font-medium">{group.title}</TableCell>
         {
-            forum.forumType === 'STUDY_CIRCLES' && <TableCell>{forum.course?.title}</TableCell>
+            group.forumType === 'STUDY_CIRCLES' && <TableCell>{group.course?.title}</TableCell>
         }
-        <TableCell>{forum._count.posts}</TableCell>
+        <TableCell>{group._count.posts}</TableCell>
         <TableCell>
             <div className="flex gap-3">
+                {group.forumType === 'STUDY_CIRCLES' ? (
+                    <Button asChild variant="outline" size="sm">
+                        <Link href={`/dashboard/discussion/${group.id}`}>Manage</Link>
+                    </Button>
+                ) : null}
                 {
-                    forum.forumType === 'LOCATION_BASED' ? <EditFruternityGroup forumId={forum.id} /> : <EditForum forumId={forum.id} />
+                    group.forumType === 'LOCATION_BASED'
+                        ? <EditLocationBasedGroup forumId={group.id} />
+                        : <EditStudyCirclesGroup forumId={group.id} />
                 }
-                <DeleteForum forumId={forum.id} />
+                <DeleteGroup forumId={group.id} />
             </div>
         </TableCell>
     </TableRow>

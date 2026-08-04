@@ -2,7 +2,7 @@
 
 import Container from "../Global/Container";
 import StudyCircleCard from "./StudyCircleCard";
-import { useGetAllForumsQuery } from "@/redux/api/forumApi";
+import { useGetAllGroupsQuery } from "@/redux/api/groupApi";
 import { Pagination } from "../Global/Pagination";
 import { TQueryParam } from "@/types";
 import { useSearchParams } from "next/navigation";
@@ -13,7 +13,7 @@ export default function StudyCircles() {
     const searchParams = useSearchParams();
     const page = searchParams.get('page');
     if (page) args.push({ name: 'page', value: page })
-    const { data, isLoading } = useGetAllForumsQuery(args);
+    const { data, isLoading } = useGetAllGroupsQuery(args);
     if (isLoading) {
         return <Loading />
     };

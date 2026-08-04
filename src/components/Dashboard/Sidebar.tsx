@@ -135,7 +135,7 @@ export function Sidebar() {
       icon: MessageCircleMore,
       route: "/dashboard/discussion",
       roles: ["SUPERADMIN", "INSTRUCTOR"],
-      title: "Forum Moderation",
+      title: "Group Moderation",
     },
   ];
 

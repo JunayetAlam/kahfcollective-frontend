@@ -23,64 +23,64 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
 import {
-    useGetAllGroupsAdminQuery,
-    useCreateGroupMutation,
-    useUpdateGroupMutation,
-    useToggleDeleteGroupMutation,
-} from "@/redux/api/groupApi";
-import { Group } from "@/types/groups.type";
+    useGetAllClassesAdminQuery,
+    useCreateClassMutation,
+    useUpdateClassMutation,
+    useToggleDeleteClassMutation,
+} from "@/redux/api/classApi";
+import { Class } from "@/types/class.type";
 import TableSkeleton from "@/components/Global/TableSkeleton";
 import { toast } from "sonner";
 
-interface GroupRowProps {
-    group: Group;
+interface ClassRowProps {
+    classItem: Class;
 }
 
-const GroupRow: React.FC<GroupRowProps> = ({ group }) => {
+const ClassRow: React.FC<ClassRowProps> = ({ classItem }) => {
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [editName, setEditName] = useState(group.name);
+    const [editName, setEditName] = useState(classItem.name);
 
-    const [updateGroup, { isLoading: isUpdating }] = useUpdateGroupMutation();
-    const [toggleDeleteGroup, { isLoading: isToggling }] = useToggleDeleteGroupMutation();
+    const [updateClass, { isLoading: isUpdating }] = useUpdateClassMutation();
+    const [toggleDeleteClass, { isLoading: isToggling }] = useToggleDeleteClassMutation();
 
-    const handleUpdateGroup = async () => {
+    const handleUpdateClass = async () => {
         if (!editName.trim()) {
-            toast.error('Group name cannot be empty');
+            toast.error('Class name cannot be empty');
             return;
         }
 
         try {
-            await updateGroup({
-                id: group.id,
+            await updateClass({
+                id: classItem.id,
                 data: { name: editName.trim() }
             }).unwrap();
 
-            toast.success('Group updated successfully');
+            toast.success('Class updated successfully');
             setIsEditOpen(false);
         } catch (error: any) {
-            toast.error('Failed to update group');
+            toast.error('Failed to update class');
         }
     };
 
     const handleToggleVisibility = async () => {
         try {
-            await toggleDeleteGroup(group.id).unwrap();
+            await toggleDeleteClass(classItem.id).unwrap();
 
-            toast.success("`Group ${group.isDeleted ? 'shown' : 'hidden'} successfully`");
+            toast.success(`Class ${classItem.isDeleted ? 'shown' : 'hidden'} successfully`);
         } catch (error: any) {
-            toast.error("Failed to toggle group visibility");
+            toast.error("Failed to toggle class visibility");
         }
     };
 
     return (
-        <TableRow className={group.isDeleted ? "opacity-50" : ""}>
-            <TableCell className="font-medium">{group.name}</TableCell>
+        <TableRow className={classItem.isDeleted ? "opacity-50" : ""}>
+            <TableCell className="font-medium">{classItem.name}</TableCell>
             <TableCell>
-                <span className={`px-2 py-1 rounded-full text-xs ${group.isDeleted
+                <span className={`px-2 py-1 rounded-full text-xs ${classItem.isDeleted
                     ? "bg-red-100 text-red-800"
                     : "bg-green-100 text-green-800"
                     }`}>
-                    {group.isDeleted ? "Hidden" : "Visible"}
+                    {classItem.isDeleted ? "Hidden" : "Visible"}
                 </span>
             </TableCell>
             <TableCell className="text-right">
@@ -91,23 +91,23 @@ const GroupRow: React.FC<GroupRowProps> = ({ group }) => {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setEditName(group.name)}
+                                onClick={() => setEditName(classItem.name)}
                             >
                                 <Edit className="h-4 w-4" />
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Edit Group</DialogTitle>
+                                <DialogTitle>Edit Class</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <Label htmlFor="edit-group-name">Group Name</Label>
+                                    <Label htmlFor="edit-class-name">Class Name</Label>
                                     <Input
-                                        id="edit-group-name"
+                                        id="edit-class-name"
                                         value={editName}
                                         onChange={(e) => setEditName(e.target.value)}
-                                        placeholder="Enter group name"
+                                        placeholder="Enter class name"
                                     />
                                 </div>
                                 <div className="flex justify-end space-x-2">
@@ -118,7 +118,7 @@ const GroupRow: React.FC<GroupRowProps> = ({ group }) => {
                                         Cancel
                                     </Button>
                                     <Button
-                                        onClick={handleUpdateGroup}
+                                        onClick={handleUpdateClass}
                                         disabled={isUpdating}
                                     >
                                         {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -138,7 +138,7 @@ const GroupRow: React.FC<GroupRowProps> = ({ group }) => {
                     >
                         {isToggling ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : group.isDeleted ? (
+                        ) : classItem.isDeleted ? (
                             <Eye className="h-4 w-4" />
                         ) : (
                             <EyeOff className="h-4 w-4" />
@@ -150,30 +150,30 @@ const GroupRow: React.FC<GroupRowProps> = ({ group }) => {
     );
 };
 
-export default function GroupManagement() {
+export default function ClassManagement() {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [newGroupName, setNewGroupName] = useState("");
+    const [newClassName, setNewClassName] = useState("");
 
-    const { data, isLoading } = useGetAllGroupsAdminQuery([]);
-    const [createGroup, { isLoading: isCreating }] = useCreateGroupMutation();
+    const { data, isLoading } = useGetAllClassesAdminQuery([]);
+    const [createClass, { isLoading: isCreating }] = useCreateClassMutation();
 
-    const groups = data?.data || [];
+    const classes = data?.data || [];
 
-    const handleCreateGroup = async () => {
-        if (!newGroupName.trim()) {
-            toast.error("Group name cannot be empty");
+    const handleCreateClass = async () => {
+        if (!newClassName.trim()) {
+            toast.error("Class name cannot be empty");
             return;
         }
 
         try {
-            await createGroup({ name: newGroupName.trim() }).unwrap();
+            await createClass({ name: newClassName.trim() }).unwrap();
 
-            toast.success("Group created successfully");
+            toast.success("Class created successfully");
 
-            setNewGroupName("");
+            setNewClassName("");
             setIsCreateOpen(false);
         } catch (error: any) {
-            toast.error("Failed to create group");
+            toast.error("Failed to create class");
         }
     };
 
@@ -181,28 +181,28 @@ export default function GroupManagement() {
         <div className="rounded-lg p-6 bg-background border border-border">
             {/* Header */}
             <div className="flex items-center justify-between pb-6 border-b border-border">
-                <h1 className="text-lg font-semibold">Group Management</h1>
+                <h1 className="text-lg font-semibold">Class Management</h1>
 
-                {/* Add Group Button */}
+                {/* Add Class Button */}
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
-                        <Button onClick={() => setNewGroupName("")}>
+                        <Button onClick={() => setNewClassName("")}>
                             <Plus className="mr-2 h-4 w-4" />
-                            Add Group
+                            Add Class
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Create New Group</DialogTitle>
+                            <DialogTitle>Create New Class</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                             <div>
-                                <Label htmlFor="new-group-name">Group Name</Label>
+                                <Label htmlFor="new-class-name">Class Name</Label>
                                 <Input
-                                    id="new-group-name"
-                                    value={newGroupName}
-                                    onChange={(e) => setNewGroupName(e.target.value)}
-                                    placeholder="Enter group name"
+                                    id="new-class-name"
+                                    value={newClassName}
+                                    onChange={(e) => setNewClassName(e.target.value)}
+                                    placeholder="Enter class name"
                                 />
                             </div>
                             <div className="flex justify-end space-x-2">
@@ -213,7 +213,7 @@ export default function GroupManagement() {
                                     Cancel
                                 </Button>
                                 <Button
-                                    onClick={handleCreateGroup}
+                                    onClick={handleCreateClass}
                                     disabled={isCreating}
                                 >
                                     {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -241,15 +241,15 @@ export default function GroupManagement() {
                             </TableRow>
                         </TableHeader>
                         <TableBody colSpan={3}>
-                            {groups.length === 0 ? (
+                            {classes.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                                        No groups found. Create your first group to get started.
+                                        No classes found. Create your first class to get started.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                groups.map((group) => (
-                                    <GroupRow key={group.id} group={group} />
+                                classes.map((classItem) => (
+                                    <ClassRow key={classItem.id} classItem={classItem} />
                                 ))
                             )}
                         </TableBody>

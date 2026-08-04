@@ -1,4 +1,4 @@
-import { Forum, JoinForum } from "./forum.type";
+import { Group, JoinGroup } from "./group.type";
 import { User } from "./user.type";
 
 export interface Post {
@@ -9,7 +9,7 @@ export interface Post {
   isDeleted: boolean;
   isPublished: boolean;
   user: User;
-  forum: Forum;
+  forum?: Group;
   createdAt: string;
   updatedAt: string;
   reacts?: React[];
@@ -25,7 +25,7 @@ export interface React {
   joinForumId: string;
   postId: string;
   isDeleted: boolean;
-  joinForum: JoinForum;
+  joinForum: JoinGroup;
   post: Post;
   createdAt: string;
   updatedAt: string;
@@ -39,7 +39,7 @@ export interface Reply {
   parentReplyId?: string | null;
   isDeleted: boolean;
   message: string;
-  joinForum: JoinForum;
+  joinForum: JoinGroup;
   post: Post;
   user: User;
   userId: string;

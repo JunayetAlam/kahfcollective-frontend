@@ -57,7 +57,7 @@ export default function ContentTable() {
               <TableHead>Type</TableHead>
               <TableHead>Creator</TableHead>
               <TableHead>Title</TableHead>
-              <TableHead>Group</TableHead>
+              <TableHead>Class</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>

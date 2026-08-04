@@ -1,24 +1,24 @@
-import { Forum } from "./forum.type";
+import { Group } from "./group.type";
 import { NormalContent } from "./normal-content.type";
 import { User } from "./user.type";
 
-export type Group = {
+export type Class = {
   id: string;
   name: string;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
   contents?: NormalContent[];
-  forums?: Forum[];
-  userGroups?: UserGroup[];
+  forums?: Group[];
+  userGroups?: UserClass[];
 };
 
-export type UserGroup = {
+export type UserClass = {
   id: string;
   groupId: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
-  group?: Group;
+  group?: Class;
   user?: User;
 };
