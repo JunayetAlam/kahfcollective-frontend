@@ -18,6 +18,7 @@ import {
     DialogTrigger,
 } from '../ui/dialog';
 import { Trash2 } from 'lucide-react'; // Icon for delete button
+import RichTextContent from '../Forms/RichTextContent';
 
 export default function SCF_SingleComment({ comment }: { comment: Reply }) {
     const { data } = useGetMeQuery(undefined);
@@ -74,11 +75,10 @@ export default function SCF_SingleComment({ comment }: { comment: Reply }) {
                     </div>
                 </div>
 
-                <div
-                    className="text-gray-700 text-sm"
-                    dangerouslySetInnerHTML={{
-                        __html: comment.message.replace(/\n/g, '<br>'),
-                    }}
+                <RichTextContent
+                    html={comment.message.replace(/\n/g, '<br>')}
+                    size="sm"
+                    className="text-gray-700"
                 />
             </div>
         </div>

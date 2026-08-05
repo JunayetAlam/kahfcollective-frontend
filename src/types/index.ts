@@ -13,6 +13,8 @@ export * from './user.type'
 export * from './payment.type'
 export * from './group.type'
 export * from './quiz.type'
+export * from './analytics.type'
+export * from './content.type'
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };

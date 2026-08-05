@@ -10,6 +10,7 @@ import {
   Home,
   LogOut,
   MessageCircleMore,
+  School,
   Users,
 } from "lucide-react";
 
@@ -108,6 +109,13 @@ export function Sidebar() {
       title: "User Management",
     },
     {
+      label: "Class Management",
+      icon: School,
+      route: "/dashboard/classes",
+      roles: ["SUPERADMIN"],
+      title: "Class Management",
+    },
+    {
       label: role === 'INSTRUCTOR' ? 'My Courses' : 'Courses',
       icon: GraduationCap,
       route: "/dashboard/my-courses",
@@ -120,6 +128,13 @@ export function Sidebar() {
       route: "/dashboard/assessment",
       roles: ["INSTRUCTOR", 'SUPERADMIN'],
       title: "Assessment Performance",
+    },
+    {
+      label: "Compare Students",
+      icon: Users,
+      route: "/dashboard/compare",
+      roles: ["INSTRUCTOR", "SUPERADMIN"],
+      title: "Compare Students",
     },
     {
       label: "Content Management",
@@ -140,7 +155,9 @@ export function Sidebar() {
   ];
 
   const activeRouteTitle =
-    navigation.find((item) => item.route === path)?.title || "";
+    navigation.find(
+      (item) => path === item.route || path.startsWith(`${item.route}/`),
+    )?.title || "";
   if (isLoading) {
     return (
       <>
@@ -175,7 +192,8 @@ export function Sidebar() {
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
             {navigation.map((item) => {
-              const isActive = path === item.route;
+              const isActive =
+                path === item.route || path.startsWith(`${item.route}/`);
               const Icon = item.icon;
 
               if (!item.roles.includes(userData?.role || "")) {

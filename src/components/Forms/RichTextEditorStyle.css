@@ -1,5 +1,94 @@
+.text-editor-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.text-editor-container .sun-editor {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.text-editor-container .sun-editor .se-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.text-editor-container .sun-editor .se-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto;
+}
+
+.text-editor-container .sun-editor .se-wrapper-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Editable area: force line wrapping */
+.text-editor-container .sun-editor .se-wrapper .se-wrapper-wysiwyg,
+.text-editor-container .sun-editor-editable,
+.text-editor-container .sun-editor .se-wrapper .sun-editor-editable {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+.text-editor-container .sun-editor-editable p,
+.text-editor-container .sun-editor-editable div,
+.text-editor-container .sun-editor-editable span,
+.text-editor-container .sun-editor-editable li,
+.text-editor-container .sun-editor-editable pre {
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Toolbar: wrap onto multiple lines instead of horizontal scroll */
+.text-editor-container .sun-editor .se-toolbar {
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
+
+.text-editor-container .sun-editor .se-toolbar .se-btn-tray {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.text-editor-container .sun-editor .se-toolbar .se-btn-module,
+.text-editor-container .sun-editor .se-toolbar .se-btn-module-border {
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  float: none !important;
+  height: auto !important;
+  margin: 2px 0 !important;
+}
+
+.text-editor-container .sun-editor .se-toolbar-sticky,
+.text-editor-container .sun-editor .se-toolbar-sticky-dummy {
+  height: auto !important;
+}
+
 .editor-container {
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   margin: 20px;
   padding: 20px;
   background-color: #f0f4f8;

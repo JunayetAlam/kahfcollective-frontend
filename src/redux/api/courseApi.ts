@@ -41,6 +41,18 @@ const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Courses", "User"],
     }),
+    bulkEnrollCourse: builder.mutation({
+      query: (body: {
+        courseId: string;
+        assign: string[];
+        unassign: string[];
+      }) => ({
+        url: `/courses/enroll/bulk`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Courses", "User"],
+    }),
     updateCourse: builder.mutation({
       query: ({ id, data }: { id: string; data: any }) => ({
         url: `/courses/${id}`,
@@ -110,5 +122,6 @@ export const {
   useToggleCompleteCourseMutation,
   useToggleDeleteCourseMutation,
   useToggleEnrollCourseMutation,
+  useBulkEnrollCourseMutation,
   useToggleAssignCourseToGroupMutation
 } = courseApi;

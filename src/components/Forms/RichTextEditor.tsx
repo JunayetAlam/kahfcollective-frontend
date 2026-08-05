@@ -13,45 +13,48 @@ interface MYTextEditorProps {
   required?: boolean;
   content: string;
   onChangeHandler: (content: string) => void;
-  disable?: boolean
-  hideLevel?: boolean
+  height?: string;
+  /** Accepted for call-site compatibility; not applied by SunEditor options. */
+  hideLevel?: boolean;
+  /** Accepted for call-site compatibility; not applied by SunEditor options. */
+  disable?: boolean;
 }
 
 const RichTextEditor: React.FC<MYTextEditorProps> = ({
   name,
   label,
-  hideLevel = false,
   required,
   content,
   onChangeHandler,
-  disable = false
+  height = "200px",
 }) => {
   return (
-    <div className="text-editor-container">
-      {
-        !hideLevel && <label htmlFor={name} className="block text-sm font-medium text-gray-700">
-          {label} {required && <span style={{ color: "red" }}>*</span>}
-        </label>
-      }
+    <div className="text-editor-container w-full min-w-0 max-w-full">
+      <label
+        htmlFor={name}
+        className="text-muted-foreground mb-2 block text-sm font-medium"
+      >
+        {label} {required && <span className="text-destructive">*</span>}
+      </label>
 
-      <div>
+      <div className="w-full min-w-0 max-w-full overflow-hidden">
         <SunEditor
           setContents={content}
           onChange={(content) => onChangeHandler(content)}
           setOptions={{
-            minHeight: '160px',
-            maxHeight: '400px',
+            height,
             width: "100%",
+            resizingBar: false,
             buttonList: [
               [
-                // "undo",
-                // "redo",
+                "undo",
+                "redo",
                 "bold",
                 "italic",
                 "underline",
-                // "strike",
-                // "subscript",
-                // "superscript",
+                "strike",
+                "subscript",
+                "superscript",
               ],
               ["list", "outdent", "indent"],
               ["align"],
@@ -59,20 +62,15 @@ const RichTextEditor: React.FC<MYTextEditorProps> = ({
               ["fontColor", "hiliteColor"],
               ["removeFormat"],
               [
-                // "link",
-                // "audio",
-                // "math",
+                "link",
+                "audio",
+                "math",
                 "table",
                 "horizontalRule",
                 "blockquote",
-                // "codeView",
+                "codeView",
               ],
-              [
-                "fullScreen",
-                // "showBlocks",
-                "preview",
-                // "print"
-              ],
+              ["fullScreen", "showBlocks", "preview", "print"],
               ["lineHeight", "paragraphStyle", "textStyle"],
               ["dir_ltr", "dir_rtl"],
             ],
@@ -93,9 +91,7 @@ const RichTextEditor: React.FC<MYTextEditorProps> = ({
 
             katex: katex,
           }}
-          placeholder={label}
-          disable={disable}
-
+          placeholder="Enter description here..."
         />
       </div>
     </div>

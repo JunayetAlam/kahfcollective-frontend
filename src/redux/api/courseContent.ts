@@ -12,6 +12,14 @@ const courseContentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CourseContents", "Courses"],
     }),
+    createTextOrLinkContent: builder.mutation({
+      query: (body) => ({
+        url: `/course-contents/text-or-link`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
     createQuizContent: builder.mutation({
       query: (formData: FormData) => ({
         url: `/course-contents/quiz`,
@@ -114,14 +122,11 @@ const courseContentApi = baseApi.injectEndpoints({
     }),
     addSingleQuiz: builder.mutation({
       query: (data) => ({
-        url: `/course-contents/question/answers`,
+        url: `/course-contents/quiz/single`,
         method: "POST",
         body: data,
       }),
-      transformResponse: (response: TResponseRedux<Quiz[]>) => ({
-        data: response.data,
-        meta: response.meta,
-      }),
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     updateContentStatus: builder.mutation({
       query: (data: { answerId: string; isCorrect: boolean }) => ({
@@ -130,6 +135,34 @@ const courseContentApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: ["CourseContents"],
+    }),
+    changeContentIndex: builder.mutation({
+      query: ({ id, newIndex }: { id: string; newIndex: number }) => ({
+        url: `/course-contents/${id}/change-index`,
+        method: "PATCH",
+        body: { newIndex },
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
+    }),
+    moveContent: builder.mutation({
+      query: ({
+        id,
+        scope,
+        semesterId,
+        chapterId,
+        newIndex,
+      }: {
+        id: string;
+        scope: "COURSE" | "SEMESTER" | "CHAPTER";
+        semesterId?: string | null;
+        chapterId?: string | null;
+        newIndex: number;
+      }) => ({
+        url: `/course-contents/${id}/move`,
+        method: "PATCH",
+        body: { scope, semesterId, chapterId, newIndex },
+      }),
+      invalidatesTags: ["CourseContents", "Courses"],
     }),
     getQuestionsSubmitsForCurrentInstructor: builder.query({
       query: (args: TQueryParam[]) => {
@@ -156,6 +189,7 @@ const courseContentApi = baseApi.injectEndpoints({
 
 export const {
   useCreateFileContentMutation,
+  useCreateTextOrLinkContentMutation,
   useUpdateCourseContentMutation,
   useGetContentByIdQuery,
   useDeleteCourseContentByIdMutation,
@@ -169,5 +203,7 @@ export const {
   useGetAllContentForSpecificCourseQuery,
   useGetQuestionsSubmitsForCurrentInstructorQuery,
   useUpdateContentStatusMutation,
-  useGetAllQuizzesForCourseAdminQuery
+  useGetAllQuizzesForCourseAdminQuery,
+  useChangeContentIndexMutation,
+  useMoveContentMutation,
 } = courseContentApi;

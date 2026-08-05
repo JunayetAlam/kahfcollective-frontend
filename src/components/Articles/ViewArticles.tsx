@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar, User, FileText } from "lucide-react"
 import Image from "next/image"
 import PDFViewer from "../Global/PDFViewer"
+import RichTextContent from "../Forms/RichTextContent"
 
 interface ViewArticleProps {
   article: NormalContent
@@ -116,12 +117,11 @@ export default function ViewArticle({ article, trigger }: ViewArticleProps) {
               )}
 
               {/* Article Description */}
-              <div className="prose prose-sm max-w-full text-gray-700 leading-relaxed">
-                <div dangerouslySetInnerHTML={{
-                  __html: formatDescription(article.description)
-                }} />
-
-              </div>
+              <RichTextContent
+                html={formatDescription(article.description)}
+                size="sm"
+                className="max-w-full text-gray-700 leading-relaxed"
+              />
             </div>
           ) : (
             <div className="w-full h-full">

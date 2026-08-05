@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CourseContentData } from "@/types";
+import { Course, CourseContentData } from "@/types";
 import { Edit } from "lucide-react";
 import { MF_ContentForm } from "./MF_ContentForm";
 
@@ -24,6 +24,26 @@ export function MF_EditContentButton({
   );
 }
 
-export function MF_AddContentButton({ courseData }: any) {
-  return <MF_ContentForm courseData={courseData} />;
+export function MF_AddContentButton({
+  courseData,
+  semesterId,
+  chapterId,
+  scopeLabel,
+  trigger,
+}: {
+  courseData: Course;
+  semesterId?: string | null;
+  chapterId?: string | null;
+  scopeLabel?: string;
+  trigger?: React.ReactNode;
+}) {
+  return (
+    <MF_ContentForm
+      courseData={courseData}
+      semesterId={semesterId}
+      chapterId={chapterId}
+      scopeLabel={scopeLabel}
+      trigger={trigger}
+    />
+  );
 }

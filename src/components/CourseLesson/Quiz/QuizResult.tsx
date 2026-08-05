@@ -1,131 +1,176 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { motion } from "framer-motion";
 
 interface QuizResultAnswer {
-    quizId: string
-    index: number
-    answerId: string | null
-    question: string
-    userAnswer: string | null
-    isRight: boolean
-    isLocked: boolean
-    correctAnswer?: string
+  quizId: string;
+  index: number;
+  answerId: string | null;
+  question: string;
+  userAnswer: string | null;
+  isRight: boolean;
+  isLocked: boolean;
+  correctAnswer?: string;
 }
 
 interface QuizResult {
-    total: number
-    correct: number
-    incorrect: number
-    answers: QuizResultAnswer[]
-    isAllMarked: boolean
+  total: number;
+  correct: number;
+  incorrect: number;
+  answers: QuizResultAnswer[];
+  isAllMarked: boolean;
 }
 
 interface QuizResultsProps {
-    quizResult: QuizResult | undefined
-    viewQuiz: () => void
+  quizResult: QuizResult | undefined;
+  viewQuiz: () => void;
 }
 
 export default function QuizResults({ quizResult, viewQuiz }: QuizResultsProps) {
-    return (
-        <Card className="w-full text-center max-w-2xl shadow-lg dark:bg-gray-800">
-            <CardHeader>
-                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Assessment Results</CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">You have completed the assessment!</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {quizResult ? (
-                    <>
-                        {!quizResult.isAllMarked ? (
-                            <>
-                                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                                    <div className="text-xl font-semibold text-yellow-800 dark:text-yellow-300 mb-2">
-                                        Your answers are under review by the instructor
-                                    </div>
-                                    <div className="text-sm text-yellow-700 dark:text-yellow-400">
-                                        Results will be available once the review is complete.
-                                    </div>
-                                </div>
+  const scorePercent =
+    quizResult && quizResult.total > 0
+      ? (quizResult.correct / quizResult.total) * 100
+      : 0;
 
-                                {/* Show submitted answers */}
-                                <div className="mt-6 space-y-3 text-left">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Submitted Answers:</h3>
-                                    <div className="max-h-60 overflow-y-auto space-y-2">
-                                        {quizResult.answers.map((answer, index) => (
-                                            <div key={answer.quizId} className="p-3 rounded-lg border bg-gray-50 border-gray-200 dark:bg-gray-800/50 dark:border-gray-700">
-                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                    Q{index + 1}: {answer.question}
-                                                </div>
-                                                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                    Your answer: <span className="font-medium">{answer.userAnswer || 'Not answered'}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                                    Your Score: {quizResult.correct} / {quizResult.total}
-                                </div>
-                                <Progress
-                                    value={(quizResult.correct / quizResult.total) * 100}
-                                    className="h-4 bg-gray-200 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-green-500"
-                                />
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                        <div className="text-green-600 dark:text-green-400 font-semibold">Correct</div>
-                                        <div className="text-2xl font-bold text-green-700 dark:text-green-300">{quizResult.correct}</div>
-                                    </div>
-                                    <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                        <div className="text-red-600 dark:text-red-400 font-semibold">Incorrect</div>
-                                        <div className="text-2xl font-bold text-red-700 dark:text-red-300">{quizResult.incorrect}</div>
-                                    </div>
-                                </div>
+  return (
+    <Card className="mx-auto w-full max-w-2xl border-border/70 text-center shadow-sm">
+      <CardHeader className="space-y-2">
+        <CardTitle className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          Assessment Results
+        </CardTitle>
+        <CardDescription className="text-muted-foreground">
+          You have completed the assessment.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {quizResult ? (
+          <>
+            {!quizResult.isAllMarked ? (
+              <>
+                <div className="rounded-lg border border-amber-200/80 bg-amber-50 px-4 py-4 text-left dark:border-amber-800/60 dark:bg-amber-950/30">
+                  <div className="text-base font-semibold text-amber-900 dark:text-amber-200">
+                    Your answers are under review
+                  </div>
+                  <div className="mt-1 text-sm text-amber-800/90 dark:text-amber-300/90">
+                    Results will be available once the instructor finishes marking.
+                  </div>
+                </div>
 
-                                {/* Detailed Results */}
-                                <div className="mt-6 space-y-3 text-left">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Question Details:</h3>
-                                    <div className="max-h-60 overflow-y-auto space-y-2">
-                                        {quizResult.answers.map((answer, index) => (
-                                            <div key={answer.quizId} className={`p-3 rounded-lg border ${answer.isRight
-                                                ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
-                                                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-                                                }`}>
-                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                    Q{index + 1}: {answer.question}
-                                                </div>
-                                                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                    Your answer: <span className="font-medium">{answer.userAnswer || 'Not answered'}</span>
-                                                    {answer.correctAnswer && (
-                                                        <span className="ml-2">
-                                                            | Correct: <span className="font-medium text-green-600 dark:text-green-400">{answer.correctAnswer}</span>
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <div className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                        Assessment completed but results are loading...
+                <div className="mt-2 space-y-3 text-left">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Your submitted answers
+                  </h3>
+                  <div className="max-h-60 space-y-2 overflow-y-auto">
+                    {quizResult.answers.map((answer, index) => (
+                      <div
+                        key={answer.quizId}
+                        className="rounded-lg border border-border/60 bg-secondary/15 p-3"
+                      >
+                        <div className="text-sm font-medium text-foreground">
+                          Q{index + 1}: {answer.question}
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          Your answer:{" "}
+                          <span className="font-medium text-foreground">
+                            {answer.userAnswer || "Not answered"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  <div className="text-2xl font-semibold text-foreground">
+                    Your score: {quizResult.correct} / {quizResult.total}
+                  </div>
+                  <div className="relative mx-auto h-2 max-w-md overflow-hidden rounded-full bg-secondary/50">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full bg-emerald-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${scorePercent}%` }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </div>
+                  <Progress value={scorePercent} className="sr-only" />
+                </div>
+                <div className="mx-auto grid max-w-md grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-lg border border-emerald-200/70 bg-emerald-50 p-3 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+                    <div className="font-medium text-emerald-700 dark:text-emerald-300">
+                      Correct
                     </div>
-                )}
-            </CardContent>
-            <div className="px-7">
-                <Button
-                    size="lg"
-                    onClick={viewQuiz}
-                    className="mt-6 w-full bg-gray-700 text-white hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700"
-                >
-                    View All Assessment
-                </Button>
-            </div>
-        </Card>
-    )
+                    <div className="mt-1 text-2xl font-bold text-emerald-800 dark:text-emerald-200">
+                      {quizResult.correct}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-red-200/70 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-950/30">
+                    <div className="font-medium text-red-700 dark:text-red-300">
+                      Incorrect
+                    </div>
+                    <div className="mt-1 text-2xl font-bold text-red-800 dark:text-red-200">
+                      {quizResult.incorrect}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 space-y-3 text-left">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Question details
+                  </h3>
+                  <div className="max-h-60 space-y-2 overflow-y-auto">
+                    {quizResult.answers.map((answer, index) => (
+                      <div
+                        key={answer.quizId}
+                        className={`rounded-lg border p-3 ${
+                          answer.isRight
+                            ? "border-emerald-200/80 bg-emerald-50/80 dark:border-emerald-900/50 dark:bg-emerald-950/25"
+                            : "border-red-200/80 bg-red-50/80 dark:border-red-900/50 dark:bg-red-950/25"
+                        }`}
+                      >
+                        <div className="text-sm font-medium text-foreground">
+                          Q{index + 1}: {answer.question}
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          Your answer:{" "}
+                          <span className="font-medium text-foreground">
+                            {answer.userAnswer || "Not answered"}
+                          </span>
+                          {answer.correctAnswer && (
+                            <span className="ml-2">
+                              | Correct:{" "}
+                              <span className="font-medium text-emerald-700 dark:text-emerald-400">
+                                {answer.correctAnswer}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <div className="text-lg font-medium text-muted-foreground">
+            Assessment completed but results are loading…
+          </div>
+        )}
+      </CardContent>
+      <div className="px-6 pb-6">
+        <Button size="lg" onClick={viewQuiz} className="mt-2 w-full">
+          View All Assessment
+        </Button>
+      </div>
+    </Card>
+  );
 }

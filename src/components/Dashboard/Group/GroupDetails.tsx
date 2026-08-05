@@ -20,6 +20,7 @@ import {
   useDeleteReplyMutation,
   useGetAllPostForSpecificGroupQuery,
 } from "@/redux/api/postApi";
+import RichTextContent from "@/components/Forms/RichTextContent";
 
 function AdminReply({ comment }: { comment: Reply }) {
   const [deleteReply, { isLoading }] = useDeleteReplyMutation();
@@ -37,11 +38,10 @@ function AdminReply({ comment }: { comment: Reply }) {
     <div className="flex items-start justify-between gap-3 rounded-md bg-muted/40 px-3 py-2">
       <div className="min-w-0">
         <p className="text-sm font-medium">{comment.user?.fullName || "Unknown"}</p>
-        <p
-          className="text-sm text-muted-foreground"
-          dangerouslySetInnerHTML={{
-            __html: (comment.message || "").replace(/\n/g, "<br>"),
-          }}
+        <RichTextContent
+          html={(comment.message || "").replace(/\n/g, "<br>")}
+          size="sm"
+          className="text-muted-foreground"
         />
         <p className="mt-1 text-xs text-muted-foreground">{formatTime(comment.createdAt)}</p>
       </div>
@@ -110,11 +110,9 @@ function AdminPostCard({ post }: { post: Post }) {
         </Badge>
       </div>
 
-      <div
-        className="prose prose-sm max-w-none text-foreground"
-        dangerouslySetInnerHTML={{
-          __html: (post.message || "").replace(/\n/g, "<br>"),
-        }}
+      <RichTextContent
+        html={(post.message || "").replace(/\n/g, "<br>")}
+        size="sm"
       />
 
       <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">

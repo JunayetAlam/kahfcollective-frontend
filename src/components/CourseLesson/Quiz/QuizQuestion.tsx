@@ -1,183 +1,284 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react"
-import { useAnswerQuizMutation, useGetSingleQuizAnswerQuery, useLockQuizMutation } from "@/redux/api/ansQuizApi"
-import { toast } from "sonner"
-import SingleQuiz from "./SingleQuiz"
-import { Quiz, UserRoleEnum } from "@/types"
-import Loading from "@/components/Global/Loading"
-interface QuizState {
-    started: boolean
-    currentQuestionIndex: number
-    selectedAnswers: Record<number, string>
-    quizCompleted: boolean
-    submittedAnswers: Record<number, boolean>
+"use client";
 
-}
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import Loading from "@/components/Global/Loading";
+import {
+  useAnswerQuizMutation,
+  useGetSingleQuizAnswerQuery,
+  useLockQuizMutation,
+} from "@/redux/api/ansQuizApi";
+import { Quiz, UserRoleEnum } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import type { QuizState } from "./Quiz";
+import SingleQuiz from "./SingleQuiz";
 
 interface QuizQuestionProps {
-    allQuizzes: Quiz[]
-    quizState: QuizState
-    setQuizState: React.Dispatch<React.SetStateAction<QuizState>>
-    refetchQuizResult: () => void
-    isAllAnswered: boolean
-    isAllMarked: boolean
-    result?: {
-        total?: number
-        correct?: number
-    }
-    role: UserRoleEnum | undefined
+  allQuizzes: Quiz[];
+  quizState: QuizState;
+  setQuizState: React.Dispatch<React.SetStateAction<QuizState>>;
+  refetchQuizResult: () => void;
+  isAllAnswered: boolean;
+  isAllMarked: boolean;
+  result?: {
+    total?: number;
+    correct?: number;
+  };
+  role: UserRoleEnum | undefined;
 }
 
-export default function QuizQuestion({ allQuizzes, quizState, setQuizState, refetchQuizResult, isAllAnswered, isAllMarked, result, role }: QuizQuestionProps) {
-    const totalQuestions = allQuizzes.length
-    const currentQuestion = allQuizzes[quizState.currentQuestionIndex]
-    const [answerQuiz, { isLoading: answerQuizLoading }] = useAnswerQuizMutation()
-    const [lockQuiz, { isLoading: lockQuizLoading }] = useLockQuizMutation()
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction >= 0 ? 48 : -48,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction >= 0 ? -48 : 48,
+    opacity: 0,
+  }),
+};
 
-    const { data, isLoading } = useGetSingleQuizAnswerQuery(currentQuestion?.id, {
-        skip: role !== 'USER'
-    })
-    if (isLoading) {
-        return <Loading />
+export default function QuizQuestion({
+  allQuizzes,
+  quizState,
+  setQuizState,
+  refetchQuizResult,
+  isAllAnswered,
+  isAllMarked,
+  result,
+  role,
+}: QuizQuestionProps) {
+  const totalQuestions = allQuizzes.length;
+  const currentQuestion = allQuizzes[quizState.currentQuestionIndex];
+  const [answerQuiz, { isLoading: answerQuizLoading }] =
+    useAnswerQuizMutation();
+  const [lockQuiz, { isLoading: lockQuizLoading }] = useLockQuizMutation();
+
+  const { data, isLoading } = useGetSingleQuizAnswerQuery(
+    currentQuestion?.id,
+    {
+      skip: role !== "USER",
+    },
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const answeredQuestionsCount = Object.keys(quizState.selectedAnswers).length;
+  const quizAns = data?.data;
+  const progressPercent =
+    ((quizState.currentQuestionIndex + 1) / Math.max(totalQuestions, 1)) * 100;
+
+  const submitAnswer = async (
+    questionIndex: number,
+    selectedAnswerText: string,
+  ) => {
+    const question = allQuizzes[questionIndex];
+    if (!question) return false;
+    try {
+      await answerQuiz({
+        quizId: question.id,
+        answer: selectedAnswerText,
+      }).unwrap();
+
+      setQuizState((prev) => ({
+        ...prev,
+        submittedAnswers: {
+          ...prev.submittedAnswers,
+          [questionIndex]: true,
+        },
+      }));
+
+      toast.success("Answer submitted successfully!");
+      return true;
+    } catch (error: any) {
+      console.error("Error submitting answer:", error);
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Failed to submit answer. Please try again.";
+      toast.error(errorMessage);
+      return false;
+    }
+  };
+
+  const lockQuizQuestions = async () => {
+    try {
+      if (!isAllAnswered && role === "USER") {
+        await lockQuiz(allQuizzes[0]?.courseContentId || "").unwrap();
+        toast.success("Assessment submitted successfully!");
+        refetchQuizResult();
+      }
+
+      setQuizState((prev) => ({
+        ...prev,
+        started: false,
+        quizCompleted: true,
+        direction: 1,
+      }));
+    } catch (error: any) {
+      console.error("Error locking Assessment:", error);
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Failed to submit Assessment. Please try again.";
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const handleAnswerChange = (value: string) => {
+    setQuizState((prev) => ({
+      ...prev,
+      selectedAnswers: {
+        ...prev.selectedAnswers,
+        [prev.currentQuestionIndex]: value,
+      },
+    }));
+  };
+
+  const handleNext = async () => {
+    const currentAnswer =
+      quizState.selectedAnswers[quizState.currentQuestionIndex];
+
+    if (!quizAns?.isLocked && role === "USER") {
+      if (currentAnswer) {
+        const success = await submitAnswer(
+          quizState.currentQuestionIndex,
+          currentAnswer,
+        );
+        if (!success) return;
+      }
     }
 
-    const answeredQuestionsCount = Object.keys(quizState.selectedAnswers).length
-    const quizAns = data?.data;
-    const submitAnswer = async (questionIndex: number, selectedAnswerText: string) => {
-        const question = allQuizzes[questionIndex]
-        if (!question) return false
-        try {
-            await answerQuiz({
-                quizId: question.id,
-                answer: selectedAnswerText
-            }).unwrap()
-
-            setQuizState(prev => ({
-                ...prev,
-                submittedAnswers: { ...prev.submittedAnswers, [questionIndex]: true }
-            }))
-
-            toast.success("Answer submitted successfully!")
-            return true
-        } catch (error: any) {
-            console.error('Error submitting answer:', error)
-            const errorMessage = error?.data?.message || error?.message || "Failed to submit answer. Please try again."
-            toast.error(errorMessage)
-            return false
-        }
+    if (quizState.currentQuestionIndex < totalQuestions - 1) {
+      setQuizState((prev) => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1,
+        direction: 1,
+      }));
+    } else {
+      await lockQuizQuestions();
     }
+  };
 
-    const lockQuizQuestions = async () => {
-        try {
-            if (!isAllAnswered && role === 'USER') {
-                await lockQuiz(allQuizzes[0]?.courseContentId || "").unwrap()
-                toast.success("Assessment submitted successfully!")
-
-                // Refetch Assessment results to get the updated data with correct answers
-                refetchQuizResult()
-            }
-
-            setQuizState(prev => ({ ...prev, started: false, quizCompleted: true }))
-        } catch (error: any) {
-            console.error('Error locking Assessment:', error)
-            const errorMessage = error?.data?.message || error?.message || "Failed to submit Assessment. Please try again."
-            toast.error(errorMessage)
-            throw error
-        }
+  const handlePrevious = () => {
+    if (quizState.currentQuestionIndex > 0) {
+      setQuizState((prev) => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex - 1,
+        direction: -1,
+      }));
     }
+  };
 
-    const handleAnswerChange = (value: string) => {
-        setQuizState(prev => ({
-            ...prev,
-            selectedAnswers: { ...prev.selectedAnswers, [prev.currentQuestionIndex]: value }
-        }))
-    }
+  const statusLabel = isAllAnswered
+    ? isAllMarked
+      ? `${result?.correct || 0}/${result?.total || totalQuestions} Correct`
+      : `${totalQuestions}/${totalQuestions} Submitted`
+    : `${answeredQuestionsCount}/${totalQuestions} answered`;
 
-    const handleNext = async () => {
-        const currentAnswer = quizState.selectedAnswers[quizState.currentQuestionIndex]
-
-        // Submit answer if not already submitted
-        if (!quizAns?.isLocked && role === 'USER') {
-            if (currentAnswer) {
-                const success = await submitAnswer(quizState.currentQuestionIndex, currentAnswer)
-                if (!success) return // Don't proceed if submission failed
-            }
-
-        }
-
-        if (quizState.currentQuestionIndex < totalQuestions - 1) {
-            setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 }))
-        } else {
-            await lockQuizQuestions()
-        }
-    }
-
-    const handlePrevious = () => {
-        if (quizState.currentQuestionIndex > 0) {
-            setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex - 1 }))
-        }
-    }
-    return (
-        <div className="w-full space-y-6">
-            <div className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                {
-                    isAllAnswered
-                        ? isAllMarked
-                            ? `${result?.correct || 0}/${result?.total || totalQuestions} Correct`
-                            : `${totalQuestions}/${totalQuestions} Submitted`
-                        : `${answeredQuestionsCount}/${totalQuestions} answered`
-                }
-
-            </div>
-            <div className="text-gray-600 dark:text-gray-400">Question {quizState.currentQuestionIndex + 1} of {totalQuestions}</div>
-            <Progress
-                value={((quizState.currentQuestionIndex + 1) / totalQuestions) * 100}
-                className="h-2 bg-gray-200 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-primary"
-            />
-            <Card className="p-6 shadow-lg dark:bg-gray-800">
-                <CardContent className="space-y-6 p-0">
-                    <SingleQuiz
-                        currentQuestion={currentQuestion}
-                        selectedAnswer={quizState.selectedAnswers[quizState.currentQuestionIndex] || ""}
-                        onAnswerChange={handleAnswerChange}
-                        isSubmitted={quizState.submittedAnswers[quizState.currentQuestionIndex]}
-                        isSubmitting={answerQuizLoading}
-                        quizAns={quizAns}
-                        isAllMarked={isAllMarked}
-                        role={role}
-                    />
-
-                    <div className="mt-8 flex w-full gap-4 max-w-max ml-auto">
-                        <Button
-                            size="lg"
-                            onClick={handlePrevious}
-                            disabled={role !== 'USER' ? false : quizState.currentQuestionIndex === 0 || answerQuizLoading || lockQuizLoading}
-                            variant="outline"
-                        >
-                            <ArrowLeft className="h-4 w-4" />
-                            Previous
-                        </Button>
-                        <Button
-                            size="lg"
-                            onClick={handleNext}
-                            disabled={
-                                role !== 'USER' ? false :
-                                    quizAns?.isLocked ? false : (!quizState.selectedAnswers[quizState.currentQuestionIndex] ||
-                                        answerQuizLoading ||
-                                        lockQuizLoading)
-                            }
-                            variant="secondary"
-                        >
-                            {(answerQuizLoading || lockQuizLoading) && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                            {quizState.currentQuestionIndex === totalQuestions - 1 ? isAllAnswered || role !== 'USER' ? 'Done' : 'Submit Assessment' : "Next"}
-                            <ArrowRight className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+  return (
+    <div className="w-full space-y-5">
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium text-muted-foreground">
+            Question {quizState.currentQuestionIndex + 1} of {totalQuestions}
+          </p>
+          <span className="rounded-full bg-secondary/40 px-3 py-1 text-xs font-medium text-foreground">
+            {statusLabel}
+          </span>
         </div>
-    )
+        <div className="relative h-1.5 overflow-hidden rounded-full bg-secondary/50">
+          <motion.div
+            className="absolute inset-y-0 left-0 rounded-full bg-primary"
+            initial={false}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </div>
+        <Progress value={progressPercent} className="sr-only" />
+      </div>
+
+      <div className="relative min-h-[280px] overflow-hidden rounded-xl border border-border/70 bg-background">
+        <AnimatePresence mode="wait" custom={quizState.direction} initial={false}>
+          <motion.div
+            key={quizState.currentQuestionIndex}
+            custom={quizState.direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="p-5 sm:p-6"
+          >
+            <SingleQuiz
+              currentQuestion={currentQuestion}
+              selectedAnswer={
+                quizState.selectedAnswers[quizState.currentQuestionIndex] || ""
+              }
+              onAnswerChange={handleAnswerChange}
+              isSubmitted={
+                quizState.submittedAnswers[quizState.currentQuestionIndex]
+              }
+              isSubmitting={answerQuizLoading}
+              quizAns={quizAns}
+              isAllMarked={isAllMarked}
+              role={role}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="ml-auto flex w-full max-w-max gap-3">
+        <Button
+          size="lg"
+          onClick={handlePrevious}
+          disabled={
+            role !== "USER"
+              ? false
+              : quizState.currentQuestionIndex === 0 ||
+                answerQuizLoading ||
+                lockQuizLoading
+          }
+          variant="outline"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Previous
+        </Button>
+        <Button
+          size="lg"
+          onClick={handleNext}
+          disabled={
+            role !== "USER"
+              ? false
+              : quizAns?.isLocked
+                ? false
+                : !quizState.selectedAnswers[quizState.currentQuestionIndex] ||
+                  answerQuizLoading ||
+                  lockQuizLoading
+          }
+          variant="secondary"
+        >
+          {(answerQuizLoading || lockQuizLoading) && (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          )}
+          {quizState.currentQuestionIndex === totalQuestions - 1
+            ? isAllAnswered || role !== "USER"
+              ? "Done"
+              : "Submit Assessment"
+            : "Next"}
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
 }

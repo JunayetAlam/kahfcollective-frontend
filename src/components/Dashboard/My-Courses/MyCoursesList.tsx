@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useGetAllCoursesQuery, useToggleAssignCourseToGroupMutation } from "@/redux/api/courseApi";
 import { TQueryParam } from "@/types";
-import { Search, Users } from "lucide-react";
+import { Eye, Search, Users } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import CreateCourse from "./CreateCourse";
 import ManageCourse from "./ManageCourse";
@@ -22,7 +23,7 @@ export default function CourseManagementDashboard() {
   const role = useAppSelector(useCurrentUser)?.role;
   const [toggleGroupAssignInBackend, { isLoading: assignLoading }] =
     useToggleAssignCourseToGroupMutation();
-  const { data, isLoading: classIsLoading } = useGetAllClassesQuery([
+  const { data } = useGetAllClassesQuery([
     { name: "limit", value: "100" },
   ]);
   const classData = data?.data || [];
@@ -64,7 +65,12 @@ export default function CourseManagementDashboard() {
               <CardHeader className="flex items-center justify-between pb-4">
                 <div>
                   <CardTitle className="text-lg font-semibold">
-                    {course.title}
+                    <Link
+                      href={`/dashboard/my-courses/${course.id}`}
+                      className="hover:text-primary transition-colors hover:underline"
+                    >
+                      {course.title}
+                    </Link>
                   </CardTitle>
                   <p className="text-muted-foreground mt-1 text-sm">
                     Instructor:{" "}
@@ -74,28 +80,45 @@ export default function CourseManagementDashboard() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
+                  <Button asChild size="sm">
+                    <Link href={`/dashboard/my-courses/${course.id}`}>
+                      <Eye className="h-4 w-4" />
+                      Details
+                    </Link>
+                  </Button>
                   <ManageStudents
                     courseId={course.id}
-                    groupIds={course.groupCourses?.map(
-                      (groupCourse) => groupCourse.group.id,
-                    )}
+                    groups={
+                      course.groupCourses?.map((groupCourse) => ({
+                        id: groupCourse.group.id,
+                        name: groupCourse.group.name,
+                      })) || []
+                    }
                   />
                   <ManageCourse courseId={course.id} />
-
                   <DeleteCourse courseId={course.id} />
                 </div>
               </CardHeader>
 
               <CardContent className="pt-0">
-                <div className="flex min-w-[350px] flex-wrap gap-3 mb-4">
+                <div className="mb-4 flex min-w-[350px] flex-wrap gap-3">
                   {classData?.map((item, index) => (
                     <Button
                       disabled={assignLoading}
-                      onClick={() => toggleGroupAssignInBackend({ courseId: course.id, groupId: item.id }).unwrap()}
+                      onClick={() =>
+                        toggleGroupAssignInBackend({
+                          courseId: course.id,
+                          groupId: item.id,
+                        }).unwrap()
+                      }
                       key={index}
-                      variant={course.groupCourses?.map(
-                        (groupCourse) => groupCourse.group.id,
-                      ).includes(item.id) ? "default" : "outline"}
+                      variant={
+                        course.groupCourses
+                          ?.map((groupCourse) => groupCourse.group.id)
+                          .includes(item.id)
+                          ? "default"
+                          : "outline"
+                      }
                       size="sm"
                     >
                       {item?.name}
@@ -106,7 +129,7 @@ export default function CourseManagementDashboard() {
                 <div className="text-muted-foreground mb-3 flex items-center gap-6 text-sm">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                    <span>{course._count?.enrollCourses || 0}</span>
+                    <span>{course._count?.enrollCourses ?? 0}</span>
                   </div>
 
                   <Badge variant="secondary" className="text-xs">

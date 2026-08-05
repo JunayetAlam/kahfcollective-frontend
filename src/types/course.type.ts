@@ -3,7 +3,13 @@ import { Class } from "./class.type";
 import { User } from "./user.type";
 
 export type CourseStatus = "DRAFT" | "ACTIVE" | "HIDDEN";
-export type CourseContentTypeEnum = "VIDEO" | "QUIZ" | "PDF";
+export type CourseContentTypeEnum =
+  | "VIDEO"
+  | "QUIZ"
+  | "PDF"
+  | "TEXT"
+  | "VIDEO_LINK"
+  | "MEETING_LINK";
 export type ContentStatusEnum = "PUBLISHED" | "DRAFT";
 export type RightAnswer = "A" | "B" | "C" | "D";
 
@@ -19,13 +25,18 @@ export interface Course {
   title: string;
   description: string;
   status: CourseStatus;
+  thumbnail?: string | null;
   isDeleted: boolean;
   instructorId: string;
   forums?: Group[];
   courseContents: CourseContents[];
+  items?: CourseTreeItem[];
+  semesters?: Semester[];
   coursesEnroll?: CourseEnroll[];
   groupCourses: GroupCourses[];
   instructor: User;
+  lessons?: number;
+  tests?: number;
   createdAt: string;
   updatedAt: string;
   _count: {
@@ -40,6 +51,54 @@ export interface Course {
     userId: string;
   }[];
 }
+
+export interface Semester {
+  id: string;
+  name: string;
+  index: number;
+  courseId: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Chapter {
+  id: string;
+  name: string;
+  index: number;
+  semesterId: string;
+  courseId: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type ContentTreeNode = CourseContents & {
+  nodeType: "CONTENT";
+};
+
+export type ChapterTreeNode = {
+  nodeType: "CHAPTER";
+  id: string;
+  name: string;
+  index: number;
+  semesterId: string;
+  courseId: string;
+  contents: CourseContents[];
+};
+
+export type SemesterTreeNode = {
+  nodeType: "SEMESTER";
+  id: string;
+  name: string;
+  index: number;
+  courseId: string;
+  items: Array<ChapterTreeNode | ContentTreeNode>;
+};
+
+export type CourseTreeItem = SemesterTreeNode | ContentTreeNode;
+
+export type ContentScope = "COURSE" | "SEMESTER" | "CHAPTER";
 
 export interface CourseEnroll {
   id: string;
@@ -59,18 +118,23 @@ export interface CourseContents {
   description: string;
   videoUrl?: string | null;
   pdfUrl?: string | null;
+  text?: string | null;
+  meetingLink?: string | null;
+  videoLink?: string | null;
   quizzes?: Quiz[];
   status: ContentStatusEnum;
   isDeleted: boolean;
   index: number;
   courseId: string;
-  instructorId: string;
+  semesterId?: string | null;
+  chapterId?: string | null;
+  instructorId?: string;
   courseQuestions?: CourseQuestion;
-  course: Course;
-  instructor: User;
+  course?: Course;
+  instructor?: User;
   createdAt: string;
   updatedAt: string;
-  hasAnswered: boolean;
+  hasAnswered?: boolean;
 }
 
 export interface CourseQuestion {
@@ -124,13 +188,13 @@ export interface QuizAnswers {
 }
 
 export type EnrollCourse = {
-  id: string;
-  userId: string;
+  id?: string;
+  userId?: string;
   courseId: string;
-  user: User;
-  course: Course;
-  createdAt: string;
-  updatedAt: string;
+  user?: User;
+  course?: Course;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type GroupCourses = {

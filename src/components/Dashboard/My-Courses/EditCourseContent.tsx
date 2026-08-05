@@ -7,6 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
+import RichTextEditor from "@/components/Forms/RichTextEditor";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -24,24 +27,77 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-
 import {
   useAddSingleQuizMutation,
   useDeleteSingleQuizMutation,
   useGetAllQuizzesForCourseAdminQuery,
   useUpdateCourseContentMutation,
-  useUpdateSingleQuizMutation,
   useUpdateFileContentMutation,
+  useUpdateSingleQuizMutation,
 } from "@/redux/api/courseContent";
 import { CourseContents } from "@/types";
+import { ClipboardList, Link2, Plus, Trash2, Upload, Video } from "lucide-react";
+import { TiDocument } from "react-icons/ti";
 
-const editSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  status: z.enum(["DRAFT", "PUBLISHED"]),
-});
+const contentTypes = [
+  "VIDEO",
+  "QUIZ",
+  "PDF",
+  "TEXT",
+  "VIDEO_LINK",
+  "MEETING_LINK",
+] as const;
+
+const editSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    status: z.enum(["DRAFT", "PUBLISHED"]),
+    type: z.enum(contentTypes),
+    text: z.string().optional(),
+    videoLink: z.string().optional(),
+    meetingLink: z.string().optional(),
+    videoFile: z.any().optional(),
+    pdfFile: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === "TEXT") {
+      const plain = (data.text || "").replace(/<[^>]*>/g, "").trim();
+      if (!plain) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Text content is required",
+          path: ["text"],
+        });
+      }
+    }
+    if (data.type === "VIDEO_LINK") {
+      try {
+        if (!data.videoLink) throw new Error();
+        new URL(data.videoLink);
+      } catch {
+        ctx.addIssue({
+          code: "custom",
+          message: "Enter a valid video URL",
+          path: ["videoLink"],
+        });
+      }
+    }
+    if (data.type === "MEETING_LINK") {
+      try {
+        if (!data.meetingLink) throw new Error();
+        new URL(data.meetingLink);
+      } catch {
+        ctx.addIssue({
+          code: "custom",
+          message: "Enter a valid meeting URL",
+          path: ["meetingLink"],
+        });
+      }
+    }
+  });
+
+type EditFormValues = z.infer<typeof editSchema>;
 
 export default function EditContentForm({
   item,
@@ -61,11 +117,12 @@ export default function EditContentForm({
   const [addQuiz, { isLoading: isAddingQuiz }] = useAddSingleQuizMutation();
   const { data: quizzesData, refetch } = useGetAllQuizzesForCourseAdminQuery(
     item?.id,
+    { skip: item.type !== "QUIZ" },
   );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const [quizToDelete, setQuizToDelete] = useState<any>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-
+  const [editingQuiz, setEditingQuiz] = useState<any>({});
   const [newQuiz, setNewQuiz] = useState<{
     question: string;
     options: { A: string; B: string; C: string; D: string } | null;
@@ -78,25 +135,71 @@ export default function EditContentForm({
     type: "MULTIPLE_CHOICE",
   });
 
-  const [editingQuiz, setEditingQuiz] = useState<any>({});
-
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
     defaultValues: {
       title: item.title,
       description: item.description,
       status: item.status,
+      type: item.type as EditFormValues["type"],
+      text: item.text || "",
+      videoLink: item.videoLink || "",
+      meetingLink: item.meetingLink || "",
+      videoFile: null,
+      pdfFile: null,
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const watchedType = watch("type");
+  const isSaving = isUpdating || isUploading;
+
+  const onSubmit = async (data: EditFormValues) => {
     try {
-      await updateContent({ id: item.id, data }).unwrap();
+      if (
+        (data.type === "VIDEO" || data.type === "PDF") &&
+        data.type !== item.type
+      ) {
+        const file = data.type === "VIDEO" ? data.videoFile : data.pdfFile;
+        if (!file) {
+          toast.error(
+            `Please upload a ${data.type === "VIDEO" ? "video" : "PDF"} file when changing type`,
+          );
+          return;
+        }
+      }
+
+      const payload: Record<string, unknown> = {
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        type: data.type,
+      };
+
+      if (data.type === "TEXT") payload.text = data.text;
+      if (data.type === "VIDEO_LINK") payload.videoLink = data.videoLink;
+      if (data.type === "MEETING_LINK") payload.meetingLink = data.meetingLink;
+
+      await updateContent({ id: item.id, data: payload }).unwrap();
+
+      const file =
+        data.type === "VIDEO"
+          ? data.videoFile
+          : data.type === "PDF"
+            ? data.pdfFile
+            : null;
+
+      if (file && (data.type === "VIDEO" || data.type === "PDF")) {
+        const formData = new FormData();
+        formData.append("file", file);
+        await updateFile({ id: item.id, formData }).unwrap();
+      }
+
       toast.success("Content updated successfully");
       onClose();
     } catch (error: any) {
@@ -104,32 +207,17 @@ export default function EditContentForm({
     }
   };
 
-  const handleFileUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select a file first");
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("id", item.id);
-      await updateFile({ id: item.id, formData }).unwrap();
-      toast.success("File updated successfully");
-      setSelectedFile(null);
-    } catch (error: any) {
-      toast.error(error?.data?.message || "File upload failed");
-    }
-  };
-
   const handleQuizUpdate = async (quiz: any) => {
     try {
-      const payload = {
-        question: quiz.question,
-        ...(quiz.type === "MULTIPLE_CHOICE" && { options: quiz.options }),
-        rightAnswer: quiz.rightAnswer,
-        type: quiz.type,
-      };
-      await updateQuiz({ id: quiz.id, data: payload }).unwrap();
+      await updateQuiz({
+        id: quiz.id,
+        data: {
+          question: quiz.question,
+          ...(quiz.type === "MULTIPLE_CHOICE" && { options: quiz.options }),
+          rightAnswer: quiz.rightAnswer,
+          type: quiz.type,
+        },
+      }).unwrap();
       toast.success("Assessment updated");
       refetch();
     } catch (error: any) {
@@ -161,11 +249,9 @@ export default function EditContentForm({
         rightAnswer: newQuiz.rightAnswer,
         type: newQuiz.type,
       };
-
       if (newQuiz.type === "MULTIPLE_CHOICE" && newQuiz.options) {
         payload.options = newQuiz.options;
       }
-
       await addQuiz(payload).unwrap();
       toast.success("Assessment added");
       setNewQuiz({
@@ -183,265 +269,492 @@ export default function EditContentForm({
 
   return (
     <div className="space-y-6">
-      {/* Content details */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          placeholder="Title"
-          {...register("title")}
-          disabled={isUpdating}
-        />
-        {errors.title && (
-          <p className="text-sm text-red-500">
-            {errors.title.message?.toString()}
-          </p>
-        )}
-
-        <Textarea
-          placeholder="Description"
-          rows={4}
-          {...register("description")}
-          disabled={isUpdating}
-        />
-        {errors.description && (
-          <p className="text-sm text-red-500">
-            {errors.description.message?.toString()}
-          </p>
-        )}
-
-        <Controller
-          name="status"
-          control={control}
-          render={({ field }) => (
-            <Select
-              value={field.value}
-              onValueChange={field.onChange}
-              disabled={isUpdating}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="DRAFT">DRAFT</SelectItem>
-                <SelectItem value="PUBLISHED">PUBLISHED</SelectItem>
-              </SelectContent>
-            </Select>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            (e.target as HTMLElement).tagName !== "TEXTAREA"
+          ) {
+            e.preventDefault();
+          }
+        }}
+      >
+        <div className="space-y-2">
+          <Label htmlFor="edit-title">Title</Label>
+          <Input
+            id="edit-title"
+            placeholder="Title"
+            {...register("title")}
+            disabled={isSaving}
+          />
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
           )}
-        />
+        </div>
 
-        <div className="flex justify-end gap-3">
+        <div className="space-y-2">
+          <Label htmlFor="edit-description">Description</Label>
+          <Textarea
+            id="edit-description"
+            placeholder="Description"
+            rows={3}
+            {...register("description")}
+            disabled={isSaving}
+          />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Type</Label>
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={isSaving}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="VIDEO">Video</SelectItem>
+                    <SelectItem value="QUIZ">Assessment</SelectItem>
+                    <SelectItem value="PDF">PDF</SelectItem>
+                    <SelectItem value="TEXT">Text</SelectItem>
+                    <SelectItem value="VIDEO_LINK">Video Link</SelectItem>
+                    <SelectItem value="MEETING_LINK">Meeting Link</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Status</Label>
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={isSaving}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="DRAFT">Draft</SelectItem>
+                    <SelectItem value="PUBLISHED">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+        </div>
+
+        {watchedType === "VIDEO" && (
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Video className="h-4 w-4" />
+              Video file
+              {item.type === "VIDEO" && item.videoUrl && (
+                <span className="text-muted-foreground font-normal">
+                  (optional — leave empty to keep current)
+                </span>
+              )}
+            </Label>
+            <Controller
+              name="videoFile"
+              control={control}
+              render={({ field }) => (
+                <div className="rounded-md border border-dashed p-6 text-center">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    id="edit-video-upload"
+                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                  />
+                  <label htmlFor="edit-video-upload">
+                    <Button variant="outline" asChild type="button">
+                      <span>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {item.type === "VIDEO" ? "Replace Video" : "Choose Video"}
+                      </span>
+                    </Button>
+                  </label>
+                  {field.value && (
+                    <p className="mt-3 text-sm text-green-700">
+                      {field.value.name}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
+        )}
+
+        {watchedType === "PDF" && (
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <TiDocument className="h-4 w-4" />
+              PDF file
+              {item.type === "PDF" && item.pdfUrl && (
+                <span className="text-muted-foreground font-normal">
+                  (optional — leave empty to keep current)
+                </span>
+              )}
+            </Label>
+            <Controller
+              name="pdfFile"
+              control={control}
+              render={({ field }) => (
+                <div className="rounded-md border border-dashed p-6 text-center">
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    id="edit-pdf-upload"
+                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                  />
+                  <label htmlFor="edit-pdf-upload">
+                    <Button variant="outline" asChild type="button">
+                      <span>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {item.type === "PDF" ? "Replace PDF" : "Choose PDF"}
+                      </span>
+                    </Button>
+                  </label>
+                  {field.value && (
+                    <p className="mt-3 text-sm text-green-700">
+                      {field.value.name}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
+        )}
+
+        {watchedType === "TEXT" && (
+          <div className="min-w-0 max-w-full space-y-2 overflow-hidden">
+            <Controller
+              name="text"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor
+                  name="text"
+                  label="Text content"
+                  required
+                  content={field.value || ""}
+                  onChangeHandler={field.onChange}
+                  height="220px"
+                />
+              )}
+            />
+            {errors.text && (
+              <p className="text-sm text-red-500">{errors.text.message}</p>
+            )}
+          </div>
+        )}
+
+        {watchedType === "VIDEO_LINK" && (
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2" htmlFor="edit-videoLink">
+              <Link2 className="h-4 w-4" />
+              Video URL
+            </Label>
+            <Input
+              id="edit-videoLink"
+              type="url"
+              placeholder="https://..."
+              {...register("videoLink")}
+              disabled={isSaving}
+            />
+            {errors.videoLink && (
+              <p className="text-sm text-red-500">{errors.videoLink.message}</p>
+            )}
+          </div>
+        )}
+
+        {watchedType === "MEETING_LINK" && (
+          <div className="space-y-2">
+            <Label
+              className="flex items-center gap-2"
+              htmlFor="edit-meetingLink"
+            >
+              <Link2 className="h-4 w-4" />
+              Meeting URL
+            </Label>
+            <Input
+              id="edit-meetingLink"
+              type="url"
+              placeholder="https://..."
+              {...register("meetingLink")}
+              disabled={isSaving}
+            />
+            {errors.meetingLink && (
+              <p className="text-sm text-red-500">
+                {errors.meetingLink.message}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="flex justify-end gap-3 border-t pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
-            disabled={isUpdating}
+            disabled={isSaving}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isUpdating}>
-            {isUpdating ? "Saving..." : "Save Changes"}
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </form>
 
-      {/* Quizzes */}
-      {item.type === "QUIZ" && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium">Edit Quizzes</h3>
-            <Button size="sm" onClick={() => setShowAddDialog(true)}>
-              Add Assessment
+      {/* Quiz management when content is (or stays) QUIZ — show if original or selected type is QUIZ after save they'd refetch; for in-session editing show if watchedType is QUIZ and item was QUIZ (quizzes exist) OR always when QUIZ */}
+      {watchedType === "QUIZ" && item.type === "QUIZ" && (
+        <div className="space-y-4 border-t pt-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-2.5">
+              <div className="bg-muted flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
+                <ClipboardList className="text-muted-foreground h-4 w-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold">Assessment questions</h3>
+                  {!!quizzesData?.data?.length && (
+                    <Badge variant="secondary" className="text-xs">
+                      {quizzesData.data.length}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-muted-foreground mt-0.5 text-xs">
+                  Edit existing questions or add new ones.
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              type="button"
+              onClick={() => setShowAddDialog(true)}
+            >
+              <Plus className="mr-1 h-4 w-4" />
+              Add
             </Button>
           </div>
 
           {quizzesData?.data?.length ? (
-            quizzesData.data.map((quiz: any) => {
-              const current = editingQuiz[quiz.id] || quiz;
-              return (
-                <div key={quiz.id} className="space-y-3 rounded border p-4">
-                  <div className="space-y-2">
-                    <Label>Assessment Type:</Label>
-                    <Select
-                      value={current.type || "MULTIPLE_CHOICE"}
-                      onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
-                        setEditingQuiz({
-                          ...editingQuiz,
-                          [quiz.id]: { ...current, type: value },
-                        })
-                      }
-                      disabled={isUpdatingQuiz}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Question Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MULTIPLE_CHOICE">Multiple Choice</SelectItem>
-                        <SelectItem value="WRITE_ANSWER">Write Answer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            <div className="space-y-3">
+              {quizzesData.data.map((quiz: any, qIndex: number) => {
+                const current = editingQuiz[quiz.id] || quiz;
+                return (
+                  <div
+                    key={quiz.id}
+                    className="bg-background space-y-4 rounded-lg border p-4 shadow-sm"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="bg-primary/10 text-primary flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold">
+                        {qIndex + 1}
+                      </span>
+                      <p className="text-sm font-medium">
+                        Question {qIndex + 1}
+                      </p>
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label>Question:</Label>
-                    <Textarea
-                      value={current.question}
-                      onChange={(e) =>
-                        setEditingQuiz({
-                          ...editingQuiz,
-                          [quiz.id]: { ...current, question: e.target.value },
-                        })
-                      }
-                      disabled={isUpdatingQuiz}
-                    />
-                  </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Question type</Label>
+                        <Select
+                          value={current.type || "MULTIPLE_CHOICE"}
+                          onValueChange={(
+                            value: "MULTIPLE_CHOICE" | "WRITE_ANSWER",
+                          ) =>
+                            setEditingQuiz({
+                              ...editingQuiz,
+                              [quiz.id]: { ...current, type: value },
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="MULTIPLE_CHOICE">
+                              Multiple choice
+                            </SelectItem>
+                            <SelectItem value="WRITE_ANSWER">
+                              Write answer
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  {current.type === "MULTIPLE_CHOICE" && current.options && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {Object.entries(current.options).map(([key, value]: any) => (
-                        <div key={key} className="flex items-center gap-2">
-                          <Badge variant="outline">{key}</Badge>
-                          <Input
-                            value={value}
-                            onChange={(e) =>
+                      {current.type === "MULTIPLE_CHOICE" && (
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Correct option</Label>
+                          <Select
+                            value={current.rightAnswer}
+                            onValueChange={(val) =>
                               setEditingQuiz({
                                 ...editingQuiz,
-                                [quiz.id]: {
-                                  ...current,
-                                  options: {
-                                    ...current.options,
-                                    [key]: e.target.value,
-                                  },
-                                },
+                                [quiz.id]: { ...current, rightAnswer: val },
                               })
                             }
-                            disabled={isUpdatingQuiz}
-                          />
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {["A", "B", "C", "D"].map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
 
-                  <div className="space-y-2">
-                    <Label>Correct Answer:</Label>
-                    {current.type === "WRITE_ANSWER" ? (
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Question text</Label>
                       <Textarea
-                        placeholder="Enter correct answer"
-                        value={current.rightAnswer}
+                        rows={2}
+                        value={current.question}
                         onChange={(e) =>
                           setEditingQuiz({
                             ...editingQuiz,
-                            [quiz.id]: { ...current, rightAnswer: e.target.value },
+                            [quiz.id]: {
+                              ...current,
+                              question: e.target.value,
+                            },
                           })
                         }
-                        disabled={isUpdatingQuiz}
                       />
-                    ) : (
-                      <Select
-                        value={current.rightAnswer}
-                        onValueChange={(val) =>
-                          setEditingQuiz({
-                            ...editingQuiz,
-                            [quiz.id]: { ...current, rightAnswer: val },
-                          })
-                        }
+                    </div>
+
+                    {current.type === "MULTIPLE_CHOICE" && current.options && (
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Options</Label>
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          {Object.entries(current.options).map(
+                            ([key, value]: any) => (
+                              <div
+                                key={key}
+                                className="flex items-center gap-2"
+                              >
+                                <span className="bg-muted text-muted-foreground flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold">
+                                  {key}
+                                </span>
+                                <Input
+                                  value={value}
+                                  onChange={(e) =>
+                                    setEditingQuiz({
+                                      ...editingQuiz,
+                                      [quiz.id]: {
+                                        ...current,
+                                        options: {
+                                          ...current.options,
+                                          [key]: e.target.value,
+                                        },
+                                      },
+                                    })
+                                  }
+                                />
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {current.type === "WRITE_ANSWER" && (
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Expected answer</Label>
+                        <Textarea
+                          rows={2}
+                          value={current.rightAnswer}
+                          onChange={(e) =>
+                            setEditingQuiz({
+                              ...editingQuiz,
+                              [quiz.id]: {
+                                ...current,
+                                rightAnswer: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex justify-end gap-2 border-t pt-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        type="button"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setQuizToDelete(quiz)}
+                      >
+                        <Trash2 className="mr-1 h-3.5 w-3.5" />
+                        Delete
+                      </Button>
+                      <Button
+                        size="sm"
+                        type="button"
+                        onClick={() => handleQuizUpdate(current)}
                         disabled={isUpdatingQuiz}
                       >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["A", "B", "C", "D"].map((opt) => (
-                            <SelectItem key={opt} value={opt}>
-                              {opt}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                        Save question
+                      </Button>
+                    </div>
                   </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      size="sm"
-                      onClick={() => handleQuizUpdate(current)}
-                      disabled={isUpdatingQuiz}
-                    >
-                      {isUpdatingQuiz ? "Updating..." : "Update Assessment"}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => setQuizToDelete(quiz)}
-                      disabled={isDeletingQuiz}
-                    >
-                      {isDeletingQuiz ? "Deleting..." : "Delete Assessment"}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           ) : (
-            <p className="text-sm text-gray-500">No quizzes found.</p>
+            <div className="bg-muted/40 rounded-lg border border-dashed px-4 py-8 text-center">
+              <p className="text-sm font-medium">No questions yet</p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Add your first assessment question.
+              </p>
+            </div>
           )}
         </div>
       )}
 
-      {/* Video */}
-      {(item.type === "VIDEO") && (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Change Video</label>
-          <Input
-            type="file"
-            accept="video/*"
-            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            disabled={isUploading}
-          />
-          {selectedFile && (
-            <p className="text-sm">Selected: {selectedFile.name}</p>
-          )}
-          <Button
-            type="button"
-            onClick={handleFileUpload}
-            disabled={isUploading}
-          >
-            {isUploading ? "Uploading..." : "Upload Video"}
-          </Button>
-        </div>
-      )}
-      {(item.type === "PDF") && (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Change PDF</label>
-          <Input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            disabled={isUploading}
-          />
-          {selectedFile && (
-            <p className="text-sm">Selected: {selectedFile.name}</p>
-          )}
-          <Button
-            type="button"
-            onClick={handleFileUpload}
-            disabled={isUploading}
-          >
-            {isUploading ? "Uploading..." : "Upload PDF"}
-          </Button>
-        </div>
+      {watchedType === "QUIZ" && item.type !== "QUIZ" && (
+        <p className="text-muted-foreground border-t pt-4 text-sm">
+          Save as Assessment first, then reopen edit to manage questions.
+        </p>
       )}
 
-      {/* Delete Confirmation */}
       <Dialog open={!!quizToDelete} onOpenChange={() => setQuizToDelete(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogTitle>Delete question?</DialogTitle>
           </DialogHeader>
-          <p className="text-sm">Are you sure you want to delete this Assessment?</p>
+          <p className="text-muted-foreground text-sm">
+            This assessment question will be removed. You can undo via restore
+            if soft-deleted on the server.
+          </p>
           <DialogFooter className="mt-4 flex justify-end gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={() => setQuizToDelete(null)}
-              disabled={isDeletingQuiz}
             >
               Cancel
             </Button>
@@ -450,115 +763,129 @@ export default function EditContentForm({
               onClick={confirmDeleteQuiz}
               disabled={isDeletingQuiz}
             >
-              {isDeletingQuiz ? "Deleting..." : "Delete"}
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Add Assessment Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add New Assessment</DialogTitle>
+            <DialogTitle>Add assessment question</DialogTitle>
+            <p className="text-muted-foreground text-sm">
+              Fill in the question details below.
+            </p>
           </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label>Assessment Type:</Label>
-              <Select
-                value={newQuiz.type}
-                onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
-                  setNewQuiz({ ...newQuiz, type: value })
-                }
-                disabled={isAddingQuiz}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Question Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MULTIPLE_CHOICE">Multiple Choice</SelectItem>
-                  <SelectItem value="WRITE_ANSWER">Write Answer</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Question type</Label>
+                <Select
+                  value={newQuiz.type}
+                  onValueChange={(value: "MULTIPLE_CHOICE" | "WRITE_ANSWER") =>
+                    setNewQuiz({ ...newQuiz, type: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MULTIPLE_CHOICE">
+                      Multiple choice
+                    </SelectItem>
+                    <SelectItem value="WRITE_ANSWER">Write answer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {newQuiz.type === "MULTIPLE_CHOICE" && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Correct option</Label>
+                  <Select
+                    value={newQuiz.rightAnswer}
+                    onValueChange={(val) =>
+                      setNewQuiz({ ...newQuiz, rightAnswer: val })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["A", "B", "C", "D"].map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label>Question:</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Question text</Label>
               <Textarea
-                placeholder="Question"
+                rows={2}
+                placeholder="Enter your question…"
                 value={newQuiz.question}
                 onChange={(e) =>
                   setNewQuiz({ ...newQuiz, question: e.target.value })
                 }
-                disabled={isAddingQuiz}
               />
             </div>
 
             {newQuiz.type === "MULTIPLE_CHOICE" && newQuiz.options && (
-              <>
-                {Object.entries(newQuiz.options).map(([key, value]) => (
-                  <div key={key} className="flex items-center gap-2">
-                    <Badge variant="outline">{key}</Badge>
-                    <Input
-                      placeholder={`Option ${key}`}
-                      value={value}
-                      onChange={(e) =>
-                        setNewQuiz({
-                          ...newQuiz,
-                          options: { ...newQuiz.options!, [key]: e.target.value },
-                        })
-                      }
-                      disabled={isAddingQuiz}
-                    />
-                  </div>
-                ))}
-              </>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Options</Label>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {Object.entries(newQuiz.options).map(([key, value]) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <span className="bg-muted text-muted-foreground flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold">
+                        {key}
+                      </span>
+                      <Input
+                        placeholder={`Option ${key}`}
+                        value={value}
+                        onChange={(e) =>
+                          setNewQuiz({
+                            ...newQuiz,
+                            options: {
+                              ...newQuiz.options!,
+                              [key]: e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
 
-            <div className="space-y-2">
-              <Label>Correct Answer:</Label>
-              {newQuiz.type === "WRITE_ANSWER" ? (
+            {newQuiz.type === "WRITE_ANSWER" && (
+              <div className="space-y-1.5">
+                <Label className="text-xs">Expected answer</Label>
                 <Textarea
-                  placeholder="Enter correct answer"
+                  rows={2}
+                  placeholder="Enter the correct answer…"
                   value={newQuiz.rightAnswer}
                   onChange={(e) =>
                     setNewQuiz({ ...newQuiz, rightAnswer: e.target.value })
                   }
-                  disabled={isAddingQuiz}
                 />
-              ) : (
-                <Select
-                  value={newQuiz.rightAnswer}
-                  onValueChange={(val) =>
-                    setNewQuiz({ ...newQuiz, rightAnswer: val })
-                  }
-                  disabled={isAddingQuiz}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Correct Answer" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["A", "B", "C", "D"].map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
+              </div>
+            )}
           </div>
           <DialogFooter className="mt-4 flex justify-end gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={() => setShowAddDialog(false)}
-              disabled={isAddingQuiz}
             >
               Cancel
             </Button>
             <Button onClick={handleAddQuiz} disabled={isAddingQuiz}>
-              {isAddingQuiz ? "Adding..." : "Add Assessment"}
+              {isAddingQuiz ? "Adding..." : "Add question"}
             </Button>
           </DialogFooter>
         </DialogContent>

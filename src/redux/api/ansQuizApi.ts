@@ -18,7 +18,7 @@ export const quizAnswerApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["QuizAnswer"],
+      invalidatesTags: ["QuizAnswer", "Analytics"],
     }),
 
     getAllQuizAnswers: builder.query({
@@ -47,7 +47,7 @@ export const quizAnswerApi = baseApi.injectEndpoints({
         url: `/answer-quizzes/lock/${contentId}`,
         method: "POST",
       }),
-      invalidatesTags: ["QuizAnswer"],
+      invalidatesTags: ["QuizAnswer", "Analytics"],
     }),
 
     getQuizResult: builder.query({

@@ -13,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import defaultUser from "@/assets/user.png";
 
 // icons
-import { User, LayoutDashboard, LogOut } from "lucide-react";
+import { User, LayoutDashboard, LogOut, ChartColumn } from "lucide-react";
 
 export default function NavProfile() {
   const dispatch = useAppDispatch();
@@ -55,6 +55,11 @@ export default function NavProfile() {
             <DropdownMenuItem asChild>
               <Link href="/profile" className="flex items-center gap-2">
                 <User size={16} /> Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/my-performance" className="flex items-center gap-2">
+                <ChartColumn size={16} /> My Performance
               </Link>
             </DropdownMenuItem>
             {

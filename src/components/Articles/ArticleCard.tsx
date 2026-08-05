@@ -7,6 +7,7 @@ import TopTitle from '../Global/TopTitle';
 import { Badge } from '../ui/badge';
 import { NormalContent } from '@/types/normal-content.type';
 import ViewArticle from './ViewArticles';
+import RichTextContent from '../Forms/RichTextContent';
 
 export default function ArticleCard({ article }: { article: NormalContent }) {
   return (
@@ -37,9 +38,10 @@ export default function ArticleCard({ article }: { article: NormalContent }) {
           {article.title}
         </TopTitle>
 
-        <div
-          className="text-sm text-gray-700"
-          dangerouslySetInnerHTML={{ __html: article.description.slice(0, 100) }}
+        <RichTextContent
+          html={article.description.slice(0, 100)}
+          size="sm"
+          className="text-gray-700"
         />
 
         <div className="flex items-center text-sm text-gray-500 border-t border-gray-200 pt-3">

@@ -6,22 +6,30 @@ import { handleSetSearchParams } from "@/lib/utils";
 
 interface PaginationWithParamsProps {
   totalPages: number;
+  page?: number;
+  onPageChange?: (page: number) => void;
 }
 
 export function Pagination({
   totalPages,
+  page,
+  onPageChange,
 }: PaginationWithParamsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentPage = Number(searchParams.get("page") || 1);
+  const currentPage = page ?? Number(searchParams.get("page") || 1);
 
-  const createPageURL = (pageNumber: number | string) => {
-    handleSetSearchParams({ page: pageNumber.toString() }, searchParams, router)
-  };
-
-  const goToPage = (page: number) => {
-    createPageURL(page)
+  const goToPage = (nextPage: number) => {
+    if (onPageChange) {
+      onPageChange(nextPage);
+      return;
+    }
+    handleSetSearchParams(
+      { page: nextPage.toString() },
+      searchParams,
+      router,
+    );
   };
 
   // Generate page numbers to display

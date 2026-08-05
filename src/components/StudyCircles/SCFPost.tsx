@@ -17,6 +17,7 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useGetMeQuery } from '@/redux/api/userApi';
 import { formatTime } from '@/lib/formateTime';
+import RichTextContent from '../Forms/RichTextContent';
 
 export default function SCFPost({ post }: { post: Post }) {
     const [showAllComments, setShowAllComments] = useState(false);
@@ -97,10 +98,9 @@ export default function SCFPost({ post }: { post: Post }) {
 
             <div className="space-y-5">
                 <div className="text-[15px] leading-relaxed text-[#304437]">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: displayText.replace(/\n/g, '<br>'),
-                        }}
+                    <RichTextContent
+                        html={displayText.replace(/\n/g, '<br>')}
+                        className="text-[#304437]"
                     />
                     {isLong && (
                         <button
